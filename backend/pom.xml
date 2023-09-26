@@ -64,22 +64,21 @@
 			<optional>true</optional>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-		<dependency>
+		<!--<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>42.6.0</version>
-		</dependency>
+		</dependency>-->
 		<!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
-		<dependency>
+		<!--<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
-		</dependency>
-
-		<!--<dependency>
+		</dependency>-->
+		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
-		</dependency>-->
+		</dependency>
 		<!--<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
