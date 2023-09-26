@@ -1,5 +1,4 @@
 version: '3'
-
 services:
   db:
     image: postgres:latest
@@ -54,7 +53,7 @@ services:
       TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
       TWILIO_VERIFY_SERVICE_SID: ${TWILIO_VERIFY_SERVICE_SID}
       #acessa o banco de dados via rede interna (bridge network) criado
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ecocoleta_db
+      SPRING_DATASOURCE_URL: ${DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SPRING_DATASOURCE_DRIVER-CLAS-NAME: org.postgresql.Driver
@@ -88,7 +87,6 @@ services:
 volumes:
   pgdata:
     driver: local
-  bundle_path:
 
 networks:
   app-network:

@@ -1,6 +1,6 @@
 # Funciona para o application-dev habilitado.
 # [Choice] Java version:
-ARG VARIANT=18
+ARG VARIANT=17
 
 FROM openjdk:${VARIANT}
 LABEL mantainer="Roni Fabio Banaszewski"
