@@ -1,26 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{title}}</title>
-</head>
-<body>
-  <!-- menu -->
-  <header>
-    <app-menu></app-menu>
-  </header>
-  <!-- end menu -->
+<!-- menu -->
+<header class="fixed-top">
+  <app-menu></app-menu>
+</header>
+<!-- end menu -->
 
-  <!-- main -->
-  <main>
-    <router-outlet></router-outlet> 
-  </main>
-  <!-- end main -->
+<!-- main -->
+<main class="bg-tertiary">
+  <router-outlet></router-outlet>
+</main>
+<!-- end main -->
 
-  <!-- footer -->
+<!-- footer -->
+<footer id="footer-nav" class="fixed-bottom">
   <app-footer></app-footer>
-  <!-- end footer -->
-</body>
-</html>
-
+</footer>
+<!-- end footer -->
