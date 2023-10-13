@@ -1,83 +1,83 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Ecocoleta</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <head>
+    <meta charset="utf-8" />
+    <title>Ecocoleta</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
-  <style type="text/css">
-    body,
-    html {
-      height: 100vh !important;
-      background-color: #D9D9D9 !important;
-    }
-
-    .app-loading {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-
-    .app-loading .logo {
-      width: 100px;
-      height: 100px;
-      background: url(./favicon.ico) center center no-repeat;
-      background-size: cover;
-    }
-
-    .app-loading .spinner {
-      height: 200px;
-      width: 200px;
-      animation: rotate 2s linear infinite;
-      transform-origin: center center;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      margin: auto;
-    }
-
-    .app-loading .spinner .path {
-      stroke-dasharray: 1, 200;
-      stroke-dashoffset: 0;
-      animation: dash 1.5s ease-in-out infinite;
-      stroke-linecap: round;
-      stroke: #2A8909;
-    }
-
-    @keyframes rotate {
-      100% {
-        transform: rotate(360deg);
+    <style type="text/css">
+      body,
+      html {
+        height: 100vh !important;
+        background-color: #d9d9d9 !important;
       }
-    }
 
-    @keyframes dash {
-      0% {
+      .app-loading {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      .app-loading .logo {
+        width: 100px;
+        height: 100px;
+        background: url(./favicon.ico) center center no-repeat;
+        background-size: cover;
+      }
+
+      .app-loading .spinner {
+        height: 200px;
+        width: 200px;
+        animation: rotate 2s linear infinite;
+        transform-origin: center center;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+      }
+
+      .app-loading .spinner .path {
         stroke-dasharray: 1, 200;
         stroke-dashoffset: 0;
+        animation: dash 1.5s ease-in-out infinite;
+        stroke-linecap: round;
+        stroke: #2a8909;
       }
 
-      50% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -35px;
+      @keyframes rotate {
+        100% {
+          transform: rotate(360deg);
+        }
       }
 
-      100% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -124px;
-      }
-    }
-  </style>
-</head>
+      @keyframes dash {
+        0% {
+          stroke-dasharray: 1, 200;
+          stroke-dashoffset: 0;
+        }
 
-<body>
-  <app-root>
+        50% {
+          stroke-dasharray: 89, 200;
+          stroke-dashoffset: -35px;
+        }
+
+        100% {
+          stroke-dasharray: 89, 200;
+          stroke-dashoffset: -124px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <app-root>
       <div class="app-loading">
         <div class="logo"></div>
         <svg class="spinner" viewBox="25 25 50 50">
@@ -93,5 +93,5 @@
         </svg>
       </div>
     </app-root>
-</body>
+  </body>
 </html>
