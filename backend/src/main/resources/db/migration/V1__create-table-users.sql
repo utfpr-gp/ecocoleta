@@ -1,8 +1,8 @@
-CREATE TABLE IF NOT EXISTS user_roles (
-    id SERIAL PRIMARY KEY,
-    role_name VARCHAR(20) NOT NULL);
-
-INSERT INTO user_roles (role_name) VALUES ('ADMIN'), ('WASTE_COLLECTOR'), ('RESIDENT'), ('COMPANY');
+-- CREATE TABLE IF NOT EXISTS user_roles (
+--     id SERIAL PRIMARY KEY,
+--     role_name VARCHAR(20) NOT NULL);
+--
+-- INSERT INTO user_roles (role_name) VALUES ('ADMIN'), ('WASTE_COLLECTOR'), ('RESIDENT'), ('COMPANY');
 
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(11) NOT NULL,
-    role_id INT NOT NULL REFERENCES user_roles(id),
+    role VARCHAR(255) NOT NULL,
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
