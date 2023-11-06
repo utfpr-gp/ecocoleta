@@ -1,9 +1,3 @@
--- CREATE TABLE IF NOT EXISTS user_roles (
---     id SERIAL PRIMARY KEY,
---     role_name VARCHAR(20) NOT NULL);
---
--- INSERT INTO user_roles (role_name) VALUES ('ADMIN'), ('WASTE_COLLECTOR'), ('RESIDENT'), ('COMPANY');
-
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL,
@@ -16,3 +10,5 @@ CREATE TABLE IF NOT EXISTS users (
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
+INSERT INTO users (name, last_name, email, password, phone, role)
+VALUES ('alvaro', 'pires', 'admin@admin.com', 'senha', '42999660090', 'ADMIN');

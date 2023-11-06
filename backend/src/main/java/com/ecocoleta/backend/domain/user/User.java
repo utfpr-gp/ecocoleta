@@ -20,16 +20,23 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Use GenerationType.IDENTITY para suportar autoincremento
     private Long id;
     private String name;
     private String last_name;
     private String email;
     private String password;
     private String phone;
+    @Enumerated(EnumType.STRING) // Mapear o enum para um tipo de dado string
     private UserRole role;
     private LocalDateTime update_time;
     private LocalDateTime create_time;
+
+    public User(String email, String password, UserRole role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
