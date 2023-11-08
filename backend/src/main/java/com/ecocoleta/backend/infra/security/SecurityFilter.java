@@ -30,7 +30,9 @@ public class SecurityFilter extends OncePerRequestFilter {
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
+        }/*else {
+            System.err.println("MY_DEBUG --> ERRO NO TOKEN");
+        }*/
         filterChain.doFilter(request, response);
     }
 
