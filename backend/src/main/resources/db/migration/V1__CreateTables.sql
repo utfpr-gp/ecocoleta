@@ -6,9 +6,9 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(11) NOT NULL,
     role VARCHAR(255) NOT NULL,
-    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    update_time TIMESTAMP,
+    create_time TIMESTAMP
     );
 
-INSERT INTO users (name, last_name, email, password, phone, role)
-VALUES ('alvaro', 'pires', 'admin@admin.com', 'senha', '42999660090', 'ADMIN');
+-- INSERT INTO users (name, last_name, email, password, phone, role)
+-- VALUES ('alvaro', 'pires', 'admin@admin.com', 'senha', '42999660090', 'ADMIN');

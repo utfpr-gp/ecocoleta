@@ -1,8 +1,10 @@
 package com.ecocoleta.backend.controllers;
 
 import com.ecocoleta.backend.domain.user.AuthenticationDTO;
+import com.ecocoleta.backend.domain.user.LoginResponseDTO;
 import com.ecocoleta.backend.domain.user.RegisterDTO;
 import com.ecocoleta.backend.domain.user.User;
+import com.ecocoleta.backend.infra.security.TokenService;
 import com.ecocoleta.backend.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,18 @@ public class AuthenticationController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TokenService tokenService;
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        return ResponseEntity.ok().build();
+        var token = tokenService.generateToken((User) auth.getPrincipal());
+
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     @PostMapping("/register")
