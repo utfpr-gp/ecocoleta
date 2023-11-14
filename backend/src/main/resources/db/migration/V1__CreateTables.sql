@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS users (
     create_time TIMESTAMP
     );
 
--- INSERT INTO users (name, last_name, email, password, phone, role)
--- VALUES ('alvaro', 'pires', 'admin@admin.com', 'senha', '42999660090', 'ADMIN');
+INSERT INTO users (name, last_name, email, password, phone, role)
+VALUES ('alvaro', 'pires', 'admin@admin.com', '$2a$10$1bkADWDLCqxTcELyR9KZ9.pKl4XftNQyfOH4a2mq2sqJ3dW/LersO', '42999660090', 'ADMIN');
