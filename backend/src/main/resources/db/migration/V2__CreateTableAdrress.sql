@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS address (
+    id BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
+    city VARCHAR(255),
+    street VARCHAR(255),
+    number VARCHAR(255),
+    neighborhood VARCHAR(255),
+    cep VARCHAR(255) NOT NULL,
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    create_time TIMESTAMP
+);

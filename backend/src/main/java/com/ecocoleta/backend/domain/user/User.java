@@ -5,17 +5,14 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.security.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Table(name = "users")
 @Entity(name = "users")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -38,14 +35,12 @@ public class User implements UserDetails {
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
-
-    //constructor teste - pois esta como not null name etc no sql
-    public User(String email, String password, UserRole role) {
-        this.name = "teste-name";
-        this.lastName = "teste-last-name";
+    public User(String name, String lastName, String email, String password, String phone, UserRole role) {
+        this.name = name;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.phone = "42999660090";
+        this.phone = phone;
         this.role = role;
     }
 
