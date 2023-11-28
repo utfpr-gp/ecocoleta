@@ -47,9 +47,13 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+//                        TODO verificar rotas
 //                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/**").permitAll() // teste
                         .requestMatchers(HttpMethod.GET, "/user/**").permitAll() // teste
+                        .requestMatchers(HttpMethod.PUT, "/user/**").permitAll() // teste
+                        .requestMatchers(HttpMethod.DELETE, "/user/**").permitAll() // teste
+
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/hello").hasRole("ADMIN") //apenas usuarios admin

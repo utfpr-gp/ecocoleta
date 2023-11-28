@@ -34,6 +34,7 @@ public class User implements UserDetails {
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
+    private Boolean activo;
 
     public User(String name, String lastName, String email, String password, String phone, UserRole role) {
         this.name = name;
@@ -42,6 +43,8 @@ public class User implements UserDetails {
         this.password = password;
         this.phone = phone;
         this.role = role;
+        this.activo = true;
+        this.createTime = LocalDateTime.now();
     }
 
     @Override
@@ -73,5 +76,28 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void update(UserUpdateDTO userUpdateDTO){
+        if (userUpdateDTO.name() != null){
+            this.name = userUpdateDTO.name();
+            this.updateTime = LocalDateTime.now();
+        }
+        if (userUpdateDTO.lastName() != null){
+            this.lastName = userUpdateDTO.lastName();
+            this.updateTime = LocalDateTime.now();
+        }
+        if (userUpdateDTO.phone() != null){
+            this.phone = userUpdateDTO.phone();
+            this.updateTime = LocalDateTime.now();
+        }
+        if (userUpdateDTO.role() != null){
+            this.role = userUpdateDTO.role();
+            this.updateTime = LocalDateTime.now();
+        }
+    }
+
+    public void delete() {
+        this.activo = false;
     }
 }
