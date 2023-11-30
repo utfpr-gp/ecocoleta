@@ -21,45 +21,25 @@ public class SecurityConfigurations {
     @Autowired
     SecurityFilter securityFilter;
 
-/*    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
-        httpSecurity.csrf(csrf -> csrf.disable());
-        httpSecurity.securityMatcher(PathRequest.toH2Console());
-        httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        httpSecurity.authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/hello").hasRole("ADMIN") //apenas usuarios admin
-                        .anyRequest().authenticated() //apenas usuarios autenticados de qualquer role
-//                                .anyRequest().permitAll()
-                );
-        httpSecurity.headers((headers) -> headers.frameOptions((frame) -> frame.sameOrigin()));
-        httpSecurity.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
-        return httpSecurity.build();
-    }*/
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-//                        TODO verificar rotas
-//                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user/**").permitAll() // teste
-                        .requestMatchers(HttpMethod.GET, "/user/**").permitAll() // teste
-                        .requestMatchers(HttpMethod.PUT, "/user/**").permitAll() // teste
-                        .requestMatchers(HttpMethod.DELETE, "/user/**").permitAll() // teste
+                .authorizeHttpRequests(req -> {
+                    //USER
+                    req.requestMatchers(HttpMethod.POST, "/user/**").permitAll(); // teste
+                    req.requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN"); // teste
+                    req.requestMatchers(HttpMethod.GET, "/user/**").authenticated(); // teste
+                    req.requestMatchers(HttpMethod.PUT, "/user/**").authenticated(); // teste
 
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/hello").hasRole("ADMIN") //apenas usuarios admin
-                        .anyRequest().authenticated() //apenas usuarios autenticados de qualquer role
-                )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                    //LOGIN
+                    req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
+                    //OTHER ROUTES
+                    req.requestMatchers(HttpMethod.GET, "/hello").hasRole("ADMIN"); //apenas usuarios admin
+                    req.anyRequest().authenticated(); //apenas usuarios autenticados de qualquer role
+                })
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) // adicionar o nosso filtro antes do filtro do spring boot, o nosso filtro ta fazendo a verificação do token...
                 .build();
     }
 
@@ -69,7 +49,7 @@ public class SecurityConfigurations {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

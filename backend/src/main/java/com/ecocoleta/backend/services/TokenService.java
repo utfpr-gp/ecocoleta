@@ -1,4 +1,4 @@
-package com.ecocoleta.backend.infra.security;
+package com.ecocoleta.backend.services;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -18,30 +18,33 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
+    private static final String ISSUER = "API-EcoColeta";
+
     public String generateToken(User user){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
-                    .withIssuer("auth-api")
+                    .withIssuer(ISSUER)
                     .withSubject(user.getEmail())
+//                    .withClaim("id", user.getId())// inserir id do usuario, verificar necessidade
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException exception){
-            throw new RuntimeException("error while genarateing token (trow custom)", exception);
+            throw new RuntimeException("error while genarating token (throw custom)", exception);
         }
     }
 
-    public String validateToken(String token){
+    public String validateToken(String tokenJWT){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    .withIssuer("auth-api")
+                    .withIssuer(ISSUER)
                     .build()
-                    .verify(token)
+                    .verify(tokenJWT)
                     .getSubject();
         } catch (JWTVerificationException exception){
-            return "";
+            throw new RuntimeException("Token JWT invalid or expired: " +tokenJWT);
         }
     }
     private Instant genExpirationDate(){

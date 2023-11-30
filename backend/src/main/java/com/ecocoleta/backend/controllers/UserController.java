@@ -1,9 +1,9 @@
 package com.ecocoleta.backend.controllers;
 
 import com.ecocoleta.backend.domain.user.User;
-import com.ecocoleta.backend.domain.user.UserDTO;
-import com.ecocoleta.backend.domain.user.UserGetDTO;
-import com.ecocoleta.backend.domain.user.UserUpdateDTO;
+import com.ecocoleta.backend.domain.dto.UserDTO;
+import com.ecocoleta.backend.domain.dto.UserGetDTO;
+import com.ecocoleta.backend.domain.dto.UserUpdateDTO;
 import com.ecocoleta.backend.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +28,10 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    //TODO alterar para return 201
-
-    //novo usuario com 201 http e uri
+    //New user
     @PostMapping()
     @Transactional
     public ResponseEntity newUser(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder){
-//        System.out.println(userDTO.toString());
         if(this.userRepository.findByEmail(userDTO.email()) != null) return ResponseEntity.badRequest().build();
         String encryptedPassword = new BCryptPasswordEncoder().encode(userDTO.password());
         User user = new User(userDTO.name(), userDTO.lastName(), userDTO.email(), encryptedPassword, userDTO.phone(), userDTO.role());
@@ -44,16 +41,6 @@ public class UserController {
 
         return ResponseEntity.created(uri).body(new UserGetDTO(user));
     }
-    /*@PostMapping("new")
-    @Transactional
-    public ResponseEntity newUser(@RequestBody @Valid UserDTO userDTO){
-        if(this.userRepository.findByEmail(userDTO.email()) != null) return ResponseEntity.badRequest().build();
-        String encryptedPassword = new BCryptPasswordEncoder().encode(userDTO.password());
-        User newUser = new User(userDTO.name(), userDTO.lastName(), userDTO.email(), encryptedPassword, userDTO.phone(), userDTO.role());
-        this.userRepository.save(newUser);
-
-        return ResponseEntity.ok().build();
-    }*/
 
     //Get User by id
     @GetMapping("/{id}")
@@ -65,6 +52,7 @@ public class UserController {
 
     //TODO teste de return de lista users
     //TODO verificar listagem etc
+    //RETURN DE LISTA DE USUARIOS ACTIVO
     @GetMapping("list")
     public ResponseEntity<Page<UserGetDTO>> listUser(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable){
         // usando obj tipo pageble para paginação

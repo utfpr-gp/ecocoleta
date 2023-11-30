@@ -1,9 +1,9 @@
 package com.ecocoleta.backend.controllers;
 
-import com.ecocoleta.backend.domain.user.AuthenticationDTO;
-import com.ecocoleta.backend.domain.user.LoginResponseDTO;
+import com.ecocoleta.backend.domain.dto.AuthenticationDTO;
+import com.ecocoleta.backend.domain.dto.LoginResponseDTO;
 import com.ecocoleta.backend.domain.user.User;
-import com.ecocoleta.backend.infra.security.TokenService;
+import com.ecocoleta.backend.services.TokenService;
 import com.ecocoleta.backend.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +20,24 @@ public class AuthenticationController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
+    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data) {
+        try {
+            var usernamePasswordToken = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+            var auth = this.authenticationManager.authenticate(usernamePasswordToken);
 
-        var token = tokenService.generateToken((User) auth.getPrincipal());
+            var token = tokenService.generateToken((User) auth.getPrincipal());
 
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+            return ResponseEntity.ok(new LoginResponseDTO(token));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
+//não usado, mudado para controller usar fazer o novo usuario
 //    @PostMapping("/register")
 //    public ResponseEntity register(@RequestBody @Valid RegisterDTO data){
 //        if(this.userRepository.findByEmail(data.email()) != null) return ResponseEntity.badRequest().build();

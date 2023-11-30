@@ -5,14 +5,14 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Table(name = "adrress")
-@Entity(name = "adrress")
+@Table(name = "address")
+@Entity(name = "Address")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Adrress {
+public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Use GenerationType.IDENTITY para suportar autoincremento

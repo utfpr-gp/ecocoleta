@@ -1,5 +1,6 @@
 package com.ecocoleta.backend.domain.user;
 
+import com.ecocoleta.backend.domain.dto.UserUpdateDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Table(name = "users")
-@Entity(name = "users")
+@Entity(name = "User")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,11 +31,11 @@ public class User implements UserDetails {
     private String phone;
     @Enumerated(EnumType.STRING) // Mapear o enum para um tipo de dado string
     private UserRole role;
+    private Boolean activo;
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
-    private Boolean activo;
 
     public User(String name, String lastName, String email, String password, String phone, UserRole role) {
         this.name = name;

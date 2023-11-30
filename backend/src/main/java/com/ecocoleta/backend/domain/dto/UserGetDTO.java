@@ -1,4 +1,7 @@
-package com.ecocoleta.backend.domain.user;
+package com.ecocoleta.backend.domain.dto;
+
+import com.ecocoleta.backend.domain.user.User;
+import com.ecocoleta.backend.domain.user.UserRole;
 
 public record UserGetDTO(Long id, String name, String lastName, String email, String phone, UserRole role) {
     public UserGetDTO(User user){

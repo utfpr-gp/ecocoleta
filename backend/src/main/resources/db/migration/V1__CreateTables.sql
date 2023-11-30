@@ -6,9 +6,10 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(11) NOT NULL,
     role VARCHAR(255) NOT NULL,
+    activo BOOLEAN NOT NULL,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP
     );
 
-INSERT INTO users (name, last_name, email, password, phone, role)
-VALUES ('alvaro', 'pires', 'admin@admin.com', '$2a$10$1bkADWDLCqxTcELyR9KZ9.pKl4XftNQyfOH4a2mq2sqJ3dW/LersO', '42999660090', 'ADMIN');
+INSERT INTO users (name, last_name, email, password, phone, role, activo)
+VALUES ('alvaro', 'pires', 'admin@admin.com', '$2a$10$1bkADWDLCqxTcELyR9KZ9.pKl4XftNQyfOH4a2mq2sqJ3dW/LersO', '42999660090', 'ADMIN', true);
