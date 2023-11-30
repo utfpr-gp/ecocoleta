@@ -4,7 +4,6 @@ import com.ecocoleta.backend.domain.dto.AuthenticationDTO;
 import com.ecocoleta.backend.domain.dto.LoginResponseDTO;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.services.TokenService;
-import com.ecocoleta.backend.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
