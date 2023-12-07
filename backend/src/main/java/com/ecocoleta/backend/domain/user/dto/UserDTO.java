@@ -1,4 +1,4 @@
-package com.ecocoleta.backend.domain.dto;
+package com.ecocoleta.backend.domain.user.dto;
 
 import com.ecocoleta.backend.domain.user.UserRole;
 import jakarta.validation.constraints.Email;

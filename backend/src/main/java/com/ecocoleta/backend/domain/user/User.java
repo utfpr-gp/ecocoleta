@@ -1,6 +1,8 @@
 package com.ecocoleta.backend.domain.user;
 
-import com.ecocoleta.backend.domain.dto.UserUpdateDTO;
+import com.ecocoleta.backend.domain.resident.Resident;
+import com.ecocoleta.backend.domain.user.dto.UserUpdateDTO;
+import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,6 +38,14 @@ public class User implements UserDetails {
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
+
+    //TODO verificar tipo de relacionamento, etc...
+
+/*    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Resident resident;*/
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private WasteCollector wasteCollector;
 
     public User(String name, String lastName, String email, String password, String phone, UserRole role) {
         this.name = name;
@@ -97,6 +107,10 @@ public class User implements UserDetails {
             this.updateTime = LocalDateTime.now();
         }
     }
+
+    /*public void setPassword(String password) {
+        this.password = PasswordUtil.generateBCrypt(password);
+    }*/
 
     public void delete() {
         this.activo = false;

@@ -26,4 +26,13 @@ public class Address {
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
+
+    public Address(String city, String street, String number, String neighborhood, String cep) {
+        this.city = city;
+        this.street = street;
+        this.number = number;
+        this.neighborhood = neighborhood;
+        this.cep = cep;
+        this.createTime = LocalDateTime.now();
+    }
 }

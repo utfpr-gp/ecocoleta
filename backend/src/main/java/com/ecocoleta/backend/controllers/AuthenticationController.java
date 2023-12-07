@@ -1,7 +1,7 @@
 package com.ecocoleta.backend.controllers;
 
-import com.ecocoleta.backend.domain.dto.AuthenticationDTO;
-import com.ecocoleta.backend.domain.dto.LoginResponseDTO;
+import com.ecocoleta.backend.domain.AuthenticationDTO;
+import com.ecocoleta.backend.domain.LoginResponseDTO;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.services.TokenService;
 import jakarta.validation.Valid;

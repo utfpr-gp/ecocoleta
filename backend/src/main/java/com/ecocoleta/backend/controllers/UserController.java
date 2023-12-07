@@ -1,10 +1,11 @@
 package com.ecocoleta.backend.controllers;
 
 import com.ecocoleta.backend.domain.user.User;
-import com.ecocoleta.backend.domain.dto.UserDTO;
-import com.ecocoleta.backend.domain.dto.UserGetDTO;
-import com.ecocoleta.backend.domain.dto.UserUpdateDTO;
+import com.ecocoleta.backend.domain.user.dto.UserDTO;
+import com.ecocoleta.backend.domain.user.dto.UserGetDTO;
+import com.ecocoleta.backend.domain.user.dto.UserUpdateDTO;
 import com.ecocoleta.backend.repositories.UserRepository;
+import com.ecocoleta.backend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,24 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    //New user
+    @Autowired
+    UserService userService;
+
+    /*//New user (ok)
+    @PostMapping()
+    @Transactional
+    public ResponseEntity newUser(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder){
+        if(this.userRepository.findByEmail(userDTO.email()) != null) return ResponseEntity.badRequest().build();
+        String encryptedPassword = new BCryptPasswordEncoder().encode(userDTO.password());
+        User user = new User(userDTO.name(), userDTO.lastName(), userDTO.email(), encryptedPassword, userDTO.phone(), userDTO.role());
+        this.userRepository.save(user);
+//        criando uma uri de forma automatica com spring passando para caminho user/id
+        var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(new UserGetDTO(user));
+    }*/
+
+    //New user (COM TIPO RESIDENT WASTE_COLLECTOR E COMPANY)
     @PostMapping()
     @Transactional
     public ResponseEntity newUser(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder){
