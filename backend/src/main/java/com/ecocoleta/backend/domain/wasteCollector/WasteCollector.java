@@ -1,6 +1,6 @@
+/*
 package com.ecocoleta.backend.domain.wasteCollector;
 
-import com.ecocoleta.backend.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,10 +26,12 @@ public class WasteCollector {
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
-    @OneToOne
+   */
+/* @OneToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User user;*//*
+
 
 
 //    address_id  BIGSERIAL
-}
+}*/

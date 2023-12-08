@@ -5,7 +5,6 @@ import com.ecocoleta.backend.domain.user.dto.UserDTO;
 import com.ecocoleta.backend.domain.user.dto.UserGetDTO;
 import com.ecocoleta.backend.domain.user.dto.UserUpdateDTO;
 import com.ecocoleta.backend.repositories.UserRepository;
-import com.ecocoleta.backend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,8 +28,8 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    UserService userService;
+    /*@Autowired
+    UserService userService;*/
 
     /*//New user (ok)
     @PostMapping()
@@ -46,10 +45,10 @@ public class UserController {
         return ResponseEntity.created(uri).body(new UserGetDTO(user));
     }*/
 
-    //New user (COM TIPO RESIDENT WASTE_COLLECTOR E COMPANY)
+    //New user (COM TIPO RESIDENT WASTE_COLLECTOR E COMPANY) a fazer
     @PostMapping()
     @Transactional
-    public ResponseEntity newUser(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity newUser(@Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder){
         if(this.userRepository.findByEmail(userDTO.email()) != null) return ResponseEntity.badRequest().build();
         String encryptedPassword = new BCryptPasswordEncoder().encode(userDTO.password());
         User user = new User(userDTO.name(), userDTO.lastName(), userDTO.email(), encryptedPassword, userDTO.phone(), userDTO.role());
@@ -85,7 +84,7 @@ public class UserController {
     //update
     @PutMapping
     @Transactional
-    public ResponseEntity update(@RequestBody @Valid UserUpdateDTO userUpdateDTO){
+    public ResponseEntity update(@Valid UserUpdateDTO userUpdateDTO){
         var user = userRepository.getReferenceById(userUpdateDTO.id());
         user.update(userUpdateDTO);
 

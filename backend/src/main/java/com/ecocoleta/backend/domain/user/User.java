@@ -1,8 +1,6 @@
 package com.ecocoleta.backend.domain.user;
 
-import com.ecocoleta.backend.domain.resident.Resident;
 import com.ecocoleta.backend.domain.user.dto.UserUpdateDTO;
-import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Table(name = "users")
-@Entity(name = "User")
+@Entity(name = "user")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -44,8 +42,8 @@ public class User implements UserDetails {
 /*    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Resident resident;*/
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private WasteCollector wasteCollector;
+    /*@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private WasteCollector wasteCollector;*/
 
     public User(String name, String lastName, String email, String password, String phone, UserRole role) {
         this.name = name;

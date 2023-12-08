@@ -1,3 +1,4 @@
+/*
 package com.ecocoleta.backend.domain.resident;
 
 import com.ecocoleta.backend.domain.user.User;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Resident extends User{
+public class Resident extends User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Use GenerationType.IDENTITY para suportar autoincremento
@@ -23,10 +24,11 @@ public class Resident extends User{
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
-
-    /*@OneToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
-    private User user;*/
+    private User user;
+
+
 
 //    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 //    protected Address address;
@@ -34,8 +36,11 @@ public class Resident extends User{
 //    address_id  BIGSERIAL
 
 
-    public Resident(String name, String lastName, String email, String password, String phone, UserRole role) {
+public Resident(String name, String lastName, String email, String password, String phone, UserRole role) {
         super(name, lastName, email, password, phone, role);
         this.createTime = LocalDateTime.now();
     }
+
+
 }
+*/
