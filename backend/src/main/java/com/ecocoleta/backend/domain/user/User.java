@@ -6,6 +6,8 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -16,8 +18,12 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
-public class User implements UserDetails {
+//@EqualsAndHashCode(of = "id")
+@Inheritance(strategy = InheritanceType.JOINED)
+public class User implements UserDetails, Serializable {
+
+    //TODO TESTE DE SERIALIZAÇÃO ***VERIFICAR*****
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Use GenerationType.IDENTITY para suportar autoincremento

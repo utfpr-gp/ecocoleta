@@ -1,10 +1,18 @@
 package com.ecocoleta.backend.controllers;
 
+import com.ecocoleta.backend.domain.company.Company;
+import com.ecocoleta.backend.domain.company.CompanyDTO;
+import com.ecocoleta.backend.domain.resident.Resident;
+import com.ecocoleta.backend.domain.resident.ResidentDTO;
 import com.ecocoleta.backend.domain.user.User;
+import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.domain.user.dto.UserDTO;
 import com.ecocoleta.backend.domain.user.dto.UserGetDTO;
 import com.ecocoleta.backend.domain.user.dto.UserUpdateDTO;
+import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
+import com.ecocoleta.backend.domain.wasteCollector.WasteCollectorDTO;
 import com.ecocoleta.backend.repositories.UserRepository;
+import com.ecocoleta.backend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,8 +36,8 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    /*@Autowired
-    UserService userService;*/
+    @Autowired
+    UserService userService;
 
     /*//New user (ok)
     @PostMapping()
@@ -45,19 +53,104 @@ public class UserController {
         return ResponseEntity.created(uri).body(new UserGetDTO(user));
     }*/
 
-    //New user (COM TIPO RESIDENT WASTE_COLLECTOR E COMPANY) a fazer
+    //New user generico
     @PostMapping()
     @Transactional
-    public ResponseEntity newUser(@Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity newUser(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder){
         if(this.userRepository.findByEmail(userDTO.email()) != null) return ResponseEntity.badRequest().build();
+
         String encryptedPassword = new BCryptPasswordEncoder().encode(userDTO.password());
+
         User user = new User(userDTO.name(), userDTO.lastName(), userDTO.email(), encryptedPassword, userDTO.phone(), userDTO.role());
+
         this.userRepository.save(user);
+
 //        criando uma uri de forma automatica com spring passando para caminho user/id
         var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
 
         return ResponseEntity.created(uri).body(new UserGetDTO(user));
     }
+
+    //CRIAÇÃO DO TIPO RESIDENTS
+    @PostMapping("/resident")
+    @Transactional
+    public ResponseEntity createUser(@RequestBody @Valid ResidentDTO residentDTO, UriComponentsBuilder uriComponentsBuilder){
+
+        //Validação de email ja existente
+        if(this.userRepository.findByEmail(residentDTO.email()) != null) return ResponseEntity.badRequest().build();
+        //Validação tipo de ROLE
+        if(residentDTO.role().equals(UserRole.RESIDENT)){
+            System.err.println("ENTROU NO IF == RESIDENT.....");
+
+            String encryptedPassword = new BCryptPasswordEncoder().encode(residentDTO.password());
+
+            // Crie um novo Resident a partir do ResidentDTO
+            Resident resident = new Resident(residentDTO.name(), residentDTO.lastName(), residentDTO.email(), encryptedPassword, residentDTO.phone(), residentDTO.role());
+
+            // Salve o resident usando o UserService
+            User savedUser = userService.saveUser(resident);
+
+            //criando uma uri de forma automatica com spring passando para caminho user/id
+            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(savedUser.getId()).toUri();
+
+            return ResponseEntity.created(uri).body(new UserGetDTO(savedUser));
+        } return ResponseEntity.badRequest().build();
+    }
+
+    //CRIAÇÃO DO TIPO WASTE-COLLECTOR
+    @PostMapping("/waste-collector")
+    @Transactional
+    public ResponseEntity createUser(@RequestBody @Valid WasteCollectorDTO wasteCollectorDTO, UriComponentsBuilder uriComponentsBuilder){
+
+        //Validação de email ja existente
+        if(this.userRepository.findByEmail(wasteCollectorDTO.email()) != null) return ResponseEntity.badRequest().build();
+        //Validação tipo de ROLE
+        if(wasteCollectorDTO.role().equals(UserRole.WASTE_COLLECTOR)){
+            System.err.println("ENTROU NO IF == WASTE_COLLECTOR.....");
+
+            String encryptedPassword = new BCryptPasswordEncoder().encode(wasteCollectorDTO.password());
+
+            // Crie um novo Resident a partir do ResidentDTO
+            WasteCollector wasteCollector = new WasteCollector(wasteCollectorDTO.name(), wasteCollectorDTO.lastName(), wasteCollectorDTO.email(), encryptedPassword, wasteCollectorDTO.phone(), wasteCollectorDTO.role(), wasteCollectorDTO.cpf(), wasteCollectorDTO.picture());
+
+            // Salve o resident usando o UserService
+            User savedUser = userService.saveUser(wasteCollector);
+
+            //criando uma uri de forma automatica com spring passando para caminho user/id
+            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(savedUser.getId()).toUri();
+
+            return ResponseEntity.created(uri).body(new UserGetDTO(savedUser));
+        } return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/company")
+    @Transactional
+    public ResponseEntity createUser(@RequestBody @Valid CompanyDTO companyDTO, UriComponentsBuilder uriComponentsBuilder){
+
+        //Validação de email ja existente
+        if(this.userRepository.findByEmail(companyDTO.email()) != null) return ResponseEntity.badRequest().build();
+        //Validação tipo de ROLE
+        if(companyDTO.role().equals(UserRole.COMPANY)){
+            System.err.println("ENTROU NO IF == COMPANY.....");
+
+            String encryptedPassword = new BCryptPasswordEncoder().encode(companyDTO.password());
+
+            // Crie um novo Resident a partir do ResidentDTO
+            Company company = new Company(companyDTO.name(), companyDTO.lastName(), companyDTO.email(), encryptedPassword, companyDTO.phone(), companyDTO.role(), companyDTO.cnpj());
+
+            // Salve o resident usando o UserService
+            User savedUser = userService.saveUser(company);
+
+            //criando uma uri de forma automatica com spring passando para caminho user/id
+            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(savedUser.getId()).toUri();
+
+            return ResponseEntity.created(uri).body(new UserGetDTO(savedUser));
+        } return ResponseEntity.badRequest().build();
+    }
+
+
+
+
 
     //Get User by id
     @GetMapping("/{id}")

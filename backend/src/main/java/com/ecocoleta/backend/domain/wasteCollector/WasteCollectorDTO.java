@@ -1,14 +1,12 @@
-package com.ecocoleta.backend.domain.resident;
-
+package com.ecocoleta.backend.domain.wasteCollector;
 
 import com.ecocoleta.backend.domain.user.UserRole;
-import com.ecocoleta.backend.domain.user.dto.UserDTO;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public record ResidentDTO(
+public record WasteCollectorDTO(
         @NotBlank
         String name,
         @NotBlank
@@ -22,6 +20,9 @@ public record ResidentDTO(
         @NotBlank
         String phone,
         @NotNull
-        UserRole role
-) {
+        UserRole role,
+        @NotBlank
+        String cpf,
+        @NotBlank
+        String picture) {
 }

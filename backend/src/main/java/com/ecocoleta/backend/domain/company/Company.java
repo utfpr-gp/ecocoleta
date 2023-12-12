@@ -1,38 +1,37 @@
-package com.ecocoleta.backend.domain.wasteCollector;
+package com.ecocoleta.backend.domain.company;
 
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Table(name = "waste_collectors")
-@Entity(name = "wasteCollector")
+@Table(name = "companys")
+@Entity(name = "company")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 //@EqualsAndHashCode(of = "id")
-public class WasteCollector extends User {
+public class Company extends User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Use GenerationType.IDENTITY para suportar autoincremento
     private Long id;
-    private String cpf;
-    private int score;
-    private String picture;
+    private String cnpj;
     //addrres id
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
-    public WasteCollector(String name, String lastName, String email, String password, String phone, UserRole role, String cpf, String picture) {
+    public Company(String name, String lastName, String email, String password, String phone, UserRole role, String cnpj) {
         super(name, lastName, email, password, phone, role);
-        this.cpf = cpf;
-        this.score = 0;
-        this.picture = picture;
+        this.cnpj = cnpj;
         this.createTime = LocalDateTime.now();
     }
 }

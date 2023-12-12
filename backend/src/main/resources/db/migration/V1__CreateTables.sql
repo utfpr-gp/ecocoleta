@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS waste_collectors
     cpf         VARCHAR(11),
     score       INT,
     picture     VARCHAR(255),
-    address_id  BIGSERIAL                    NOT NULL,
+    address_id  BIGSERIAL,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP,
     CONSTRAINT uc_waste_collectors_user_id UNIQUE (user_id), -- Adicionando uma restrição única
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS companys
     id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
     user_id     BIGSERIAL UNIQUE,
     cnpj        VARCHAR(11)                  NOT NULL,
-    address_id  BIGSERIAL                    NOT NULL,
+    address_id  BIGSERIAL,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION,
