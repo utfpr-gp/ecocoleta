@@ -11,17 +11,15 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Table(name = "companys")
-@Entity(name = "company")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 //@EqualsAndHashCode(of = "id")
+@PrimaryKeyJoinColumn(name = "userId")
 public class Company extends User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Use GenerationType.IDENTITY para suportar autoincremento
-    private Long id;
     private String cnpj;
     //addrres id
     @Column(name = "create_time")

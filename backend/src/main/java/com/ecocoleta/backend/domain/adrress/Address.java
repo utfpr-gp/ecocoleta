@@ -6,12 +6,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Table(name = "address")
-@Entity(name = "Address")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Address {
 
     @Id

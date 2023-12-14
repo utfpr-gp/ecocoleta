@@ -13,12 +13,12 @@ import java.util.Collection;
 import java.util.List;
 
 @Table(name = "users")
-@Entity(name = "user")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User implements UserDetails, Serializable {
 
@@ -27,7 +27,7 @@ public class User implements UserDetails, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Use GenerationType.IDENTITY para suportar autoincremento
-    private Long id;
+    protected Long id;
     private String name;
     @Column(name = "last_name")
     private String lastName;
@@ -42,14 +42,6 @@ public class User implements UserDetails, Serializable {
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
-
-    //TODO verificar tipo de relacionamento, etc...
-
-/*    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Resident resident;*/
-
-    /*@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private WasteCollector wasteCollector;*/
 
     public User(String name, String lastName, String email, String password, String phone, UserRole role) {
         this.name = name;
@@ -112,6 +104,7 @@ public class User implements UserDetails, Serializable {
         }
     }
 
+    //TODO verificaqr reset de senha
     /*public void setPassword(String password) {
         this.password = PasswordUtil.generateBCrypt(password);
     }*/

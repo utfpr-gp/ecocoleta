@@ -53,7 +53,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(new UserGetDTO(user));
     }*/
 
-    //New user generico
+    /*//New user generico
     @PostMapping()
     @Transactional
     public ResponseEntity newUser(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder){
@@ -69,7 +69,39 @@ public class UserController {
         var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
 
         return ResponseEntity.created(uri).body(new UserGetDTO(user));
+    }*/
+
+    //TODO fazer tudo o uso do repository e model via service
+
+    //New user generico com user service
+    @PostMapping()
+    @Transactional
+    public ResponseEntity newUser(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder){
+
+        System.err.println("ENTROU CONTROLER GENERICO... " + userDTO.toString());
+
+//        WasteCollectorDTO wc =  userDTO;
+
+
+        if(this.userRepository.findByEmail(userDTO.email()) != null) return ResponseEntity.badRequest().build();
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(userDTO.password());
+
+        User user = new User(userDTO.name(), userDTO.lastName(), userDTO.email(), encryptedPassword, userDTO.phone(), userDTO.role());
+
+        this.userRepository.save(user);
+
+//        criando uma uri de forma automatica com spring passando para caminho user/id
+        var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(new UserGetDTO(user));
     }
+
+
+
+
+
+
 
     //CRIAÇÃO DO TIPO RESIDENTS
     @PostMapping("/resident")

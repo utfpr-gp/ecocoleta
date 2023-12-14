@@ -1,5 +1,6 @@
 package com.ecocoleta.backend.domain.wasteCollector;
 
+import com.ecocoleta.backend.domain.adrress.Address;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import jakarta.persistence.*;
@@ -8,21 +9,23 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Table(name = "waste_collectors")
-@Entity(name = "wasteCollector")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id")
+@PrimaryKeyJoinColumn(name = "userId")
 public class WasteCollector extends User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Use GenerationType.IDENTITY para suportar autoincremento
-    private Long id;
     private String cpf;
     private int score;
     private String picture;
     //addrres id
+    //TODO verificar endereço como criar o objeto e relação
+    @OneToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")
