@@ -29,8 +29,6 @@ public class User implements UserDetails, Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Use GenerationType.IDENTITY para suportar autoincremento
     protected Long id;
     private String name;
-    @Column(name = "last_name")
-    private String lastName;
     @Column(nullable = false, unique = true)
     private String email;
     private String password;
@@ -43,9 +41,8 @@ public class User implements UserDetails, Serializable {
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
-    public User(String name, String lastName, String email, String password, String phone, UserRole role) {
+    public User(String name, String email, String password, String phone, UserRole role) {
         this.name = name;
-        this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.phone = phone;
@@ -88,10 +85,6 @@ public class User implements UserDetails, Serializable {
     public void update(UserUpdateDTO userUpdateDTO){
         if (userUpdateDTO.name() != null){
             this.name = userUpdateDTO.name();
-            this.updateTime = LocalDateTime.now();
-        }
-        if (userUpdateDTO.lastName() != null){
-            this.lastName = userUpdateDTO.lastName();
             this.updateTime = LocalDateTime.now();
         }
         if (userUpdateDTO.phone() != null){

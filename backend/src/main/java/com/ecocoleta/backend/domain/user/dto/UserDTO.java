@@ -10,8 +10,6 @@ public record UserDTO (
         @NotBlank
         String name,
         @NotBlank
-        String lastName,
-        @NotBlank
         @Email
         String email,
         @NotBlank

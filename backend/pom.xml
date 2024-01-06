@@ -85,6 +85,12 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!--JPA (Java Persistence API)-->
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>javax.persistence-api</artifactId>
+			<version>2.2</version> <!-- ou a versão mais recente disponível -->
+		</dependency>
 
 		<!--DATABASES DEPENDENCIAS-->
 

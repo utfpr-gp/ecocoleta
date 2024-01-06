@@ -29,6 +29,11 @@ import org.springframework.web.util.UriComponentsBuilder;
  * A principal diferença entre as duas entidades é o CPF e CNPJ. Em relação aos demais atributos, usa-se a classe User.
  */
 
+//TODO fazer tudo o uso do repository e model via service
+//TODO fazer a criação de cada objeto em um endpoint diferente
+//TODO verificar a criação do obj address e sua relação de herança
+//TODO colocar restrição de roles em cada endpoint e autenticação //    @RolesAllowed({RoleType.USER, RoleType.COMPANY})
+
 @RestController
 @RequestMapping("user")
 public class UserController {
@@ -38,20 +43,6 @@ public class UserController {
 
     @Autowired
     UserService userService;
-
-    /*//New user (ok)
-    @PostMapping()
-    @Transactional
-    public ResponseEntity newUser(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder){
-        if(this.userRepository.findByEmail(userDTO.email()) != null) return ResponseEntity.badRequest().build();
-        String encryptedPassword = new BCryptPasswordEncoder().encode(userDTO.password());
-        User user = new User(userDTO.name(), userDTO.lastName(), userDTO.email(), encryptedPassword, userDTO.phone(), userDTO.role());
-        this.userRepository.save(user);
-//        criando uma uri de forma automatica com spring passando para caminho user/id
-        var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(new UserGetDTO(user));
-    }*/
 
     /*//New user generico
     @PostMapping()
@@ -71,8 +62,6 @@ public class UserController {
         return ResponseEntity.created(uri).body(new UserGetDTO(user));
     }*/
 
-    //TODO fazer tudo o uso do repository e model via service
-
     //New user generico com user service
     @PostMapping()
     @Transactional
@@ -80,14 +69,12 @@ public class UserController {
 
         System.err.println("ENTROU CONTROLER GENERICO... " + userDTO.toString());
 
-//        WasteCollectorDTO wc =  userDTO;
-
 
         if(this.userRepository.findByEmail(userDTO.email()) != null) return ResponseEntity.badRequest().build();
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(userDTO.password());
 
-        User user = new User(userDTO.name(), userDTO.lastName(), userDTO.email(), encryptedPassword, userDTO.phone(), userDTO.role());
+        User user = new User(userDTO.name(), userDTO.email(), encryptedPassword, userDTO.phone(), userDTO.role());
 
         this.userRepository.save(user);
 
@@ -99,12 +86,8 @@ public class UserController {
 
 
 
-
-
-
-
     //CRIAÇÃO DO TIPO RESIDENTS
-    @PostMapping("/resident")
+    /*@PostMapping("/resident")
     @Transactional
     public ResponseEntity createUser(@RequestBody @Valid ResidentDTO residentDTO, UriComponentsBuilder uriComponentsBuilder){
 
@@ -118,6 +101,52 @@ public class UserController {
 
             // Crie um novo Resident a partir do ResidentDTO
             Resident resident = new Resident(residentDTO.name(), residentDTO.lastName(), residentDTO.email(), encryptedPassword, residentDTO.phone(), residentDTO.role());
+
+            // Salve o resident usando o UserService
+            User savedUser = userService.saveUser(resident);
+
+            //criando uma uri de forma automatica com spring passando para caminho user/id
+            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(savedUser.getId()).toUri();
+
+            return ResponseEntity.created(uri).body(new UserGetDTO(savedUser));
+        } return ResponseEntity.badRequest().build();
+    }*/
+
+
+
+
+
+
+    //MODIFICADO*************************
+    //CRIAÇÃO DO TIPO RESIDENTS
+    @PostMapping("/resident")
+    @Transactional
+    public ResponseEntity createUser(@RequestBody @Valid ResidentDTO residentDTO, UriComponentsBuilder uriComponentsBuilder){
+
+        //Validação de email ja existente
+        if(this.userRepository.findByEmail(residentDTO.email()) != null) return ResponseEntity.badRequest().build();
+        //Validação tipo de ROLE
+        if(residentDTO.role().equals(UserRole.RESIDENT)){
+            System.err.println("ENTROU NO IF == RESIDENT.....");
+
+            System.out.println("OBJ print>>> " + residentDTO.toString());
+
+            String encryptedPassword = new BCryptPasswordEncoder().encode(residentDTO.password());
+
+            // Crie um novo Resident a partir do ResidentDTO
+            Resident resident = new Resident(residentDTO.name(), residentDTO.email(), encryptedPassword, residentDTO.phone(), residentDTO.role());
+
+            // Adicione o endereço ao residente
+            /*if (residentDTO.address() != null) {
+                System.out.println("ENTROU NO IF DE ENDEREÇO....");
+                Address address = new Address(
+                        residentDTO.address().city(), residentDTO.address().street(),
+                        residentDTO.address().number(), residentDTO.address().neighborhood(),
+                        residentDTO.address().cep()
+                );
+                System.out.println("sout ADDRESS>> " + address.toString());
+                resident.addAddress(address);
+            }*/
 
             // Salve o resident usando o UserService
             User savedUser = userService.saveUser(resident);
@@ -143,7 +172,7 @@ public class UserController {
             String encryptedPassword = new BCryptPasswordEncoder().encode(wasteCollectorDTO.password());
 
             // Crie um novo Resident a partir do ResidentDTO
-            WasteCollector wasteCollector = new WasteCollector(wasteCollectorDTO.name(), wasteCollectorDTO.lastName(), wasteCollectorDTO.email(), encryptedPassword, wasteCollectorDTO.phone(), wasteCollectorDTO.role(), wasteCollectorDTO.cpf(), wasteCollectorDTO.picture());
+            WasteCollector wasteCollector = new WasteCollector(wasteCollectorDTO.name(), wasteCollectorDTO.email(), encryptedPassword, wasteCollectorDTO.phone(), wasteCollectorDTO.role(), wasteCollectorDTO.cpf(), wasteCollectorDTO.picture());
 
             // Salve o resident usando o UserService
             User savedUser = userService.saveUser(wasteCollector);
@@ -168,7 +197,7 @@ public class UserController {
             String encryptedPassword = new BCryptPasswordEncoder().encode(companyDTO.password());
 
             // Crie um novo Resident a partir do ResidentDTO
-            Company company = new Company(companyDTO.name(), companyDTO.lastName(), companyDTO.email(), encryptedPassword, companyDTO.phone(), companyDTO.role(), companyDTO.cnpj());
+            Company company = new Company(companyDTO.name(), companyDTO.companyName(), companyDTO.email(), encryptedPassword, companyDTO.phone(), companyDTO.role(), companyDTO.cnpj());
 
             // Salve o resident usando o UserService
             User savedUser = userService.saveUser(company);

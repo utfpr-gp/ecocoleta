@@ -12,8 +12,6 @@ public record WasteCollectorDTO(
         @NotBlank
         String name,
         @NotBlank
-        String lastName,
-        @NotBlank
         @Email
         String email,
         @NotBlank
@@ -27,7 +25,7 @@ public record WasteCollectorDTO(
         String cpf,
         @NotBlank
         String picture,
-
-        /*@NotNull */@Valid AdrressDTO adrressDTO
-        ) {
+        @Valid
+        AdrressDTO adrress
+) {
 }

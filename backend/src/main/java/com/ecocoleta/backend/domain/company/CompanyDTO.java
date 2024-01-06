@@ -1,6 +1,8 @@
 package com.ecocoleta.backend.domain.company;
 
+import com.ecocoleta.backend.domain.adrress.AdrressDTO;
 import com.ecocoleta.backend.domain.user.UserRole;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +12,7 @@ public record CompanyDTO(
         @NotBlank
         String name,
         @NotBlank
-        String lastName,
+        String companyName,
         @NotBlank
         @Email
         String email,
@@ -22,6 +24,8 @@ public record CompanyDTO(
         @NotNull
         UserRole role,
         @NotBlank
-        String cnpj
+        String cnpj,
+        @Valid
+        AdrressDTO adrress
 ) {
 }

@@ -1,8 +1,9 @@
 package com.ecocoleta.backend.domain.resident;
 
 
+import com.ecocoleta.backend.domain.adrress.AdrressDTO;
 import com.ecocoleta.backend.domain.user.UserRole;
-import com.ecocoleta.backend.domain.user.dto.UserDTO;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,8 +13,6 @@ public record ResidentDTO(
         @NotBlank
         String name,
         @NotBlank
-        String lastName,
-        @NotBlank
         @Email
         String email,
         @NotBlank
@@ -22,6 +21,8 @@ public record ResidentDTO(
         @NotBlank
         String phone,
         @NotNull
-        UserRole role
+        UserRole role,
+        @Valid
+        AdrressDTO address
 ) {
 }

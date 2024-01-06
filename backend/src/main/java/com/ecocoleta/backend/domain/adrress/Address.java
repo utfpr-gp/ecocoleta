@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Address {
 
     @Id
@@ -35,5 +34,18 @@ public class Address {
         this.neighborhood = neighborhood;
         this.cep = cep;
         this.createTime = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "city='" + city + '\'' +
+                ", street='" + street + '\'' +
+                ", number='" + number + '\'' +
+                ", neighborhood='" + neighborhood + '\'' +
+                ", cep='" + cep + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }

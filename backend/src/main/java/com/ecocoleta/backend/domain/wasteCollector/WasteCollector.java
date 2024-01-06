@@ -25,14 +25,14 @@ public class WasteCollector extends User {
     //TODO verificar endereço como criar o objeto e relação
     @OneToOne
     @JoinColumn(name = "address_id")
-    private Address address;
+    protected Address address;
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
-    public WasteCollector(String name, String lastName, String email, String password, String phone, UserRole role, String cpf, String picture) {
-        super(name, lastName, email, password, phone, role);
+    public WasteCollector(String name, String email, String password, String phone, UserRole role, String cpf, String picture) {
+        super(name, email, password, phone, role);
         this.cpf = cpf;
         this.score = 0;
         this.picture = picture;

@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS users
 (
     id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
     name        VARCHAR(255)                 NOT NULL,
-    last_name   VARCHAR(255)                 NOT NULL,
     email       VARCHAR(255)                 NOT NULL,
     password    VARCHAR(255)                 NOT NULL,
     phone       VARCHAR(11)                  NOT NULL,
@@ -30,7 +29,7 @@ CREATE TABLE IF NOT EXISTS address
 CREATE TABLE IF NOT EXISTS residents
 (
     id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    user_id     BIGSERIAL UNIQUE,
+    user_id     BIGSERIAL UNIQUE             NOT NULL,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
@@ -66,12 +65,13 @@ CREATE TABLE IF NOT EXISTS waste_collectors
 -- Table ecocoleta_db.companys
 CREATE TABLE IF NOT EXISTS companys
 (
-    id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    user_id     BIGSERIAL UNIQUE,
-    cnpj        VARCHAR(11)                  NOT NULL,
-    address_id  BIGSERIAL,
-    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_time TIMESTAMP,
+    id           BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
+    user_id      BIGSERIAL UNIQUE,
+    cnpj         VARCHAR(11)                  NOT NULL,
+    company_name VARCHAR(255)                 NOT NULL,
+    address_id   BIGSERIAL,
+    create_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time  TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
