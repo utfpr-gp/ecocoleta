@@ -32,6 +32,9 @@ public class SecurityConfigurations {
                     req.requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN"); // teste
                     req.requestMatchers(HttpMethod.GET, "/user/**").authenticated(); // teste
                     req.requestMatchers(HttpMethod.PUT, "/user/**").authenticated(); // teste
+                    //MY-ACCOUNT
+                    req.requestMatchers(HttpMethod.POST, "/my-account/**").authenticated(); // teste
+
 
                     //LOGIN
                     req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();

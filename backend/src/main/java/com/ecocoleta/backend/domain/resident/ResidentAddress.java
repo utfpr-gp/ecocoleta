@@ -41,4 +41,12 @@ public class ResidentAddress implements Serializable{
         this.id = new ResidentAddressId(resident.getId(), address.getId());
     }
 
+    @Override
+    public String toString() {
+        return "ResidentAddress{" +
+                "id=" + id +
+                ", resident=" + resident.getId() +
+                ", address=" + address +
+                '}';
+    }
 }

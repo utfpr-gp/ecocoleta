@@ -38,4 +38,15 @@ public class WasteCollector extends User {
         this.picture = picture;
         this.createTime = LocalDateTime.now();
     }
+
+    /*public void setAddress(Address address) {
+        // Certifique-se de que o endereço seja salvo antes de associá-lo ao WasteCollector
+        if (address.getId() == null) {
+            // Se o ID do endereço for nulo, salve-o no banco de dados
+            AddressRepository.save(address);
+        }
+
+        // Agora, você pode associar o endereço ao WasteCollector
+        this.address = address;
+    }*/
 }

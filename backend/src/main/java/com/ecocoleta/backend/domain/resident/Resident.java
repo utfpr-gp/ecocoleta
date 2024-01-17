@@ -37,4 +37,6 @@ public class Resident extends User {
         ResidentAddress residentAddress = new ResidentAddress(this, address);
         residentAddresses.add(residentAddress);
     }
+
+
 }
