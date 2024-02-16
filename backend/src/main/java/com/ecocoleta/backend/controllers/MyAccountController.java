@@ -121,6 +121,7 @@ public class MyAccountController {
     public ResponseEntity<?> getAddress(@PathVariable Long userId, UriComponentsBuilder uriComponentsBuilder) {}
 */
 
+    //TODO fazer edição de endereço passadno o id do user pelo token, e id endereço pelo parametro
     //EDITAR
     @PutMapping("/address/{userId}")
     @Transactional
@@ -150,6 +151,7 @@ public class MyAccountController {
     }
 
 
+    //TODO criação de endereços de residents verificar
     @PostMapping("/address/{userId}")
     @Transactional
     public ResponseEntity<?> createAddress(@PathVariable Long userId, @RequestBody @Valid AdrressDTO adrressDTO, UriComponentsBuilder uriComponentsBuilder) {

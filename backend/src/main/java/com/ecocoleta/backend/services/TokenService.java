@@ -17,16 +17,16 @@ public class TokenService {
 
     @Value("${api.security.token.secret}")
     private String secret;
-
-    private static final String ISSUER = "API-EcoColeta";
+    @Value("${api.security.token.issuer}")
+    private String issuer;
 
     public String generateToken(User user){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
-                    .withIssuer(ISSUER)
+                    .withIssuer(issuer)
                     .withSubject(user.getEmail())
-//                    .withClaim("id", user.getId())// inserir id do usuario, verificar necessidade
+                    .withClaim("id", user.getId())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
             return token;
@@ -39,7 +39,7 @@ public class TokenService {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
-                    .withIssuer(ISSUER)
+                    .withIssuer(issuer)
                     .build()
                     .verify(tokenJWT)
                     .getSubject();

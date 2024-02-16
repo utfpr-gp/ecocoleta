@@ -40,7 +40,7 @@ public class AddressService {
                 Resident resident = (Resident) user;
                 System.out.println("OBJ ADDRESS: " + address.toString());
 
-                //treste
+                //teste
                 if (resident.getResidentAddresses().isEmpty()){
                     System.out.println("lista residentAddress de 1xn esta vazia");
 
