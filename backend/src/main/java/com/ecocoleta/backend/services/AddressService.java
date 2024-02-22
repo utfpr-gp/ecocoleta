@@ -1,7 +1,7 @@
 package com.ecocoleta.backend.services;
 
-import com.ecocoleta.backend.domain.adrress.Address;
-import com.ecocoleta.backend.domain.adrress.AdrressDTO;
+import com.ecocoleta.backend.domain.address.Address;
+import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.company.Company;
 import com.ecocoleta.backend.domain.resident.Resident;
 import com.ecocoleta.backend.domain.resident.ResidentAddress;
@@ -12,6 +12,9 @@ import com.ecocoleta.backend.repositories.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -23,16 +26,45 @@ public class AddressService {
     @Autowired
     private UserService userService;
 
-//    public void editAddress(User user, AdrressDTO adrressDTO) {
-//        // Lógica de edição do endereço
-//    }
+    public List<Address> getUserAddresses(User user) {
+        List<Address> listAddress = new ArrayList<>();
 
-    public void editAddress(User user, AdrressDTO adrressDTO) {
+        switch (getUserType(user)) {
+            case RESIDENT:
+                System.err.println("User instancia de RESIDENT");
+                Resident resident = (Resident) user;
+//                listAddress = addressRepository.findAllById(Collections.singleton(resident.getResidentAddresses()));
+//TODO retorno do tipo resident
+                break;
+            case WASTE_COLLECTOR:
+                System.err.println("User instancia de WASTE_COLLECTOR");
+                WasteCollector wasteCollector = (WasteCollector) user;
+                listAddress = addressRepository.findAllById(Collections.singleton(wasteCollector.getAddress().getId()));
+            break;
+            case COMPANY:
+                System.err.println("User instancia de COMPANY");
+                Company company = (Company) user;
+                listAddress = addressRepository.findAllById(Collections.singleton(company.getAddress().getId()));
+                break;
+            case ADMIN:
+                System.err.println("User instancia de ADMIN");
+                //???....
+                break;
+            default:
+                throw new UnsupportedOperationException("errocustom switch case do get address.");
+        }
+
+        //não retornou nada ...
+        return  listAddress;
+    }
+
+    public void editAddress(User user, AddressDTO addressDTO) {
 
     }
 
-    public boolean createAddress(User user, AdrressDTO adrressDTO) {
-        Address address = new Address(adrressDTO.city(), adrressDTO.street(), adrressDTO.number(), adrressDTO.neighborhood(), adrressDTO.cep());
+    //TODO terminar de fazer metodo de criação de enderço como resident
+    public boolean createAddress(User user, AddressDTO addressDTO) {
+        Address address = new Address(addressDTO.city(), addressDTO.street(), addressDTO.number(), addressDTO.neighborhood(), addressDTO.cep());
 
         switch (getUserType(user)) {
             case RESIDENT:
@@ -46,7 +78,7 @@ public class AddressService {
 
                     System.out.println("salvar... obj address");
                     addressRepository.save(address);
-                    System.out.println("salvo obj address/// set address e salvar user wastcolector");
+                    System.out.println("salvo obj address/// set address e salvar user resident");
 
                     // Cria um novo objeto ResidentAddress
                     ResidentAddress residentAddress = new ResidentAddress(resident, address);
@@ -54,8 +86,8 @@ public class AddressService {
                     // Adiciona o ResidentAddress à lista de Resident
                     resident.getResidentAddresses().add(residentAddress);
 
-                    // Salva o endereço no repositório
-                    addressRepository.save(address);
+//                    // Salva o endereço no repositório
+//                    addressRepository.save(address);
 
                     // Salva as atualizações no usuário Resident
                     userService.saveUser(resident);
@@ -97,7 +129,7 @@ public class AddressService {
                 System.out.println("OBJ ADDRESS: " + address.toString());
 
                 if (wasteCollector.getAddress() == null) {
-                    System.out.println("address de watcolector vazio");
+                    System.out.println("address de wastecolector vazio");
 
                     System.out.println("salvar... obj address");
                     addressRepository.save(address);

@@ -1,6 +1,6 @@
 package com.ecocoleta.backend.domain.company;
 
-import com.ecocoleta.backend.domain.adrress.Address;
+import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import jakarta.persistence.*;

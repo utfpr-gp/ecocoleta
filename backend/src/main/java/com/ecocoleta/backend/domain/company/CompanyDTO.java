@@ -1,6 +1,6 @@
 package com.ecocoleta.backend.domain.company;
 
-import com.ecocoleta.backend.domain.adrress.AdrressDTO;
+import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.user.UserRole;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -26,6 +26,6 @@ public record CompanyDTO(
         @NotBlank
         String cnpj,
         @Valid
-        AdrressDTO adrress
+        AddressDTO adrress
 ) {
 }

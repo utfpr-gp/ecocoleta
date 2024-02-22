@@ -1,4 +1,4 @@
-package com.ecocoleta.backend.domain.adrress;
+package com.ecocoleta.backend.domain.address;
 
 import jakarta.persistence.*;
 import lombok.*;

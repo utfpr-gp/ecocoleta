@@ -35,17 +35,4 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-//não usado, mudado para controller usar fazer o novo usuario
-//    @PostMapping("/register")
-//    public ResponseEntity register(@RequestBody @Valid RegisterDTO data){
-//        if(this.userRepository.findByEmail(data.email()) != null) return ResponseEntity.badRequest().build();
-//
-//        String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-//        User newUser = new User(data.email(), encryptedPassword, data.role());
-//        this.userRepository.save(newUser);
-//
-//        return ResponseEntity.ok().build();
-//    }
-
 }

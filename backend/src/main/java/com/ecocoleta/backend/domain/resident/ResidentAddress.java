@@ -1,6 +1,6 @@
 package com.ecocoleta.backend.domain.resident;
 
-import com.ecocoleta.backend.domain.adrress.Address;
+import com.ecocoleta.backend.domain.address.Address;
 import jakarta.persistence.*;
 import lombok.*;
 

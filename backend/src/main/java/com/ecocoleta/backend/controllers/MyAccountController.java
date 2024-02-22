@@ -1,6 +1,7 @@
 package com.ecocoleta.backend.controllers;
 
-import com.ecocoleta.backend.domain.adrress.AdrressDTO;
+import com.ecocoleta.backend.domain.address.Address;
+import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.repositories.AddressRepository;
 import com.ecocoleta.backend.repositories.UserRepository;
@@ -9,11 +10,15 @@ import com.ecocoleta.backend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("myaccount")
@@ -46,86 +51,46 @@ public class MyAccountController {
     //TODO verifcar como fazer esse metodo
     //TODO metodos de ediçaõ e criação endereço.
 
-    /*
-        @PutMapping("/editAddress/{userId}")
-        public ResponseEntity<?> editAddress(@PathVariable Long userId, @RequestBody @Valid AdrressDTO adrressDTO, UriComponentsBuilder uriComponentsBuilder) {
-
-            System.out.println("ENTROU NO CONTORLLER PUT ADDRESS");
-            // Busca o usuário por ID
-            Optional<User> optionalUser = userService.getUserById(userId);
-
-            if (optionalUser.isEmpty()) {
-                System.err.println("User vazio!!!!");
-                return ResponseEntity.notFound().build();
-    //            throw new EntityNotFoundException("O usuário não foi encontrado.");
-            }
-
-            //verificar se ja esta cadastrado o mesmo endereço?
-
-            Address address = new Address(adrressDTO.city(), adrressDTO.street(), adrressDTO.number(), adrressDTO.neighborhood(), adrressDTO.cep());
-
-            System.out.println("cRIOU O OBJ ADDRESS: " + address.toString());
-
-    //        addressRepository.save(address);
-
-            User user = optionalUser.get();
-
-            */
-/*if (user instanceof Resident) {
-            Resident resident = (Resident) user;
-            resident.setAddress(address);
-            userService.saveUser(resident);
-        } else *//*
-
-        if (user instanceof WasteCollector) {
-            System.out.println("User instancia de WASTCOLLECTOR");
-            WasteCollector wasteCollector = (WasteCollector) user;
-
-            if (wasteCollector.getAddress() == null){
-                System.out.println("address de watcolector vazio");
-
-                System.out.println("salvar... obj address");
-                addressRepository.save(address);
-                System.out.println("salvo obj address/// set address e salvar user wastcolector");
-
-                wasteCollector.setAddress(address);
-                userService.saveUser(wasteCollector);
-
-            }
-            if (wasteCollector.getAddress() != null){
-                System.out.println("address de watcolector != null não vazio");
-            }
-
-//            wasteCollector.setAddress(address);
-//            userService.saveUser(wasteCollector);
-        } else if (user instanceof Company) {
-            System.out.println("User instancia de COMPANY");
-
-            Company company = (Company) user;
-            company.setAddress(address);
-            userService.saveUser(company);
-        } else {
-            System.out.println("User instancia de ELSE NENHUM");
-
-            // Lidar com outros tipos de usuários, se aplicável
-            return ResponseEntity.badRequest().build();
-        }
-
-        System.out.println("SAIU DO CONTROLLER PUT ADDRESS");
-        return ResponseEntity.ok().build();
-    }
-*/
+    //TODO fazer metodo get address
     //GET
-    /*@GetMapping("/address/{userId}")
+    @GetMapping("/address/{userId}")
     @Transactional
-    public ResponseEntity<?> getAddress(@PathVariable Long userId, UriComponentsBuilder uriComponentsBuilder) {}
-*/
+    public ResponseEntity<List<AddressDTO>> getAddress(@PathVariable Long userId, UriComponentsBuilder uriComponentsBuilder) {
 
-    //TODO fazer edição de endereço passadno o id do user pelo token, e id endereço pelo parametro
+        System.err.println("ENTROU NO CONTORLLER GET ADDRESS");
+        // Busca o usuário por ID
+        Optional<User> optionalUser = userService.getUserById(userId);
+
+        if (optionalUser.isPresent()){
+            System.err.println("        if (optionalUser.isPresent()){");
+            //logica de busca endereço
+            User user = optionalUser.get();
+            List<Address> addresses = addressService.getUserAddresses(user);
+            if (!addresses.isEmpty()){
+                System.err.println("            if (!addresses.isEmpty()){\n");
+
+                List<AddressDTO> addressDTOs = addresses.stream().map(address -> new AddressDTO(address.getCity(), address.getStreet(), address.getNumber(), address.getNeighborhood(), address.getCep())).collect(Collectors.toList());
+                System.err.println("CONVERTEU A LISTA NO SERVICE CONTROLLER");
+
+                System.err.println("RETURN....");
+                return ResponseEntity.ok(addressDTOs);
+            }else {
+                System.err.println("User sem endereço!!!!");
+                return ResponseEntity.notFound().build(); // Endereço não encontrado
+            }
+        } else {
+            System.err.println("User vazio!!!!");
+            return ResponseEntity.notFound().build();
+//            throw new EntityNotFoundException("O usuário não foi encontrado.");
+        }
+    }
+
+
+    //TODO fazer edição de endereço passadno o id do user pelo token, e id endereço pelo parametro >> ver metod post
     //EDITAR
     @PutMapping("/address/{userId}")
     @Transactional
-    public ResponseEntity<?> editAddress(@PathVariable Long userId, @RequestBody @Valid AdrressDTO adrressDTO, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> editAddress(@PathVariable Long userId, @RequestBody @Valid AddressDTO addressDTO, UriComponentsBuilder uriComponentsBuilder) {
 
         System.out.println("ENTROU NO CONTORLLER PUT ADDRESS");
         // Busca o usuário por ID
@@ -138,7 +103,7 @@ public class MyAccountController {
         }
 
         User user = optionalUser.get();
-        addressService.editAddress(user, adrressDTO);
+        addressService.editAddress(user, addressDTO);
 
         System.out.println("SAIU DO CONTROLLER PUT ADDRESS");
         return ResponseEntity.ok().build();
@@ -152,9 +117,16 @@ public class MyAccountController {
 
 
     //TODO criação de endereços de residents verificar
+    //TODO feito teste de pegar o id do user autenticado pelo @AuthenticationPrincipal
+    //TODO verificar criação do endereço com o user atuthenticado ou admin***
     @PostMapping("/address/{userId}")
     @Transactional
-    public ResponseEntity<?> createAddress(@PathVariable Long userId, @RequestBody @Valid AdrressDTO adrressDTO, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> createAddress(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long userId, @RequestBody @Valid AddressDTO addressDTO, UriComponentsBuilder uriComponentsBuilder) throws Exception {
+
+        //teste authentication
+        //TODO retirar depois
+        var userIdTeste = userService.getUserIdByUserEmail(userDetails.getUsername());
+        System.err.println("userdetails injetado..." + userIdTeste);
 
         System.out.println("ENTROU NO CONTORLLER Post ADDRESS");
         // Busca o usuário por ID
@@ -168,7 +140,7 @@ public class MyAccountController {
 
         User user = optionalUser.get();
 
-        if (addressService.createAddress(user, adrressDTO)) {
+        if (addressService.createAddress(user, addressDTO)) {
             System.out.println("SAIU DO CONTROLLER POST ADDRESS com sucesso");
             return ResponseEntity.ok().build();
         }

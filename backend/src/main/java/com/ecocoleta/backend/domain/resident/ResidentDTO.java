@@ -1,7 +1,7 @@
 package com.ecocoleta.backend.domain.resident;
 
 
-import com.ecocoleta.backend.domain.adrress.AdrressDTO;
+import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.user.UserRole;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -23,6 +23,6 @@ public record ResidentDTO(
         @NotNull
         UserRole role,
         @Valid
-        AdrressDTO address
+        AddressDTO address
 ) {
 }

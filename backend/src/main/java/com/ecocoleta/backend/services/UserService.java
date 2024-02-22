@@ -3,7 +3,6 @@ package com.ecocoleta.backend.services;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +24,17 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public Long getUserIdByUserEmail(String userEmail){
+        User user = userRepository.findUserByEmailIs(userEmail);
+//        if (user != null) {
+            return user.getId();
+//        } else {
+//            // Lançar uma exceção ou tratar o caso em que o usuário não é encontrado
+//            throw new Exception("Usuário não encontrado com o nome de usuário: " + userEmail);
+//        }
+
     }
 
 //    public UserDetails findByEmail(String email){

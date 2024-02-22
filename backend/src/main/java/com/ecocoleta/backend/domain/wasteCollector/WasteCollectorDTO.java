@@ -1,6 +1,6 @@
 package com.ecocoleta.backend.domain.wasteCollector;
 
-import com.ecocoleta.backend.domain.adrress.AdrressDTO;
+import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.user.UserRole;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -26,6 +26,6 @@ public record WasteCollectorDTO(
         @NotBlank
         String picture,
         @Valid
-        AdrressDTO adrress
+        AddressDTO adrress
 ) {
 }
