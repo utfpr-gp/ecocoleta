@@ -40,6 +40,10 @@ public class User implements UserDetails, Serializable {
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
+//    @OneToOne(cascade = CascadeType.PERSIST)
+//    @JoinColumn(name = "address_id")
+//    protected Address address;
+
 
     public User(String name, String email, String password, String phone, UserRole role) {
         this.name = name;

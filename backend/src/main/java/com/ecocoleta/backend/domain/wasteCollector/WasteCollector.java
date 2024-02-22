@@ -1,9 +1,11 @@
 package com.ecocoleta.backend.domain.wasteCollector;
 
-import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,9 +25,9 @@ public class WasteCollector extends User {
     private String picture;
     //addrres id
     //TODO verificar endereço como criar o objeto e relação
-    @OneToOne
-    @JoinColumn(name = "address_id")
-    protected Address address;
+//    @OneToOne(cascade = CascadeType.PERSIST)
+//    @JoinColumn(name = "address_id")
+//    protected Address address;
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")

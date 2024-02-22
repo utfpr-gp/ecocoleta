@@ -45,6 +45,16 @@ CREATE TABLE IF NOT EXISTS residents_address
     FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
+-- Table ecocoleta_db.residents_address
+CREATE TABLE IF NOT EXISTS user_addresses
+(
+    user_id BIGSERIAL NOT NULL,
+    address_id   BIGSERIAL NOT NULL,
+    PRIMARY KEY (user_id, address_id),
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
 -- Table ecocoleta_db.waste_collectors
 CREATE TABLE IF NOT EXISTS waste_collectors
 (

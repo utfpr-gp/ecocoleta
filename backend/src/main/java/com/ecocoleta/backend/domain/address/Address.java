@@ -22,6 +22,8 @@ public class Address {
     private String number;
     private String neighborhood;
     private String cep;
+//    @ManyToOne
+//    private User user;
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")

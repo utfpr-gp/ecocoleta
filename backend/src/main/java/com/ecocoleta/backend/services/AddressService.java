@@ -1,21 +1,14 @@
 package com.ecocoleta.backend.services;
 
-import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.company.Company;
 import com.ecocoleta.backend.domain.resident.Resident;
-import com.ecocoleta.backend.domain.resident.ResidentAddress;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.repositories.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 @Service
 public class AddressService {
@@ -26,6 +19,7 @@ public class AddressService {
     @Autowired
     private UserService userService;
 
+/*
     public List<Address> getUserAddresses(User user) {
         List<Address> listAddress = new ArrayList<>();
 
@@ -57,12 +51,14 @@ public class AddressService {
         //não retornou nada ...
         return  listAddress;
     }
+*/
 
     public void editAddress(User user, AddressDTO addressDTO) {
 
     }
 
     //TODO terminar de fazer metodo de criação de enderço como resident
+/*
     public boolean createAddress(User user, AddressDTO addressDTO) {
         Address address = new Address(addressDTO.city(), addressDTO.street(), addressDTO.number(), addressDTO.neighborhood(), addressDTO.cep());
 
@@ -81,13 +77,13 @@ public class AddressService {
                     System.out.println("salvo obj address/// set address e salvar user resident");
 
                     // Cria um novo objeto ResidentAddress
-                    ResidentAddress residentAddress = new ResidentAddress(resident, address);
+                    UserAddress userAddress = new UserAddress(resident, address);
 
                     // Adiciona o ResidentAddress à lista de Resident
-                    resident.getResidentAddresses().add(residentAddress);
+                    resident.getResidentAddresses().add(userAddress);
 
-//                    // Salva o endereço no repositório
-//                    addressRepository.save(address);
+                    // Salva o endereço no repositório
+                    addressRepository.save(address);
 
                     // Salva as atualizações no usuário Resident
                     userService.saveUser(resident);
@@ -107,16 +103,16 @@ public class AddressService {
                 }else if (!resident.getResidentAddresses().isEmpty()){
                     System.out.println("lista residentAddress de 1xn NÃO vazia");
 
-                    Set<ResidentAddress> residentAddressHashSet = resident.getResidentAddresses();
-                    System.out.println("HASHSET DE RESIDENTADDRESS CADASTRADOS..." + residentAddressHashSet.toString());
-                    residentAddressHashSet.add(new ResidentAddress(resident, address));
+                    Set<UserAddress> userAddressHashSet = resident.getResidentAddresses();
+                    System.out.println("HASHSET DE RESIDENTADDRESS CADASTRADOS..." + userAddressHashSet.toString());
+                    userAddressHashSet.add(new UserAddress(resident, address));
 
 
                     System.out.println("TO STRING RESIDENTADDRESS..." + resident.getResidentAddresses().toString());
                     System.out.println("OBJ ADDRESS: " + address.toString());
 
                     System.out.println("CRIOU RESIDENTADDRESS");
-                    resident.setResidentAddresses(residentAddressHashSet);
+                    resident.setResidentAddresses(userAddressHashSet);
                     userService.saveUser(resident);
 
                     return true;
@@ -132,11 +128,11 @@ public class AddressService {
                     System.out.println("address de wastecolector vazio");
 
                     System.out.println("salvar... obj address");
-                    addressRepository.save(address);
-                    System.out.println("salvo obj address/// set address e salvar user wastcolector");
+//                    addressRepository.save(address);
+//                    System.out.println("salvo obj address/// set address e salvar user wastcolector");
 
                     wasteCollector.setAddress(address);
-                    userService.saveUser(wasteCollector);
+//                    userService.saveUser(wasteCollector);
                     return true;
                 }
                 if (wasteCollector.getAddress() != null) {
@@ -172,6 +168,7 @@ public class AddressService {
 
         return false;
     }
+*/
 
     //TODO fazer metodo de deletar endereço
 

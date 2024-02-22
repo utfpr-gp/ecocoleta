@@ -1,9 +1,11 @@
 package com.ecocoleta.backend.domain.company;
 
-import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,9 +22,9 @@ public class Company extends User {
 
     private String cnpj;
     private String company_name;
-    @OneToOne
-    @JoinColumn(name = "address_id")
-    protected Address address;
+//    @OneToOne
+//    @JoinColumn(name = "address_id")
+//    protected Address address;
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")

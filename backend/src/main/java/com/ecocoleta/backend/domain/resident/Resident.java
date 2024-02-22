@@ -1,14 +1,14 @@
 package com.ecocoleta.backend.domain.resident;
 
-import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Table(name = "residents")
 @Entity
@@ -20,8 +20,10 @@ import java.util.Set;
 @PrimaryKeyJoinColumn(name = "userId")
 public class Resident extends User {
 
-    @OneToMany(mappedBy = "resident", cascade = CascadeType.ALL, orphanRemoval = true)
-    protected Set<ResidentAddress> residentAddresses = new HashSet<>();
+//    @OneToMany(mappedBy = "resident", cascade = CascadeType.ALL, orphanRemoval = true)
+//    protected Set<ResidentAddress> residentAddresses = new HashSet<>();
+//    protected List<Address> addresses;
+//    protected Set<ResidentAddress> residentAddresses = new HashSet<>();
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")
@@ -32,11 +34,11 @@ public class Resident extends User {
         this.createTime = LocalDateTime.now();
     }
 
-    public void addAddress(Address address) {
-        System.out.println("METOD ADDRESS CLASSE RESIDENTS.. PRINT>> " + address.toString());
-        ResidentAddress residentAddress = new ResidentAddress(this, address);
-        residentAddresses.add(residentAddress);
-    }
+//    public void addAddress(Address address) {
+//        System.out.println("METOD ADDRESS CLASSE RESIDENTS.. PRINT>> " + address.toString());
+//        ResidentAddress residentAddress = new ResidentAddress(this, address);
+//        residentAddresses.add(residentAddress);
+//    }
 
 
 }

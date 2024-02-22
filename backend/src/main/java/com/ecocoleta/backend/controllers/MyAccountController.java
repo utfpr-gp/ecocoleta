@@ -3,9 +3,11 @@ package com.ecocoleta.backend.controllers;
 import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.user.User;
+import com.ecocoleta.backend.domain.user.UserAddress;
 import com.ecocoleta.backend.repositories.AddressRepository;
 import com.ecocoleta.backend.repositories.UserRepository;
 import com.ecocoleta.backend.services.AddressService;
+import com.ecocoleta.backend.services.UserAddressService;
 import com.ecocoleta.backend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("myaccount")
@@ -45,6 +45,9 @@ public class MyAccountController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    UserAddressService userAddressService;
+
     //TODO  metodo myacont/id para pegar dados do usuario
 
 
@@ -53,7 +56,7 @@ public class MyAccountController {
 
     //TODO fazer metodo get address
     //GET
-    @GetMapping("/address/{userId}")
+ /*   @GetMapping("/address/{userId}")
     @Transactional
     public ResponseEntity<List<AddressDTO>> getAddress(@PathVariable Long userId, UriComponentsBuilder uriComponentsBuilder) {
 
@@ -84,7 +87,7 @@ public class MyAccountController {
 //            throw new EntityNotFoundException("O usuário não foi encontrado.");
         }
     }
-
+*/
 
     //TODO fazer edição de endereço passadno o id do user pelo token, e id endereço pelo parametro >> ver metod post
     //EDITAR
@@ -139,13 +142,20 @@ public class MyAccountController {
         }
 
         User user = optionalUser.get();
+        Address address = new Address(addressDTO.city(), addressDTO.street(), addressDTO.number(), addressDTO.neighborhood(), addressDTO.cep());
 
-        if (addressService.createAddress(user, addressDTO)) {
-            System.out.println("SAIU DO CONTROLLER POST ADDRESS com sucesso");
-            return ResponseEntity.ok().build();
-        }
-        System.out.println("SAIU DO CONTROLLER POST ADDRESS com erro");
-        return ResponseEntity.badRequest().build();
+        UserAddress userAddress = new UserAddress(user, address);
+        userAddressService.save(userAddress);
+        return ResponseEntity.ok().build();
+
+
+
+//        if (addressService.createAddress(user, addressDTO)) {
+//            System.out.println("SAIU DO CONTROLLER POST ADDRESS com sucesso");
+//            return ResponseEntity.ok().build();
+//        }
+//        System.out.println("SAIU DO CONTROLLER POST ADDRESS com erro");
+//        return ResponseEntity.badRequest().build();
 
 
     /*//        criando uma uri de forma automatica com spring passando para caminho user/id
