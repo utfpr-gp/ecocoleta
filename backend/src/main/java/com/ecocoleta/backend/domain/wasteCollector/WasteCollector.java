@@ -23,11 +23,6 @@ public class WasteCollector extends User {
     private String cpf;
     private int score;
     private String picture;
-    //addrres id
-    //TODO verificar endereço como criar o objeto e relação
-//    @OneToOne(cascade = CascadeType.PERSIST)
-//    @JoinColumn(name = "address_id")
-//    protected Address address;
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")
@@ -40,15 +35,4 @@ public class WasteCollector extends User {
         this.picture = picture;
         this.createTime = LocalDateTime.now();
     }
-
-    /*public void setAddress(Address address) {
-        // Certifique-se de que o endereço seja salvo antes de associá-lo ao WasteCollector
-        if (address.getId() == null) {
-            // Se o ID do endereço for nulo, salve-o no banco de dados
-            AddressRepository.save(address);
-        }
-
-        // Agora, você pode associar o endereço ao WasteCollector
-        this.address = address;
-    }*/
 }

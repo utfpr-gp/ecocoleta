@@ -22,9 +22,6 @@ public class Company extends User {
 
     private String cnpj;
     private String company_name;
-//    @OneToOne
-//    @JoinColumn(name = "address_id")
-//    protected Address address;
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")
