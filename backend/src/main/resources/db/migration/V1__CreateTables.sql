@@ -35,17 +35,7 @@ CREATE TABLE IF NOT EXISTS residents
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
--- Table ecocoleta_db.residents_address
-CREATE TABLE IF NOT EXISTS residents_address
-(
-    address_id   BIGSERIAL NOT NULL,
-    residents_id BIGSERIAL NOT NULL,
-    PRIMARY KEY (residents_id, address_id),
-    FOREIGN KEY (residents_id) REFERENCES residents (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
--- Table ecocoleta_db.residents_address
+-- Table ecocoleta_db.user_address
 CREATE TABLE IF NOT EXISTS user_addresses
 (
     user_id BIGSERIAL NOT NULL,
@@ -63,14 +53,11 @@ CREATE TABLE IF NOT EXISTS waste_collectors
     cpf         VARCHAR(11),
     score       INT,
     picture     VARCHAR(255),
-    address_id  BIGSERIAL,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP,
     CONSTRAINT uc_waste_collectors_user_id UNIQUE (user_id), -- Adicionando uma restrição única
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION,
-    FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE NO ACTION ON UPDATE NO ACTION
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
-
 
 -- Table ecocoleta_db.companys
 CREATE TABLE IF NOT EXISTS companys
@@ -79,11 +66,9 @@ CREATE TABLE IF NOT EXISTS companys
     user_id      BIGSERIAL UNIQUE,
     cnpj         VARCHAR(11)                  NOT NULL,
     company_name VARCHAR(255)                 NOT NULL,
-    address_id   BIGSERIAL,
     create_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time  TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION,
-    FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE NO ACTION ON UPDATE NO ACTION
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 

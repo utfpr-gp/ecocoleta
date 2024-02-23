@@ -22,16 +22,16 @@ public interface UserAddressRepository extends JpaRepository<UserAddress, UserAd
 //    Optional<Integer> selectRatingByProfessionalAndExpertise(@Param("professional_id") Long professional_id, @Param("expertise_id") Long expertise_id);
 
     /**
-     * Retorna uma especialidade profissional, dado um profissional e sua especialidade
+     * Retorna uma userAddress de um usuário e um endereço
      *
      * @param user
      * @param address
-     * @return Optional<ProfessionalExpertise>
+     * @return Optional<UserAddress>
      */
     Optional<UserAddress> findByUserAndAddress(User user, Address address);
 
     /**
-     * Retorna uma lista de especialidades de um profissional
+     * Retorna uma lista de endereco de um usuário
      *
      * @param user
      * @return address
@@ -40,6 +40,12 @@ public interface UserAddressRepository extends JpaRepository<UserAddress, UserAd
     List<UserAddress> findByUser(User user);
 
 
+    /**
+     * Retorna uma lista de usuário de um endereço
+     *
+     * @param address
+     * @return user
+     */
     List<UserAddress> findByAddress(Address address);
 
 }

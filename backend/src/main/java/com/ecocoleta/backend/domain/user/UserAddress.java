@@ -28,7 +28,7 @@ public class UserAddress implements Serializable{
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId("addressId")
     @JoinColumn(name = "address_id")
     private Address address;
@@ -38,14 +38,4 @@ public class UserAddress implements Serializable{
         this.address = address;
         this.id = new UserAddressPK(user.getId(), address.getId());
     }
-
-//
-//    @Override
-//    public String toString() {
-//        return "ResidentAddress{" +
-//                "id=" + id +
-//                ", resident=" + resident.getId() +
-//                ", address=" + address +
-//                '}';
-//    }
 }
