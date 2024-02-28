@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 public record AddressDTO(
+        Long addressId,
         @NotBlank
         String city,
         @NotBlank

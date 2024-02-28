@@ -38,6 +38,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("user")
 public class UserController {
 
+    //TODO refatorar controller de User, retiar repositorys criar metodos no userService...
+
     @Autowired
     UserRepository userRepository;
 

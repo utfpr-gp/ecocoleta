@@ -4,13 +4,15 @@ import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserAddress;
-import com.ecocoleta.backend.repositories.AddressRepository;
-import com.ecocoleta.backend.repositories.UserRepository;
+import com.ecocoleta.backend.services.AddressService;
+import com.ecocoleta.backend.services.AutorizationService;
 import com.ecocoleta.backend.services.UserAddressService;
 import com.ecocoleta.backend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -33,85 +35,21 @@ public class MyAccountController {
      * */
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    AddressRepository addressRepository;
-
-    @Autowired
     UserService userService;
+
+    @Autowired
+    AutorizationService autorizationService;
+
+    @Autowired
+    AddressService addressService;
 
     @Autowired
     UserAddressService userAddressService;
 
     //TODO  metodo myacont/id para pegar dados do usuario
 
-
-    //TODO verifcar como fazer esse metodo
-    //TODO metodos de ediçaõ e criação endereço.
-
-    @GetMapping("/address/{userId}")
-    @Transactional
-    public ResponseEntity<List<AddressDTO>> getAddress(@PathVariable Long userId, UriComponentsBuilder uriComponentsBuilder) {
-
-        //TODO fazer validaçãodo token somente para usuarios admin pegar todos os endereços ou para o proprio usuario pegar seus endereços
-
-        System.out.println("ENTROU NO CONTORLLER GET ADDRESS");
-        // Busca o usuário por ID
-        Optional<User> optionalUser = userService.getUserById(userId);
-
-        if (optionalUser.isEmpty()) {
-            System.err.println("User não encontrado!!!!");
-            return ResponseEntity.notFound().build();
-        } else {
-            System.out.println("User encontrado!!!!");
-            User user = optionalUser.get();
-
-            if (userAddressService.findByUser(user).isEmpty()) {
-                System.err.println("SAIU DO CONTROLLER GET ADDRESS com erro");
-                return ResponseEntity.badRequest().build();
-            } else {
-                List<UserAddress> userAddress = userAddressService.findByUser(user);
-                List<AddressDTO> addressDTOs = userAddress.stream().map(address -> new AddressDTO(address.getAddress().getCity(), address.getAddress().getStreet(), address.getAddress().getNumber(), address.getAddress().getNeighborhood(), address.getAddress().getCep())).collect(Collectors.toList());
-                System.out.println("SAIU DO CONTROLLER GET ADDRESS com sucesso");
-                return ResponseEntity.ok(addressDTOs);
-            }
-        }
-    }
-
-    //TODO fazer edição de endereço passadno o id do user pelo token, e id endereço pelo parametro >> ver metod post
-    //EDITAR
-//    @PutMapping("/address/{userId}")
-//    @Transactional
-//    public ResponseEntity<?> editAddress(@PathVariable Long userId, @RequestBody @Valid AddressDTO addressDTO, UriComponentsBuilder uriComponentsBuilder) {
-//
-//        System.out.println("ENTROU NO CONTORLLER PUT ADDRESS");
-//        // Busca o usuário por ID
-//        Optional<User> optionalUser = userService.getUserById(userId);
-//
-//        if (optionalUser.isEmpty()) {
-//            System.err.println("User vazio!!!!");
-//            return ResponseEntity.notFound().build();
-////            throw new EntityNotFoundException("O usuário não foi encontrado.");
-//        }
-//
-//        User user = optionalUser.get();
-//        addressService.editAddress(user, addressDTO);
-//
-//        System.out.println("SAIU DO CONTROLLER PUT ADDRESS");
-//        return ResponseEntity.ok().build();
-//
-///*
-//        //        criando uma uri de forma automatica com spring passando para caminho user/id
-//        var uri = uriComponentsBuilder.path("/myaccount/addres/{id}").buildAndExpand(user.getId()).toUri();
-//
-//        return ResponseEntity.created(uri).body(new AdrressDTO());*/
-//    }
-
-
-    //TODO criação de endereços de residents verificar
-    //TODO feito teste de pegar o id do user autenticado pelo @AuthenticationPrincipal
-    //TODO verificar criação do endereço com o user atuthenticado ou admin***
+    //Metodos de Address>>>>>
+    //CREATE
     @PostMapping("/address/{userId}")
     @Transactional
     public ResponseEntity<?> createAddress(/*@AuthenticationPrincipal UserDetails userDetails,*/ @PathVariable Long userId, @RequestBody @Valid AddressDTO addressDTO, UriComponentsBuilder uriComponentsBuilder) throws Exception {
@@ -144,5 +82,85 @@ public class MyAccountController {
                 return ResponseEntity.badRequest().build();
             }
         }
+    }
+
+    //GET
+    @GetMapping("/address/{userId}")
+    @Transactional
+    public ResponseEntity<List<AddressDTO>> getAddress(@PathVariable Long userId, UriComponentsBuilder uriComponentsBuilder) {
+
+        //TODO fazer validaçãodo token somente para usuarios admin pegar todos os endereços ou para o proprio usuario pegar seus endereços
+
+        System.out.println("ENTROU NO CONTORLLER GET ADDRESS");
+        // Busca o usuário por ID
+        Optional<User> optionalUser = userService.getUserById(userId);
+
+        if (optionalUser.isEmpty()) {
+            System.err.println("User não encontrado!!!!");
+            return ResponseEntity.notFound().build();
+        } else {
+            System.out.println("User encontrado!!!!");
+            User user = optionalUser.get();
+
+            if (userAddressService.findByUser(user).isEmpty()) {
+                System.err.println("SAIU DO CONTROLLER GET ADDRESS com erro");
+                return ResponseEntity.badRequest().build();
+            } else {
+                List<UserAddress> userAddress = userAddressService.findByUser(user);
+                List<AddressDTO> addressDTOs = userAddress.stream().map(address -> new AddressDTO(address.getAddress().getId(), address.getAddress().getCity(), address.getAddress().getStreet(), address.getAddress().getNumber(), address.getAddress().getNeighborhood(), address.getAddress().getCep())).collect(Collectors.toList());
+                System.out.println("SAIU DO CONTROLLER GET ADDRESS com sucesso");
+                return ResponseEntity.ok(addressDTOs);
+            }
+        }
+    }
+
+    //TODO fazer edição de endereço passadno o id do user pelo token, e id endereço pelo parametro >> ver metod post
+    //UPDATE
+    @PutMapping("/address/{userId}")
+    @Transactional
+    public ResponseEntity<?> editAddress(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long userId, @RequestBody @Valid AddressDTO addressDTO, UriComponentsBuilder uriComponentsBuilder) {
+
+        System.out.println("ENTROU NO CONTORLLER PUT ADDRESS");
+        //verificando autorização
+        if (autorizationService.validateUserPermission(userId, userDetails)) {
+            System.out.println("Usuario tem permissão");
+
+            if (userAddressService.editAddress(userId, addressDTO)) {
+                System.out.println("SAIU DO CONTROLLER PUT ADDRESS com sucesso");
+                return ResponseEntity.ok().build();
+            } else {
+                System.out.println("SAIU DO CONTROLLER PUT ADDRESS com erro");
+                return ResponseEntity.badRequest().build();
+            }
+        } else {
+            System.err.println("Usuario não tem permissão");
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    //DELETE
+
+    //    @DeleteMapping("/address/{userId}/{addressId}")
+    @DeleteMapping("/address/")
+    @Transactional
+    public ResponseEntity<?> deleteAddress(@AuthenticationPrincipal /*UserDetails userDetails, @PathVariable Long userId, @PathVariable Long addressId*/ @RequestParam Long userId, @RequestParam Long addressId, UriComponentsBuilder uriComponentsBuilder) {
+        System.out.println("ENTROU NO CONTORLLER DELETE ADDRESS");
+        //validação se o user tem permissão admin ou user autenticado é o dono do endereço
+        //fazer...
+
+        Optional<User> optionalUser = userService.getUserById(userId);
+        Optional<UserAddress> optionalUserAddress = userAddressService.findByUserAndAddress(optionalUser.get(), addressService.getAddressById(addressId).get());
+
+        if (optionalUserAddress.isPresent()) {
+            userAddressService.deleteAddress(optionalUserAddress.get().getId());
+            System.out.println("SAIU DO CONTROLLER DELETE ADDRESS com sucesso");
+            return ResponseEntity.ok().build();
+        } else {
+            System.out.println("SAIU DO CONTROLLER DELETE ADDRESS com erro");
+            return ResponseEntity.badRequest().build();
+            //TODO fazer trow execption de erros ...
+//            throw new EntityNotFoundException("Erro ao remover, registro não encontrado para o id " + id);
+        }
+
     }
 }

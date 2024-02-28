@@ -38,6 +38,16 @@ public class Address {
         this.createTime = LocalDateTime.now();
     }
 
+    public Address(Long id, String city, String street, String number, String neighborhood, String cep) {
+        this.id = id;
+        this.city = city;
+        this.street = street;
+        this.number = number;
+        this.neighborhood = neighborhood;
+        this.cep = cep;
+        this.createTime = LocalDateTime.now();
+    }
+
     @Override
     public String toString() {
         return "Address{" +

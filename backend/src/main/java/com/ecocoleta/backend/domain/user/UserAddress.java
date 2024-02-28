@@ -2,8 +2,7 @@ package com.ecocoleta.backend.domain.user;
 
 import com.ecocoleta.backend.domain.address.Address;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -13,8 +12,11 @@ import java.io.Serializable;
 //@Data
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user_addresses")
 @Entity
+@Getter
+@Setter
 public class UserAddress implements Serializable{
 
     /**
