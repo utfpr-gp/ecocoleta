@@ -48,17 +48,13 @@ public class MyAccountController {
 
     //TODO  metodo myacont/id para pegar dados do usuario
 
+    //TODO refatorar retorno com exceptions adequadas....
+
     //Metodos de Address>>>>>
     //CREATE
     @PostMapping("/address/{userId}")
     @Transactional
-    public ResponseEntity<?> createAddress(/*@AuthenticationPrincipal UserDetails userDetails,*/ @PathVariable Long userId, @RequestBody @Valid AddressDTO addressDTO, UriComponentsBuilder uriComponentsBuilder) throws Exception {
-
-//        //teste authentication
-//        //TODO retirar depois
-//        var userIdTeste = userService.getUserIdByUserEmail(userDetails.getUsername());
-//        System.err.println("userdetails injetado..." + userIdTeste);
-//        //remover apos^^^
+    public ResponseEntity<?> createAddress(@PathVariable Long userId, @RequestBody @Valid AddressDTO addressDTO, UriComponentsBuilder uriComponentsBuilder) throws Exception {
 
         System.out.println("ENTROU NO CONTORLLER Post ADDRESS");
         // Busca o usuário por ID
@@ -68,7 +64,7 @@ public class MyAccountController {
             System.err.println("User não encontrado!!!!");
             return ResponseEntity.notFound().build();
         } else {
-            System.err.println("User encontrado!!!!");
+            System.out.println("User encontrado!!!!");
             User user = optionalUser.get();
             //TODO fazer Mapper para transformar AddressDTO em Address
             Address address = new Address(addressDTO.city(), addressDTO.street(), addressDTO.number(), addressDTO.neighborhood(), addressDTO.cep());
@@ -78,7 +74,7 @@ public class MyAccountController {
                 System.out.println("SAIU DO CONTROLLER POST ADDRESS com sucesso");
                 return ResponseEntity.ok().build();
             } else {
-                System.out.println("SAIU DO CONTROLLER POST ADDRESS com erro");
+                System.err.println("SAIU DO CONTROLLER POST ADDRESS com erro");
                 return ResponseEntity.badRequest().build();
             }
         }
@@ -88,10 +84,8 @@ public class MyAccountController {
     @GetMapping("/address/{userId}")
     @Transactional
     public ResponseEntity<List<AddressDTO>> getAddress(@PathVariable Long userId, UriComponentsBuilder uriComponentsBuilder) {
-
-        //TODO fazer validaçãodo token somente para usuarios admin pegar todos os endereços ou para o proprio usuario pegar seus endereços
-
         System.out.println("ENTROU NO CONTORLLER GET ADDRESS");
+
         // Busca o usuário por ID
         Optional<User> optionalUser = userService.getUserById(userId);
 
@@ -114,49 +108,38 @@ public class MyAccountController {
         }
     }
 
-    //TODO fazer edição de endereço passadno o id do user pelo token, e id endereço pelo parametro >> ver metod post
     //UPDATE
     @PutMapping("/address/{userId}")
     @Transactional
     public ResponseEntity<?> editAddress(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long userId, @RequestBody @Valid AddressDTO addressDTO, UriComponentsBuilder uriComponentsBuilder) {
-
         System.out.println("ENTROU NO CONTORLLER PUT ADDRESS");
-        //verificando autorização
-        if (autorizationService.validateUserPermission(userId, userDetails)) {
-            System.out.println("Usuario tem permissão");
 
-            if (userAddressService.editAddress(userId, addressDTO)) {
-                System.out.println("SAIU DO CONTROLLER PUT ADDRESS com sucesso");
-                return ResponseEntity.ok().build();
-            } else {
-                System.out.println("SAIU DO CONTROLLER PUT ADDRESS com erro");
-                return ResponseEntity.badRequest().build();
-            }
+        //validação se o user tem permissão admin ou user autenticado é o dono do endereço e se a relação user address existe
+        if (autorizationService.validateUserPermission(userId, userDetails) && userAddressService.editAddress(userId, addressDTO)) {
+            System.out.println("SAIU DO CONTROLLER PUT ADDRESS com sucesso");
+            return ResponseEntity.ok().build();
         } else {
-            System.err.println("Usuario não tem permissão");
+            System.err.println("SAIU DO CONTROLLER PUT ADDRESS com erro ou sem permissão");
             return ResponseEntity.badRequest().build();
         }
     }
 
     //DELETE
-
     //    @DeleteMapping("/address/{userId}/{addressId}")
     @DeleteMapping("/address/")
     @Transactional
-    public ResponseEntity<?> deleteAddress(@AuthenticationPrincipal /*UserDetails userDetails, @PathVariable Long userId, @PathVariable Long addressId*/ @RequestParam Long userId, @RequestParam Long addressId, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> deleteAddress(@AuthenticationPrincipal UserDetails userDetails, /* @PathVariable Long userId, @PathVariable Long addressId*/ @RequestParam Long userId, @RequestParam Long addressId, UriComponentsBuilder uriComponentsBuilder) {
         System.out.println("ENTROU NO CONTORLLER DELETE ADDRESS");
-        //validação se o user tem permissão admin ou user autenticado é o dono do endereço
-        //fazer...
-
         Optional<User> optionalUser = userService.getUserById(userId);
         Optional<UserAddress> optionalUserAddress = userAddressService.findByUserAndAddress(optionalUser.get(), addressService.getAddressById(addressId).get());
 
-        if (optionalUserAddress.isPresent()) {
+        //validação se o user tem permissão admin ou user autenticado é o dono do endereço e se a relação user address existe
+        if (autorizationService.validateUserPermission(userId, userDetails) && optionalUserAddress.isPresent()) {
             userAddressService.deleteAddress(optionalUserAddress.get().getId());
             System.out.println("SAIU DO CONTROLLER DELETE ADDRESS com sucesso");
             return ResponseEntity.ok().build();
         } else {
-            System.out.println("SAIU DO CONTROLLER DELETE ADDRESS com erro");
+            System.err.println("SAIU DO CONTROLLER DELETE ADDRESS com erro ou sem permissão");
             return ResponseEntity.badRequest().build();
             //TODO fazer trow execption de erros ...
 //            throw new EntityNotFoundException("Erro ao remover, registro não encontrado para o id " + id);
