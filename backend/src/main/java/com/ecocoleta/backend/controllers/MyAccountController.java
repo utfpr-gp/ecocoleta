@@ -115,7 +115,7 @@ public class MyAccountController {
         System.out.println("ENTROU NO CONTORLLER PUT ADDRESS");
 
         //validação se o user tem permissão admin ou user autenticado é o dono do endereço e se a relação user address existe
-        if (autorizationService.validateUserPermission(userId, userDetails) && userAddressService.editAddress(userId, addressDTO)) {
+        if (autorizationService.isAuthorized(userId, userDetails) && userAddressService.editAddress(userId, addressDTO)) {
             System.out.println("SAIU DO CONTROLLER PUT ADDRESS com sucesso");
             return ResponseEntity.ok().build();
         } else {
@@ -134,7 +134,7 @@ public class MyAccountController {
         Optional<UserAddress> optionalUserAddress = userAddressService.findByUserAndAddress(optionalUser.get(), addressService.getAddressById(addressId).get());
 
         //validação se o user tem permissão admin ou user autenticado é o dono do endereço e se a relação user address existe
-        if (autorizationService.validateUserPermission(userId, userDetails) && optionalUserAddress.isPresent()) {
+        if (autorizationService.isAuthorized(userId, userDetails) && optionalUserAddress.isPresent()) {
             userAddressService.deleteAddress(optionalUserAddress.get().getId());
             System.out.println("SAIU DO CONTROLLER DELETE ADDRESS com sucesso");
             return ResponseEntity.ok().build();

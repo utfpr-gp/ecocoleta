@@ -11,7 +11,6 @@ import com.ecocoleta.backend.domain.user.dto.UserGetDTO;
 import com.ecocoleta.backend.domain.user.dto.UserUpdateDTO;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollectorDTO;
-import com.ecocoleta.backend.repositories.UserRepository;
 import com.ecocoleta.backend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -29,233 +29,143 @@ import org.springframework.web.util.UriComponentsBuilder;
  * A principal diferença entre as duas entidades é o CPF e CNPJ. Em relação aos demais atributos, usa-se a classe User.
  */
 
-//TODO fazer tudo o uso do repository e model via service
-//TODO fazer a criação de cada objeto em um endpoint diferente
-//TODO verificar a criação do obj address e sua relação de herança
 //TODO colocar restrição de roles em cada endpoint e autenticação //    @RolesAllowed({RoleType.USER, RoleType.COMPANY})
 
 @RestController
 @RequestMapping("user")
 public class UserController {
 
-    //TODO refatorar controller de User, retiar repositorys criar metodos no userService...
-
-    @Autowired
-    UserRepository userRepository;
-
     @Autowired
     UserService userService;
 
-    /*//New user generico
-    @PostMapping()
+    //CREATE USER TYPE ADMIN
+    @PostMapping("/admin")
     @Transactional
-    public ResponseEntity newUser(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder){
-        if(this.userRepository.findByEmail(userDTO.email()) != null) return ResponseEntity.badRequest().build();
+//    @RolesAllowed("ADMIN")
+    public ResponseEntity newUser(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder) {
+        System.out.println("ENTROU CONTROLER ADMIN...");
+        //verifica se existe, se role é admin e se user autenticado é admin
+        if (userService.findByEmail(userDTO.email()) == null && userDTO.role().equals(UserRole.ADMIN) && userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            System.out.println("criando novo usuario");
+            //TODO Mapper user...
+            User user = new User(userDTO.name(), userDTO.email(), userDTO.password(), userDTO.phone(), userDTO.role());
+            userService.createUser(user);
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(userDTO.password());
+//            criando uma uri de forma automatica com spring passando para caminho user/id
+            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
 
-        User user = new User(userDTO.name(), userDTO.lastName(), userDTO.email(), encryptedPassword, userDTO.phone(), userDTO.role());
-
-        this.userRepository.save(user);
-
-//        criando uma uri de forma automatica com spring passando para caminho user/id
-        var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(new UserGetDTO(user));
-    }*/
-
-    //New user generico com user service
-    @PostMapping()
-    @Transactional
-    public ResponseEntity newUser(@RequestBody @Valid UserDTO userDTO, UriComponentsBuilder uriComponentsBuilder){
-
-        System.err.println("ENTROU CONTROLER GENERICO... " + userDTO.toString());
-
-
-        if(this.userRepository.findByEmail(userDTO.email()) != null) return ResponseEntity.badRequest().build();
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(userDTO.password());
-
-        User user = new User(userDTO.name(), userDTO.email(), encryptedPassword, userDTO.phone(), userDTO.role());
-
-        this.userRepository.save(user);
-
-//        criando uma uri de forma automatica com spring passando para caminho user/id
-        var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(new UserGetDTO(user));
+            return ResponseEntity.created(uri).body(new UserGetDTO(user));
+        } else {
+            System.err.println("Email ja cadastrado ou sem permissão de admin");
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-
-
-    //CRIAÇÃO DO TIPO RESIDENTS
-    /*@PostMapping("/resident")
-    @Transactional
-    public ResponseEntity createUser(@RequestBody @Valid ResidentDTO residentDTO, UriComponentsBuilder uriComponentsBuilder){
-
-        //Validação de email ja existente
-        if(this.userRepository.findByEmail(residentDTO.email()) != null) return ResponseEntity.badRequest().build();
-        //Validação tipo de ROLE
-        if(residentDTO.role().equals(UserRole.RESIDENT)){
-            System.err.println("ENTROU NO IF == RESIDENT.....");
-
-            String encryptedPassword = new BCryptPasswordEncoder().encode(residentDTO.password());
-
-            // Crie um novo Resident a partir do ResidentDTO
-            Resident resident = new Resident(residentDTO.name(), residentDTO.lastName(), residentDTO.email(), encryptedPassword, residentDTO.phone(), residentDTO.role());
-
-            // Salve o resident usando o UserService
-            User savedUser = userService.saveUser(resident);
-
-            //criando uma uri de forma automatica com spring passando para caminho user/id
-            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(savedUser.getId()).toUri();
-
-            return ResponseEntity.created(uri).body(new UserGetDTO(savedUser));
-        } return ResponseEntity.badRequest().build();
-    }*/
-
-
-
-
-
-
-    //MODIFICADO*************************
     //CRIAÇÃO DO TIPO RESIDENTS
     @PostMapping("/resident")
     @Transactional
-    public ResponseEntity createUser(@RequestBody @Valid ResidentDTO residentDTO, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity createUser(@RequestBody @Valid ResidentDTO residentDTO, UriComponentsBuilder uriComponentsBuilder) {
+        System.out.println("ENTROU CONTROLLER RESIDENT...");
+        if (userService.findByEmail(residentDTO.email()) == null && residentDTO.role().equals(UserRole.RESIDENT)) {
+            System.out.println("criando novo usuario");
+            //TODO Mapper user...
+//            // Crie um novo Resident a partir do ResidentDTO
+            Resident resident = new Resident(residentDTO.name(), residentDTO.email(), residentDTO.password(), residentDTO.phone(), residentDTO.role());
+            User user = userService.createUser(resident);
+//            criando uma uri de forma automatica com spring passando para caminho user/id
+            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
 
-        //Validação de email ja existente
-        if(this.userRepository.findByEmail(residentDTO.email()) != null) return ResponseEntity.badRequest().build();
-        //Validação tipo de ROLE
-        if(residentDTO.role().equals(UserRole.RESIDENT)){
-            System.err.println("ENTROU NO IF == RESIDENT.....");
-
-            System.out.println("OBJ print>>> " + residentDTO.toString());
-
-            String encryptedPassword = new BCryptPasswordEncoder().encode(residentDTO.password());
-
-            // Crie um novo Resident a partir do ResidentDTO
-            Resident resident = new Resident(residentDTO.name(), residentDTO.email(), encryptedPassword, residentDTO.phone(), residentDTO.role());
-
-            // Adicione o endereço ao residente
-            /*if (residentDTO.address() != null) {
-                System.out.println("ENTROU NO IF DE ENDEREÇO....");
-                Address address = new Address(
-                        residentDTO.address().city(), residentDTO.address().street(),
-                        residentDTO.address().number(), residentDTO.address().neighborhood(),
-                        residentDTO.address().cep()
-                );
-                System.out.println("sout ADDRESS>> " + address.toString());
-                resident.addAddress(address);
-            }*/
-
-            // Salve o resident usando o UserService
-            User savedUser = userService.saveUser(resident);
-
-            //criando uma uri de forma automatica com spring passando para caminho user/id
-            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(savedUser.getId()).toUri();
-
-            return ResponseEntity.created(uri).body(new UserGetDTO(savedUser));
-        } return ResponseEntity.badRequest().build();
+            return ResponseEntity.created(uri).body(new UserGetDTO(user));
+        } else {
+            System.err.println("Email ja cadastrado");
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     //CRIAÇÃO DO TIPO WASTE-COLLECTOR
     @PostMapping("/waste-collector")
     @Transactional
-    public ResponseEntity createUser(@RequestBody @Valid WasteCollectorDTO wasteCollectorDTO, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity createUser(@RequestBody @Valid WasteCollectorDTO wasteCollectorDTO, UriComponentsBuilder uriComponentsBuilder) {
+        System.out.println("ENTROU CONTROLLER WASTECOLLECTOR...");
 
-        //Validação de email ja existente
-        if(this.userRepository.findByEmail(wasteCollectorDTO.email()) != null) return ResponseEntity.badRequest().build();
-        //Validação tipo de ROLE
-        if(wasteCollectorDTO.role().equals(UserRole.WASTE_COLLECTOR)){
-            System.err.println("ENTROU NO IF == WASTE_COLLECTOR.....");
+        if (userService.findByEmail(wasteCollectorDTO.email()) == null && wasteCollectorDTO.role().equals(UserRole.WASTE_COLLECTOR)) {
+            System.out.println("criando novo usuario");
+            //TODO Mapper user...
+//            // Crie um novo Resident a partir do WasteCollectorDTO
+            WasteCollector wasteCollector = new WasteCollector(wasteCollectorDTO.name(), wasteCollectorDTO.email(), wasteCollectorDTO.password(), wasteCollectorDTO.phone(), wasteCollectorDTO.role(), wasteCollectorDTO.cpf(), wasteCollectorDTO.picture());
+            User user = userService.createUser(wasteCollector);
+//            criando uma uri de forma automatica com spring passando para caminho user/id
+            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
 
-            String encryptedPassword = new BCryptPasswordEncoder().encode(wasteCollectorDTO.password());
-
-            // Crie um novo Resident a partir do ResidentDTO
-            WasteCollector wasteCollector = new WasteCollector(wasteCollectorDTO.name(), wasteCollectorDTO.email(), encryptedPassword, wasteCollectorDTO.phone(), wasteCollectorDTO.role(), wasteCollectorDTO.cpf(), wasteCollectorDTO.picture());
-
-            // Salve o resident usando o UserService
-            User savedUser = userService.saveUser(wasteCollector);
-
-            //criando uma uri de forma automatica com spring passando para caminho user/id
-            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(savedUser.getId()).toUri();
-
-            return ResponseEntity.created(uri).body(new UserGetDTO(savedUser));
-        } return ResponseEntity.badRequest().build();
+            return ResponseEntity.created(uri).body(new UserGetDTO(user));
+        } else {
+            System.err.println("Email ja cadastrado");
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/company")
     @Transactional
-    public ResponseEntity createUser(@RequestBody @Valid CompanyDTO companyDTO, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity createUser(@RequestBody @Valid CompanyDTO companyDTO, UriComponentsBuilder uriComponentsBuilder) {
+        System.out.println("ENTROU CONTROLLER COMPANY...");
 
-        //Validação de email ja existente
-        if(this.userRepository.findByEmail(companyDTO.email()) != null) return ResponseEntity.badRequest().build();
-        //Validação tipo de ROLE
-        if(companyDTO.role().equals(UserRole.COMPANY)){
-            System.err.println("ENTROU NO IF == COMPANY.....");
+        if (userService.findByEmail(companyDTO.email()) == null && companyDTO.role().equals(UserRole.COMPANY)) {
+            System.out.println("criando novo usuario");
+            //TODO Mapper user...
+//            // Crie um novo Resident a partir do companyDTO
+            Company company = new Company(companyDTO.name(), companyDTO.companyName(), companyDTO.email(), companyDTO.password(), companyDTO.phone(), companyDTO.role(), companyDTO.cnpj());
+            User user = userService.createUser(company);
+//            criando uma uri de forma automatica com spring passando para caminho user/id
+            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
 
-            String encryptedPassword = new BCryptPasswordEncoder().encode(companyDTO.password());
-
-            // Crie um novo Resident a partir do ResidentDTO
-            Company company = new Company(companyDTO.name(), companyDTO.companyName(), companyDTO.email(), encryptedPassword, companyDTO.phone(), companyDTO.role(), companyDTO.cnpj());
-
-            // Salve o resident usando o UserService
-            User savedUser = userService.saveUser(company);
-
-            //criando uma uri de forma automatica com spring passando para caminho user/id
-            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(savedUser.getId()).toUri();
-
-            return ResponseEntity.created(uri).body(new UserGetDTO(savedUser));
-        } return ResponseEntity.badRequest().build();
+            return ResponseEntity.created(uri).body(new UserGetDTO(user));
+        } else {
+            System.err.println("Email ja cadastrado");
+            return ResponseEntity.badRequest().build();
+        }
     }
-
-
-
-
 
     //Get User by id
     @GetMapping("/{id}")
-    public ResponseEntity getUser(@PathVariable Long id){
-        var user = userRepository.getReferenceById(id);
+    public ResponseEntity getUser(@PathVariable Long id) {
+        var user = userService.getUserById(id);
 
-        return  ResponseEntity.ok(new UserGetDTO(user));
+        return ResponseEntity.ok(new UserGetDTO(user));
     }
 
     //TODO teste de return de lista users
     //TODO verificar listagem etc
     //RETURN DE LISTA DE USUARIOS ACTIVO
     @GetMapping("list")
-    public ResponseEntity<Page<UserGetDTO>> listUser(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable){
+    public ResponseEntity<Page<UserGetDTO>> listUser(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
         // usando obj tipo pageble para paginação
         //convertendo uma lista de User para UserListDTO(sem precisar retornar todos os atributos de User)
-        var page = userRepository.findAllByActivoTrue(pageable).map(UserGetDTO::new);
-
+        var page = userService.getAllByActivoTrue(pageable).map(UserGetDTO::new);
         return ResponseEntity.ok(page);
     }
 
-    //TODO update de senha
+    //TODO update de senha, muda ra url colocando o parametro id...
 
     //update
     @PutMapping
     @Transactional
-    public ResponseEntity update(@Valid UserUpdateDTO userUpdateDTO){
-        var user = userRepository.getReferenceById(userUpdateDTO.id());
-        user.update(userUpdateDTO);
+    public ResponseEntity update(@Valid UserUpdateDTO userUpdateDTO) {
+        var user = userService.getUserById(userUpdateDTO.id());
+        user.get().update(userUpdateDTO);
 
         return ResponseEntity.ok(new UserGetDTO(user));
     }
 
     //delete*disableUser com parametro dinamico
+    //TODO refazer com authenticação somente para user tipo admin
+    //TODO refazer delete para deletar os demais relações com o user, address, colects...
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity deleteUser(@PathVariable Long id){
-//        userRepository.deleteById(id);
-        var user = userRepository.getReferenceById(id);
-        user.delete();
+    public ResponseEntity deleteUser(@PathVariable Long id) {
+        var user = userService.getUserById(id);
+        user.get().delete();
 
-        return  ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 
 }

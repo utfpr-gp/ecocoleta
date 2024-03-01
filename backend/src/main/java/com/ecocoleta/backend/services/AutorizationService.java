@@ -20,7 +20,7 @@ public class AutorizationService implements UserDetailsService {
     }
 
     //Verifica se o user authenticado é igual o usuario que esta sendo passado como parametro ou se é admin
-    public boolean validateUserPermission(Long userId, UserDetails userDetails) {
+    public boolean isAuthorized(Long userId, UserDetails userDetails) {
         User userRequestParams = userRepository.findById(userId).get();
 
         if(userRequestParams.getEmail().equals(userDetails.getUsername()) || userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){

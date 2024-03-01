@@ -2,13 +2,10 @@ package com.ecocoleta.backend.services;
 
 import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.address.AddressDTO;
-import com.ecocoleta.backend.domain.company.Company;
-import com.ecocoleta.backend.domain.resident.Resident;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserAddress;
 import com.ecocoleta.backend.domain.user.UserAddressPK;
 import com.ecocoleta.backend.domain.user.UserRole;
-import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.repositories.UserAddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -96,7 +93,7 @@ public class UserAddressService {
 
         //identifica o tipo de usuário
         User user = userAddress.getUser();
-        UserRole userType = getUserType(userAddress.getUser());
+        UserRole userType = userService.getUserRole(userAddress.getUser());
 
         if (userType.equals(UserRole.RESIDENT)) {
             System.out.println("User instancia de RESIDENT, criando endereço.");
@@ -111,21 +108,5 @@ public class UserAddressService {
             System.err.println("User já possui endereço cadastrado.");
             return false;
         }
-    }
-
-
-    private UserRole getUserType(User user) {
-
-        if (user instanceof WasteCollector) {
-            return UserRole.WASTE_COLLECTOR;
-        } else if (user instanceof Company) {
-            return UserRole.COMPANY;
-        } else if (user instanceof Resident) {
-            return UserRole.RESIDENT;
-        } /*else {
-            // Adicione outros tipos conforme necessário
-//            return UserRole.;
-        }*/
-        return null;
     }
 }
