@@ -92,3 +92,9 @@ Abra o pacote backend no IntelliJ IDEA
 - **Verificar aplications.properties se está tudo correto**
 - **Faça um reload no pacotes maven**
 - **Agora está pronto para iniciar o backend do projeto**
+
+### Importar configuração do insomnia
+
+Para importar todas as rotas configuradas no insomnia para testar a API clique no botão abaixo para importar (necessário ter insomnia instalado).
+
+[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=EcoColeta&uri=https%3A%2F%2Fraw.githubusercontent.com%2Futfpr-gp%2Fecocoleta%2F%2540alguipires%2Finitial-readme%2FInsomnia_export_API_test.json)
