@@ -1,10 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
+// regular style toast
+@import 'ngx-toastr/toastr';
 
-/* import bootstrap css from /node_modules */
-@import '~bootstrap/dist/css/bootstrap.min.css';
-@import '~bootstrap-icons/font/bootstrap-icons.min.css';
+/* importando bootstrap css */
+@import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+@import '../node_modules/bootstrap-icons/font/bootstrap-icons.min.css';
 
 /* my styles global */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+htlm, body{
+    height: 100%;
+    width: 100%;
+}
 .full-tam{
     height: 100%;
     width: 100%;
