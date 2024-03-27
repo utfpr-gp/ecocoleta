@@ -16,5 +16,22 @@
       label="Senha"
       ><!-- passar aqui o icone --></app-primary-input
     >
+    <section>
+      <div class="forgot-checkbox">
+        <div class="remember-checkbox">
+          <input type="checkbox" id="checkRemember" checked />
+          <label for="checkRemember">Lembrar-me</label>
+        </div>
+        <div class="forgot">
+          <span>Esqueci minha senha</span>
+        </div>
+      </div>
+      <div class="button-login">
+        <app-button-larger-green
+          (submit)="submit()"
+          btnText="Entrar"
+        ></app-button-larger-green>
+      </div>
+    </section>
   </form>
 </app-login-default>

@@ -6,6 +6,7 @@
     font-size: 16px;
     color: $black-color;
     text-align: start;
+    width: 100%;
 
     label{
         margin-bottom: 5px;
@@ -16,7 +17,7 @@
         flex-direction: row;
         align-items: center;
         width: 100%;
-        gap: 10px;
+        gap: 5px;
 
         input{
             border: none;
@@ -24,7 +25,16 @@
             font-weight: 500;
             background-color: $white-color;
             padding: 10px 0 10px 20px;
+            width: 100%;
+            // width: 90%;]
+            //TODO verificar se inserir icones do input
         }
+
+        // .icon{
+        //     align-items: center;
+        //     justify-content: center;
+        //     width: 10%;
+        // }
     }
     
 }

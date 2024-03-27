@@ -7,11 +7,17 @@ import {
 } from '@angular/forms';
 import { LoginDefaultComponent } from '../../components/login-default/login-default.component';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
+import { ButtonLargerGreenComponent } from '../../components/button-larger-green/button-larger-green.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [LoginDefaultComponent, ReactiveFormsModule, PrimaryInputComponent],
+  imports: [
+    LoginDefaultComponent,
+    ReactiveFormsModule,
+    PrimaryInputComponent,
+    ButtonLargerGreenComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
