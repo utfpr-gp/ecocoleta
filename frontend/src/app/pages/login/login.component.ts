@@ -1,10 +1,17 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { LoginDefaultComponent } from '../../components/login-default/login-default.component';
+import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [LoginComponent],
+  imports: [LoginDefaultComponent, ReactiveFormsModule, PrimaryInputComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -19,5 +26,9 @@ export class LoginComponent {
         Validators.minLength(6),
       ]),
     });
+  }
+
+  submit() {
+    console.log('Submit 2');
   }
 }

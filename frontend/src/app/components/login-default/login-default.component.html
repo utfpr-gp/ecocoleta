@@ -1,0 +1,66 @@
+<main>
+  <section class="title-section">
+    <h1>{{ title }}</h1>
+  </section>
+  <section class="form-section">
+    <div>
+      <ng-content></ng-content>
+    </div>
+    <div class="forgot-checkbox">
+      <div class="remember-checkbox">
+        <input type="checkbox" id="checkRemember" checked />
+        <label for="checkRemember">Lembrar-me</label>
+      </div>
+      <div class="forgot">
+        <span>Esqueci minha senha</span>
+      </div>
+    </div>
+    <div>
+      <app-button-larger-green
+        (submit)="submit()"
+        btnText="Entrar"
+      ></app-button-larger-green>
+    </div>
+  </section>
+  <section class="signin-section"><p>criar conta...</p></section>
+</main>
+
+<!-- <form class="form-signin w-100 m-auto">
+  <div
+    class="form-group icon d-flex flex-column justify-content-center align-items-center"
+  >
+    <h1>{{ title }}</h1>
+  </div>
+  <div class="form-group">
+    <label for="email">E-mail</label>
+    <input
+      type="email"
+      class="form-control"
+      id="email"
+      aria-describedby="emailHelp"
+      placeholder="Digite seu e-mail"
+    />
+  </div>
+  <div class="form-group">
+    <label for="password">Senha</label>
+    <input
+      type="password"
+      class="form-control"
+      id="password"
+      placeholder="Sua senha"
+    />
+    <small id="emailHelp" class="form-text text-muted"
+      ><a href="">Esqueci minha senha</a></small
+    >
+  </div>
+  <div class="form-check">
+    <input
+      type="checkbox"
+      class="form-check-input"
+      id="checkRemember"
+      checked
+    />
+    <label class="form-check-label" for="checkRemember">Lembrar-me</label>
+  </div>
+  <app-button-larger-green btnText="Login"></app-button-larger-green>
+</form> -->

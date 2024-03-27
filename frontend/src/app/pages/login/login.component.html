@@ -1,3 +1,20 @@
-<app-login title="Login">
-  <form [formGroup]="loginForm"></form>
-</app-login>
+<app-login-default title="Login page">
+  <form [formGroup]="loginForm">
+    <app-primary-input
+      formControlName="email"
+      type="email"
+      inputName="email"
+      placeholder="Digite seu e-mail"
+      label="E-mail"
+      ><!-- passar aqui o icone --></app-primary-input
+    >
+    <app-primary-input
+      formControlName="password"
+      type="password"
+      inputName="password"
+      placeholder=""
+      label="Senha"
+      ><!-- passar aqui o icone --></app-primary-input
+    >
+  </form>
+</app-login-default>

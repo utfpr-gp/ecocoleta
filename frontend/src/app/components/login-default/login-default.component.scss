@@ -1,0 +1,60 @@
+/* conseue utilizar as variaveis de cores $.... */
+@import "../../../styles/variables.scss";
+
+main{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  h1, p{
+    color: $primary-green-color;
+  }
+
+  section{
+    padding-top: 30px;
+
+    div{
+      padding-top: 20px;
+    }
+
+    .forgot-checkbox{
+      display: flex;
+      flex-direction: row;
+      color: $primary-green-color;
+
+      .forgot{
+        padding-left: 50px;
+      }  
+    }
+
+  }
+  .signin-section{
+    padding-top: 100px;
+  }
+}
+// .form-signin {
+//   max-width: 330px;
+//   padding-top: 10vh;
+// }
+
+// div{
+//   padding-top: 20px;
+// }
+
+/* .form-signin .form-floating:focus-within {
+  z-index: 2;
+} */
+
+/* .form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+} */

@@ -6,16 +6,22 @@
 @import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 @import '../node_modules/bootstrap-icons/font/bootstrap-icons.min.css';
 
+
+/* importando variáveis de cores */
+@import '../src/styles/variables.scss';
+
 /* my styles global */
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-htlm, body{
+html, body{
     height: 100%;
     width: 100%;
+    background-color: $secondary-gray-color;
 }
+
 .full-tam{
     height: 100%;
     width: 100%;
@@ -31,20 +37,22 @@ htlm, body{
     } */
 
 /* definindo variáveis para cores */
-:root{
-    --primary: #2A8909;
-    --secondary: #F1F1F1;
-    /* tertiary não é um padrão do Bootstrap, mas pode ser adicionado! */
-    --tertiary: #D9D9D9;
-    /* --success: #0099DD;
-    --info: #A1C7E0;
-    --warning: #FF9933;
-    --danger: #E3371E; */
-}
+// está config > path styles/variables.scss
+// :root{
+//     --primary: #2A8909;
+//     --secondary: #F1F1F1;
+//     /* tertiary não é um padrão do Bootstrap, mas pode ser adicionado! */
+//     --tertiary: #D9D9D9;
+//     /* --success: #0099DD;
+//     --info: #A1C7E0;
+//     --warning: #FF9933;
+//     --danger: #E3371E; */
+// }
 /* sobrescrevendo classes padrão do Bootstrap */
 /* a marcação !important dá um peso maior a regra, sobrescrevendo regras prévias */
 .bg-primary, .btn-primary{
-    background-color: var(--primary) !important;
+    background-color: $primary-green-color !important;
+    border-color: $primary-green-color !important;
 }
 .bg-secondary, .btn-secondary{
     background-color: var(--secondary) !important;
@@ -72,6 +80,6 @@ htlm, body{
     color: var(--warning) !important ; 
 } */
 
-.text-green-white{
-    color: #36BA33;
+.text-green{
+    color: $primary-green-color;
 }
