@@ -24,9 +24,6 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data) {
         try {
-            System.out.println("ENTROU NO CONTORLLER Post LOGIN");
-            System.out.println(data.email() + " " + data.password());
-
             var usernamePasswordToken = new UsernamePasswordAuthenticationToken(data.email(), data.password());
             var auth = this.authenticationManager.authenticate(usernamePasswordToken);
 
