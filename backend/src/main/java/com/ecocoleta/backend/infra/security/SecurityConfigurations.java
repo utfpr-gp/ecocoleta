@@ -22,32 +22,31 @@ public class SecurityConfigurations {
     SecurityFilter securityFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(req -> {
+                .authorizeHttpRequests(authorize -> authorize
+                                //LOGIN
+                                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 
-                    //LOGIN
-                    req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
+                                //USER
+                                .requestMatchers(HttpMethod.POST, "/user/**").permitAll() // teste
+                                .requestMatchers(HttpMethod.GET, "/user/**").authenticated() // teste
+                                .requestMatchers(HttpMethod.PUT, "/user/**").authenticated() // teste
+                                .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN") // teste
+                                //MY-ACCOUNT
+                                .requestMatchers(HttpMethod.POST, "/myaccount/**").authenticated() // teste
+                                .requestMatchers(HttpMethod.GET, "/myaccount/**").authenticated() // teste
+                                .requestMatchers(HttpMethod.PUT, "/myaccount/**").authenticated() // teste
+                                .requestMatchers(HttpMethod.DELETE, "/myaccount/**").authenticated() // teste
 
-                    //USER
-                    req.requestMatchers(HttpMethod.POST, "/user/**").permitAll(); // teste
-                    req.requestMatchers(HttpMethod.GET, "/user/**").authenticated(); // teste
-                    req.requestMatchers(HttpMethod.PUT, "/user/**").authenticated(); // teste
-                    req.requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN"); // teste
-                    //MY-ACCOUNT
-                    req.requestMatchers(HttpMethod.POST, "/myaccount/**").authenticated(); // teste
-                    req.requestMatchers(HttpMethod.GET, "/myaccount/**").authenticated(); // teste
-                    req.requestMatchers(HttpMethod.PUT, "/myaccount/**").authenticated(); // teste
-                    req.requestMatchers(HttpMethod.DELETE, "/myaccount/**").authenticated(); // teste
-
-                    //OTHER ROUTES
-                    req.requestMatchers(HttpMethod.GET, "/hello").hasRole("ADMIN"); //apenas usuarios admin -- teste
+                                //OTHER ROUTES
+                                .requestMatchers(HttpMethod.GET, "/hello").hasRole("ADMIN") //apenas usuarios admin -- teste
 //                    req.anyRequest().authenticated(); //apenas usuarios autenticados de qualquer role
-                })
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) // adicionar o nosso filtro antes do filtro do spring boot, o nosso filtro ta fazendo a verificação do token...
-                .build();
+                )
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class); // adicionar o nosso filtro antes do filtro do spring boot, o nosso filtro ta fazendo a verificação do token...
+        return http.build();
     }
 
     @Bean
