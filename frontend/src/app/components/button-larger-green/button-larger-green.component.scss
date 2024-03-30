@@ -13,4 +13,8 @@ button{
     background-color: $primary-green-color;
     color: white;
     padding: 10px 24px; 
+
+    &:disabled{
+        opacity: 0.8;
+    }
 }

@@ -12,5 +12,6 @@ public class CorsConfiguration implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:4200") //TODO VERIFCAR PARA COLOCAR COMO .ENV A URL DO FRONT
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT");
+//                .allowCredentials(true); //TODO VERIFICAR SE É NECESSÁRIO
     }
 }

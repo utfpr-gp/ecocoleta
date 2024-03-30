@@ -1,1 +1,3 @@
-<button (click)="submit()">{{ btnText }}</button>
+<button type="button" (click)="submit()" [disabled]="disabledBtn">
+  {{ btnText }}
+</button>

@@ -1,4 +1,8 @@
-<app-login-default title="Login page">
+<app-login-default
+  title="Login page"
+  (submit)="submit()"
+  (navigate)="navigate()"
+>
   <form [formGroup]="loginForm">
     <app-primary-input
       formControlName="email"
@@ -12,7 +16,7 @@
       formControlName="password"
       type="password"
       inputName="password"
-      placeholder=""
+      placeholder="Digite sua senha"
       label="Senha"
       ><!-- passar aqui o icone --></app-primary-input
     >
@@ -30,7 +34,14 @@
         <app-button-larger-green
           (submit)="submit()"
           btnText="Entrar"
+          [disabledBtn]="!loginForm.valid"
         ></app-button-larger-green>
+      </div>
+      <div class="button-signup">
+        <app-button-larger-secondary
+          (navigate)="navigate()"
+          btnText="Não tem uma conta? Cadastre-se"
+        ></app-button-larger-secondary>
       </div>
     </section>
   </form>

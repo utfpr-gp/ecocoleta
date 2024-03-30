@@ -8,6 +8,15 @@ import {
 import { LoginDefaultComponent } from '../../components/login-default/login-default.component';
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
 import { ButtonLargerGreenComponent } from '../../components/button-larger-green/button-larger-green.component';
+import { ButtonLargerSecondaryComponent } from '../../components/button-larger-secondary/button-larger-secondary.component';
+import { Router } from '@angular/router';
+import { LoginService } from '../../services/login.service';
+import { ToastrService } from 'ngx-toastr';
+
+interface LoginForm {
+  email: FormControl;
+  password: FormControl;
+}
 
 @Component({
   selector: 'app-login',
@@ -17,24 +26,45 @@ import { ButtonLargerGreenComponent } from '../../components/button-larger-green
     ReactiveFormsModule,
     PrimaryInputComponent,
     ButtonLargerGreenComponent,
+    ButtonLargerSecondaryComponent,
   ],
+  providers: [LoginService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  loginForm!: FormGroup;
+  loginForm!: FormGroup<LoginForm>;
 
-  constructor() {
+  constructor(
+    private router: Router,
+    private loginService: LoginService,
+    private toastService: ToastrService
+  ) {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [
         Validators.required,
-        Validators.minLength(6),
+        Validators.minLength(5),
       ]),
     });
   }
 
   submit() {
-    console.log('Submit 2');
+    this.loginService
+      .login(this.loginForm.value.email, this.loginForm.value.password)
+      .subscribe({
+        // next: () => console.log('Login feito com sucesso!'),
+        // error: () => console.log('Erro inesperado! Tente novamente mais tarde'),
+        next: () => this.toastService.success('Login feito com sucesso!'),
+        error: () =>
+          this.toastService.error(
+            'Erro inesperado! Tente novamente mais tarde'
+          ),
+      });
+    // console.log(this.loginForm.value);
+  }
+
+  navigate() {
+    this.router.navigate(['register']);
   }
 }

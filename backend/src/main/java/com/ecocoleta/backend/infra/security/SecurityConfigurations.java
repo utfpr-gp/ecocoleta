@@ -27,6 +27,10 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
+
+                    //LOGIN
+                    req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
+
                     //USER
                     req.requestMatchers(HttpMethod.POST, "/user/**").permitAll(); // teste
                     req.requestMatchers(HttpMethod.GET, "/user/**").authenticated(); // teste
@@ -38,8 +42,6 @@ public class SecurityConfigurations {
                     req.requestMatchers(HttpMethod.PUT, "/myaccount/**").authenticated(); // teste
                     req.requestMatchers(HttpMethod.DELETE, "/myaccount/**").authenticated(); // teste
 
-                    //LOGIN
-                    req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
                     //OTHER ROUTES
                     req.requestMatchers(HttpMethod.GET, "/hello").hasRole("ADMIN"); //apenas usuarios admin -- teste
 //                    req.anyRequest().authenticated(); //apenas usuarios autenticados de qualquer role

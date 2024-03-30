@@ -1,15 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-button-larger-green',
+  selector: 'app-button-larger-secondary',
   standalone: true,
   imports: [],
-  templateUrl: './button-larger-green.component.html',
-  styleUrl: './button-larger-green.component.scss',
+  templateUrl: './button-larger-secondary.component.html',
+  styleUrl: './button-larger-secondary.component.scss',
 })
-export class ButtonLargerGreenComponent implements OnInit {
+export class ButtonLargerSecondaryComponent implements OnInit {
   @Input() btnText: string = '';
-  @Input() disabledBtn: boolean = true;
   @Output('submit') onSubmit = new EventEmitter();
   @Output('navigate') onNavigate = new EventEmitter();
 

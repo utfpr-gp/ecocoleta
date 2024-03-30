@@ -23,9 +23,9 @@ type InputType = 'text' | 'password' | 'email' | 'number' | 'tel' | 'url';
 })
 export class PrimaryInputComponent implements ControlValueAccessor {
   @Input() type: InputType = 'text';
-  @Input() inputName: string = '';
   @Input() placeholder: string = '';
   @Input() label: string = '';
+  @Input() inputName: string = '';
 
   value: string = '';
   onChange: any = () => {};
