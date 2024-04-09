@@ -1,0 +1,32 @@
+@import "../../../styles/variables.scss";
+
+form{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    section{
+        .forgot-checkbox{
+            display: flex;
+            flex-direction: row;
+            color: $primary-green-color;
+      
+            .forgot{
+              padding-left: 50px;
+            } 
+        } 
+
+        .signin-section{
+          padding-top: 100px;
+        }
+
+        .button-login{
+            padding-top: 10px;
+        }
+
+        .button-signup{
+            padding-top: 80px;
+        }
+    }
+}

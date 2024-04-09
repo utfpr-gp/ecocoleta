@@ -1,0 +1,69 @@
+revisar esa tela, versaõ mobile ta cobrindo o title e versão desktop ta com o
+title muito grande e tudo em coluna
+<app-register-form title="Criar conta como reciclador">
+  <form [formGroup]="residentForm">
+    <app-primary-input
+      formControlName="userName"
+      type="text"
+      inputName="userName"
+      placeholder="Nome"
+      label="Nome e sobrenome"
+      ><!-- passar aqui o icone --></app-primary-input
+    >
+    <app-primary-input
+      formControlName="phoneNumber"
+      type="tel"
+      inputName="phoneNumber"
+      placeholder="Telefone"
+      label="Telefone"
+      ><!-- passar aqui o icone --></app-primary-input
+    >
+    <app-primary-input
+      formControlName="email"
+      type="email"
+      inputName="email"
+      placeholder="Digite seu e-mail"
+      label="E-mail"
+      ><!-- passar aqui o icone --></app-primary-input
+    >
+    <app-primary-input
+      formControlName="emailCheck"
+      type="email"
+      inputName="emailCheck"
+      placeholder="Confirme o e-mail"
+      label="Confirme o e-mail"
+      ><!-- passar aqui o icone --></app-primary-input
+    >
+    <app-primary-input
+      formControlName="password"
+      type="password"
+      inputName="password"
+      placeholder="Digite sua senha"
+      label="Senha"
+      ><!-- passar aqui o icone --></app-primary-input
+    >
+    <app-primary-input
+      formControlName="passwordCheck"
+      type="password"
+      inputName="password"
+      placeholder="Confirme sua senha"
+      label="Confirme sua senha"
+      ><!-- passar aqui o icone --></app-primary-input
+    >
+    <section>
+      <div class="button-login">
+        <app-button-larger-green
+          (submit)="submit()"
+          btnText="Entrar"
+          [disabledBtn]="!residentForm.valid"
+        ></app-button-larger-green>
+      </div>
+      <div class="button-signup">
+        <app-button-larger-secondary
+          (navigate)="navigate()"
+          btnText="Não tem uma conta? Cadastre-se"
+        ></app-button-larger-secondary>
+      </div>
+    </section>
+  </form>
+</app-register-form>
