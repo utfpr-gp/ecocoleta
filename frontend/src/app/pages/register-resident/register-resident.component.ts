@@ -11,7 +11,7 @@ import { ButtonLargerSecondaryComponent } from '../../components/button-larger-s
 import { Router } from '@angular/router';
 import { LoginService } from '../../services/login.service';
 import { ToastrService } from 'ngx-toastr';
-import { RegisterFormComponent } from '../../components/register-form/register-form.component';
+// import { RegisterFormComponent } from '../../components/register-form/register-form.component';
 
 interface ResidentForm {
   email: FormControl;
@@ -26,7 +26,7 @@ interface ResidentForm {
   selector: 'app-register-resident',
   standalone: true,
   imports: [
-    RegisterFormComponent,
+    // RegisterFormComponent,
     ReactiveFormsModule,
     PrimaryInputComponent,
     ButtonLargerGreenComponent,
@@ -93,7 +93,7 @@ export class RegisterResidentComponent {
       });
   }
 
-  navigate() {
+  navigateRegister() {
     this.router.navigate(['register']);
   }
 }
