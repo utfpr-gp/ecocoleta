@@ -23,7 +23,7 @@ export class LoginService {
       );
   } */
 
-  //TODO tratament ode erro mais robusto
+  //TODO tratamento de erro mais robusto
   login(email: string, password: string): Observable<any> {
     return this.httpClient
       .post<LoginResponse>(this.apiUrl + '/login', { email, password })
