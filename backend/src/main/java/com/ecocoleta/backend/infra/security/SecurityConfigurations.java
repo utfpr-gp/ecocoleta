@@ -42,7 +42,8 @@ public class SecurityConfigurations {
                                 .requestMatchers(HttpMethod.DELETE, "/myaccount/**").authenticated() // teste
 
                                 //OTHER ROUTES
-                                .requestMatchers(HttpMethod.GET, "/hello").hasRole("ADMIN") //apenas usuarios admin -- teste
+                                .requestMatchers(HttpMethod.GET, "/hello").permitAll() //todos user -- teste
+//                                .requestMatchers(HttpMethod.GET, "/hello").hasRole("ADMIN") //apenas usuarios admin -- teste
 //                    req.anyRequest().authenticated(); //apenas usuarios autenticados de qualquer role
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class); // adicionar o nosso filtro antes do filtro do spring boot, o nosso filtro ta fazendo a verificação do token...

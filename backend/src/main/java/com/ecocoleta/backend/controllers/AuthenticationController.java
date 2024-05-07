@@ -3,6 +3,7 @@ package com.ecocoleta.backend.controllers;
 import com.ecocoleta.backend.domain.AuthenticationDTO;
 import com.ecocoleta.backend.domain.LoginResponseDTO;
 import com.ecocoleta.backend.domain.user.User;
+import com.ecocoleta.backend.services.AuthenticationService;
 import com.ecocoleta.backend.services.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,19 +16,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("auth")
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+//    @Autowired
+//    private AuthenticationManager authenticationManager;
+//
+//    @Autowired
+//    private TokenService tokenService;
 
     @Autowired
-    private TokenService tokenService;
+    private AuthenticationService authenticationService;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data) {
         try {
-            var usernamePasswordToken = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-            var auth = this.authenticationManager.authenticate(usernamePasswordToken);
-
-            var token = tokenService.generateToken((User) auth.getPrincipal());
+            var token = authenticationService.authenticateAndGetToken(data.email(), data.password());
+//            var usernamePasswordToken = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+//            var auth = this.authenticationManager.authenticate(usernamePasswordToken);
+//
+//            var token = tokenService.generateToken((User) auth.getPrincipal());
 
             return ResponseEntity.ok(new LoginResponseDTO(token));
         } catch (Exception e) {

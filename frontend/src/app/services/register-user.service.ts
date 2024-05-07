@@ -2,17 +2,17 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { LoginResponse } from '../types/login-response.type';
+import { LoginResponse } from '../core/types/login-response.type';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RegisterUserService {
-  apiUrl: string = `${environment.API}user`;
+  apiUrl: string = `${environment.API}/user`;
 
   constructor(private httpClient: HttpClient) {}
   //TODO tratamento de erro mais robusto
-  //TODO fazer tipagem do retorno de cdastro> mudar o back para trazer o token-auth
+  //TODO fazer tipagem do retorno de cadastro> mudar o back para trazer o token-auth
   registerUserResident(
     userName: string,
     email: string,

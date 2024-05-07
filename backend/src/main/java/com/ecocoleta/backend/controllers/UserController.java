@@ -8,9 +8,11 @@ import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.domain.user.dto.UserDTO;
 import com.ecocoleta.backend.domain.user.dto.UserGetDTO;
+import com.ecocoleta.backend.domain.user.dto.UserGetTokenDTO;
 import com.ecocoleta.backend.domain.user.dto.UserUpdateDTO;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollectorDTO;
+import com.ecocoleta.backend.services.AuthenticationService;
 import com.ecocoleta.backend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     //CREATE USER TYPE ADMIN
     @PostMapping("/admin")
@@ -96,10 +101,14 @@ public class UserController {
             User user = userService.createUser(wasteCollector);
 //            criando uma uri de forma automatica com spring passando para caminho user/id
             var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
+//            var uriToken = uriComponentsBuilder.path("/auth/login").buildAndExpand(wasteCollectorDTO.email(), wasteCollectorDTO.password()).toUri();
+            String token = authenticationService.authenticateAndGetToken(wasteCollectorDTO.email(), wasteCollectorDTO.password());
+            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
 
-            return ResponseEntity.created(uri).body(new UserGetDTO(user));
+//            return ResponseEntity.created(uriToken).body(new UserGetTokenDTO(user));
         } else {
             System.err.println("Email ja cadastrado");
+            //TODO fazer exeption correspondente
             return ResponseEntity.badRequest().build();
         }
     }
