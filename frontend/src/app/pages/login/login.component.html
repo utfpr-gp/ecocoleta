@@ -34,7 +34,7 @@
         <app-button-larger-green
           (submit)="submit()"
           btnText="Entrar"
-          [disabledBtn]="!loginForm.valid"
+          [disabledBtn]="loginForm.invalid"
         ></app-button-larger-green>
       </div>
       <div class="button-signup">

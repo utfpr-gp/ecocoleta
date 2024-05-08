@@ -9,7 +9,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class ButtonLargerGreenComponent implements OnInit {
   @Input() btnText: string = '';
-  @Input() disabledBtn: boolean = true;
+  @Input() disabledBtn: boolean = false;
   @Output('submit') onSubmit = new EventEmitter();
   @Output('navigate') onNavigate = new EventEmitter();
 
