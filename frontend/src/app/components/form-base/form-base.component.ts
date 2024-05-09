@@ -24,6 +24,7 @@ interface FormBase {
   userName: FormControl;
   phoneNumber: FormControl;
   cpf: FormControl;
+  // picture: FormControl;
 }
 
 type FormType = 'resident' | 'wasteCollector';
@@ -82,6 +83,10 @@ export class FormBaseComponent implements OnInit {
       required: 'O campo CPF é obrigatório.',
       minlength: 'O CPF deve ter no mínimo 11 caracteres.',
     },
+    picture: {
+      required: 'Insira uma foto sua é obrigatório.',
+      minlength: 'foto...',
+    },
   };
 
   constructor(
@@ -123,6 +128,10 @@ export class FormBaseComponent implements OnInit {
           ? [Validators.required, Validators.minLength(11)]
           : []
       ),
+      // picture: new FormControl(
+      //   '',
+      //   this.formType === 'wasteCollector' ? [Validators.required] : []
+      // ),
     });
     this.formularyService.setRegister(this.formBase);
   }
@@ -148,6 +157,7 @@ export class FormBaseComponent implements OnInit {
       this.showErrorMessage('userName');
       this.showErrorMessage('phoneNumber');
       this.showErrorMessage('cpf');
+      // this.showErrorMessage('picture');
       return;
     }
     this.actionButtonClick.emit();

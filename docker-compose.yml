@@ -59,8 +59,8 @@ services:
   #     SPRING_DATASOURCE_URL: ${DATASOURCE_URL}
   #     SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
   #     SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-  #     SPRING_DATASOURCE_DRIVER-CLAS-NAME: org.postgresql.Driver
-  #     SPRING_JPA_PROPERTIES_HIPERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+  #     # SPRING_DATASOURCE_DRIVER-CLAS-NAME: org.postgresql.Driver
+  #     # SPRING_JPA_PROPERTIES_HIPERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
   #     #acessa o banco de dados via rede interna (bridge network) criado
   #     # SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/ecocoleta_db?useSSL=false&serverTimezone=UTC
   #     # SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}

@@ -52,37 +52,37 @@ export class LoginService {
       );
   }
 
-  signupWasteCollector(
-    name: string,
-    email: string,
-    password: string,
-    phone: string
-    // cpf: string,
-    // picture: string
-  ) {
-    return this.httpClient
-      .post<LoginResponse>(this.apiUrl + '/waste-collector', {
-        name,
-        email,
-        password,
-        phone,
-        role: 'WASTE_COLLECTOR',
-        //TODO corrigir camoos de cpf e picture
-        cpf: '12345678901',
-        picture: 'uri/picture/123456',
-      })
-      .pipe(
-        tap((value) => {
-          const token = value.token;
-          if (token) {
-            //setando token no sessionStorage
-            this.setToken(token);
-          }
-          // sessionStorage.setItem('auth-token', value.token);
-          // sessionStorage.setItem("username", value.name)
-        })
-      );
-  }
+  // signupWasteCollector(
+  //   name: string,
+  //   email: string,
+  //   password: string,
+  //   phone: string
+  //   // cpf: string,
+  //   // picture: string
+  // ) {
+  //   return this.httpClient
+  //     .post<LoginResponse>(this.apiUrl + '/waste-collector', {
+  //       name,
+  //       email,
+  //       password,
+  //       phone,
+  //       role: 'WASTE_COLLECTOR',
+  //       //TODO corrigir camoos de cpf e picture
+  //       cpf: '12345678901',
+  //       picture: 'uri/picture/123456',
+  //     })
+  //     .pipe(
+  //       tap((value) => {
+  //         const token = value.token;
+  //         if (token) {
+  //           //setando token no sessionStorage
+  //           this.setToken(token);
+  //         }
+  //         // sessionStorage.setItem('auth-token', value.token);
+  //         // sessionStorage.setItem("username", value.name)
+  //       })
+  //     );
+  // }
 
   //TODO metodo logout, remove token da sesão e redireciona para a tela de login
 
