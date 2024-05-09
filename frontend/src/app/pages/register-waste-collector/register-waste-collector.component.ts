@@ -25,6 +25,7 @@ export class RegisterWasteCollectorComponent {
       formAserCadastrado
     );
   }
+  //TODO fazer metodo cadastro com tratamento de erros e toastr
 
   // cadastrar() {
   //   const formCadastro = this.formularioService.getCadastro()

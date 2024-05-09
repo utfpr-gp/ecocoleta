@@ -28,52 +28,6 @@ interface FormBase {
 
 type FormType = 'resident' | 'wasteCollector';
 
-// // Defina um tipo para as mensagens de erro
-// type ErrorMessages = {
-//   [key in keyof FormBase]: {
-//     required: string;
-//     email?: string;
-//     minlength?: string;
-//     maxlength?: string;
-//     equalTo?: string;
-//   };
-// };
-
-// // Defina o objeto de mensagens de erro
-// const errorMessages: ErrorMessages = {
-//   email: {
-//     required: 'O campo E-mail é obrigatório.',
-//     email: 'Por favor, insira um e-mail válido.',
-//   },
-//   emailCheck: {
-//     required: 'O campo Confirme o e-mail é obrigatório.',
-//     email: 'Por favor, insira um e-mail válido.',
-//     equalTo: 'Os e-mails não correspondem.',
-//   },
-//   password: {
-//     required: 'O campo Senha é obrigatório.',
-//     minlength: 'A senha deve ter no mínimo 5 caracteres.',
-//   },
-//   passwordCheck: {
-//     required: 'O campo Confirme a senha é obrigatório.',
-//     minlength: 'A senha deve ter no mínimo 5 caracteres.',
-//     equalTo: 'As senhas não correspondem.',
-//   },
-//   userName: {
-//     required: 'O campo Nome e sobrenome é obrigatório.',
-//     minlength: 'O nome deve ter no mínimo 3 caracteres.',
-//     maxlength: 'O nome deve ter no máximo 250 caracteres.',
-//   },
-//   phoneNumber: {
-//     required: 'O campo Telefone é obrigatório.',
-//     minlength: 'O telefone deve ter no mínimo 11 caracteres.',
-//   },
-//   cpf: {
-//     required: 'O campo CPF é obrigatório.',
-//     minlength: 'O CPF deve ter no mínimo 11 caracteres.',
-//   },
-// };
-
 @Component({
   selector: 'app-form-base',
   standalone: true,
@@ -90,13 +44,45 @@ type FormType = 'resident' | 'wasteCollector';
 })
 export class FormBaseComponent implements OnInit {
   formBase!: FormGroup<FormBase>;
-  // estadoControl = new FormControl<UnidadeFederativa | null>(null, Validators.required);
-
   @Input() titlePage: string = '';
   @Input() formModeUpdate: boolean = false; //se editar ou cadastrar
-  // @Input() formType: FormType = 'resident'; //perfilComponent = resident ou waste-collector...
   @Input() formType: FormType = 'wasteCollector'; //perfilComponent = resident ou waste-collector...
   @Output() actionButtonClick: EventEmitter<any> = new EventEmitter<any>();
+
+  // Defina o objeto de mensagens de erro
+  errorMessages: any = {
+    email: {
+      required: 'O campo E-mail é obrigatório.',
+      email: 'Por favor, insira um e-mail válido.',
+    },
+    emailCheck: {
+      required: 'O campo Confirme o e-mail é obrigatório.',
+      email: 'Por favor, insira um e-mail válido.',
+      equalTo: 'Os e-mails não correspondem.',
+    },
+    password: {
+      required: 'O campo Senha é obrigatório.',
+      minlength: 'A senha deve ter no mínimo 5 caracteres.',
+    },
+    passwordCheck: {
+      required: 'O campo Confirme a senha é obrigatório.',
+      minlength: 'A senha deve ter no mínimo 5 caracteres.',
+      equalTo: 'As senhas não correspondem.',
+    },
+    userName: {
+      required: 'O campo Nome e sobrenome é obrigatório.',
+      minlength: 'O nome deve ter no mínimo 3 caracteres.',
+      maxlength: 'O nome deve ter no máximo 250 caracteres.',
+    },
+    phoneNumber: {
+      required: 'O campo Telefone é obrigatório.',
+      minlength: 'O telefone deve ter no mínimo 11 caracteres.',
+    },
+    cpf: {
+      required: 'O campo CPF é obrigatório.',
+      minlength: 'O CPF deve ter no mínimo 11 caracteres.',
+    },
+  };
 
   constructor(
     private router: Router,
@@ -142,50 +128,52 @@ export class FormBaseComponent implements OnInit {
   }
 
   // Método para exibir o toast alert com as mensagens de erro personalizadas
-  // showErrorMessage(field: string) {
-  //         const errorMessage = this.errorMessages[field];
+  showErrorMessage(field: string) {
+    const formField = this.formBase.get(field);
+    if (formField?.errors) {
+      const errors = Object.keys(formField.errors);
+      const errorMessage = this.errorMessages[field][errors[0]];
+      this.toastrService.error(errorMessage);
+    }
+  }
 
-  //   // const formField = this.formBase.get(field);
-  //   // if (formField?.errors) {
-  //   //   const errors = Object.keys(formField.errors);
-  //   //   const errorMessage = this.errorMessages[field][errors[0]];
-  //   //   this.toastrService.error(errorMessage);
-  //   // }
-  // }
-
-  // // Método para exibir o toast alert com as mensagens de erro personalizadas
-  // showErrorMessage(field: string) {
-  //   const formField = this.formBase.get(field);
-  //   if (formField?.errors) {
-  //     const errors = Object.keys(formField.errors);
-  //     const errorMessage = this.errorMessages[field][errors[0]];
-  //     this.toastrService.error(errorMessage);
-  //   }
-  // }
+  runAction() {
+    if (this.formBase.invalid) {
+      this.toastrService.error('Por favor, corrija os erros no formulário.');
+      // Mostrar mensagens de erro personalizadas para campos específicos
+      this.showErrorMessage('email');
+      this.showErrorMessage('emailCheck');
+      this.showErrorMessage('password');
+      this.showErrorMessage('passwordCheck');
+      this.showErrorMessage('userName');
+      this.showErrorMessage('phoneNumber');
+      this.showErrorMessage('cpf');
+      return;
+    }
+    this.actionButtonClick.emit();
+  }
 
   // runAction() {
   //   if (this.formBase.invalid) {
   //     this.toastrService.error('Por favor, corrija os erros no formulário.');
-  //     // Mostrar mensagens de erro personalizadas para campos específicos
-  //     this.showErrorMessage('email');
-  //     this.showErrorMessage('emailCheck');
-  //     this.showErrorMessage('password');
-  //     this.showErrorMessage('passwordCheck');
-  //     this.showErrorMessage('userName');
-  //     this.showErrorMessage('phoneNumber');
-  //     this.showErrorMessage('cpf');
-  //     // return;
+  //     for (const controlName in this.formBase.controls) {
+  //       if (this.formBase.controls.hasOwnProperty(controlName)) {
+  //         const control = this.formBase.get(controlName);
+  //         if (control?.invalid) {
+  //           for (const errorKey in control?.errors) {
+  //             if (control?.errors.hasOwnProperty(errorKey)) {
+  //               const errorMessage = this.errorMessages[controlName][errorKey];
+  //               this.toastrService.error(errorMessage);
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
   //   } else {
   //     console.log('Formulário válido!');
   //     this.actionButtonClick.emit();
   //   }
-  //   // this.actionButtonClick.emit();
   // }
-  //TODO fazer tratametno de erro
-
-  runAction() {
-    this.actionButtonClick.emit();
-  }
 
   // retona um boolean se bater a typagem do formulario
   isTypeWasteCollector(formType: FormType): boolean {
