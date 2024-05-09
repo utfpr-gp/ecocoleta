@@ -1,101 +1,45 @@
 import { Component } from '@angular/core';
-import { FormWasteCollectorComponent } from '../../components/form-waste-collector/form-waste-collector.component';
-
-// import {
-//   FormControl,
-//   FormGroup,
-//   ReactiveFormsModule,
-//   Validators,
-// } from '@angular/forms';
-// import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
-// import { ButtonLargerGreenComponent } from '../../components/button-larger-green/button-larger-green.component';
-// import { ButtonLargerSecondaryComponent } from '../../components/button-larger-secondary/button-larger-secondary.component';
-// import { Router } from '@angular/router';
-// import { LoginService } from '../../services/login.service';
-// import { ToastrService } from 'ngx-toastr';
-// import { RegisterFormComponent } from '../../components/register-form/register-form.component';
-
-// interface WasteCollectorForm {
-//   email: FormControl;
-//   emailCheck: FormControl;
-//   password: FormControl;
-//   passwordCheck: FormControl;
-//   userName: FormControl;
-//   phoneNumber: FormControl;
-// }
+import { FormBaseComponent } from '../../components/form-base/form-base.component';
+import { FormularyService } from '../../core/services/formulary.service';
+import { UserService } from '../../core/services/user.service';
 
 @Component({
   selector: 'app-register-waste-collector',
   standalone: true,
-  imports: [
-    FormWasteCollectorComponent,
-    // RegisterFormComponent,
-    // ReactiveFormsModule,
-    // PrimaryInputComponent,
-    // ButtonLargerGreenComponent,
-    // ButtonLargerSecondaryComponent,
-  ],
-  // providers: [LoginService],
+  imports: [FormBaseComponent],
   templateUrl: './register-waste-collector.component.html',
   styleUrl: './register-waste-collector.component.scss',
 })
 export class RegisterWasteCollectorComponent {
-  // wasteCollectorForm!: FormGroup<WasteCollectorForm>;
+  //se formulario esta para edição ou cadastro, false=cadastro, true=edicao
+  formModeUpdate: boolean = false;
+  constructor(
+    private formularyService: FormularyService,
+    private userService: UserService
+  ) {}
 
-  constructor() { // private toastService: ToastrService // private loginService: LoginService, // private router: Router,
-    // this.wasteCollectorForm = new FormGroup({
-    //   email: new FormControl('', [Validators.required, Validators.email]),
-    //   emailCheck: new FormControl('', [Validators.required, Validators.email]),
-    //   password: new FormControl('', [
-    //     Validators.required,
-    //     Validators.minLength(5),
-    //   ]),
-    //   passwordCheck: new FormControl('', [
-    //     Validators.required,
-    //     Validators.minLength(5),
-    //   ]),
-    //   userName: new FormControl('', [Validators.required]),
-    //   phoneNumber: new FormControl('', [Validators.required]),
-    // });
+  register() {
+    const formAserCadastrado = this.formularyService.getRegister();
+    console.log(
+      'register, botão d componente formbase filho clicado e iniciando metodo do componente api para cadastrar, chamar service etc',
+      formAserCadastrado
+    );
   }
 
-  /* submit() {
-    this.loginService
-      .login(this.loginForm.value.email, this.loginForm.value.password)
-      .subscribe({
-        // next: () => console.log('Login feito com sucesso!'),
-        // error: () => console.log('Erro inesperado! Tente novamente mais tarde'),
-        next: () => this.toastService.success('Login feito com sucesso!'),
-        error: () =>
-          this.toastService.error(
-            'Erro inesperado! Tente novamente mais tarde'
-          ),
-      });
-    // console.log(this.loginForm.value);
-  } */
-
-  // submit() {
-  //   this.loginService
-  //     .login(
-  //       this.wasteCollectorForm.value.email,
-  //       this.wasteCollectorForm.value.password
-  //     )
-  //     .subscribe({
-  //       next: () => {
-  //         this.toastService.success('Login feito com sucesso!'),
-  //           this.router.navigate(['/user']);
+  // cadastrar() {
+  //   const formCadastro = this.formularioService.getCadastro()
+  //   if(formCadastro?.valid) {
+  //     const novoCadastro = formCadastro.getRawValue() as PessoaUsuaria;
+  //     console.log(novoCadastro)
+  //     this.cadastroService.cadastrar(novoCadastro).subscribe({
+  //       next: (value) => {
+  //         console.log('Cadastro realizado com sucesso', value);
+  //         this.router.navigate(['/login'])
   //       },
-  //       error: (err: any) => {
-  //         this.toastService.error(
-  //           'Erro inesperado! Tente novamente mais tarde'
-  //         );
-  //         // Se desejar, você pode lidar com o erro aqui também.
-  //         console.error('Erro durante o login:', err);
-  //       },
-  //     });
-  // }
-
-  // navigateRegister() {
-  //   this.router.navigate(['register']);
+  //       error: (err) => {
+  //         console.log('Erro ao realizar cadastro', err)
+  //       }
+  //     })
+  //   }
   // }
 }

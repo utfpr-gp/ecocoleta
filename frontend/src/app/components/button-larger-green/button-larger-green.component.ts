@@ -10,18 +10,11 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class ButtonLargerGreenComponent implements OnInit {
   @Input() btnText: string = '';
   @Input() disabledBtn: boolean = false;
-  @Output('submit') onSubmit = new EventEmitter();
-  @Output('navigate') onNavigate = new EventEmitter();
-
-  submit() {
-    this.onSubmit.emit();
-  }
-
-  navigate() {
-    this.onNavigate.emit();
-  }
-
-  constructor() {}
+  @Output() buttonClick: EventEmitter<void> = new EventEmitter<void>();
 
   ngOnInit(): void {}
+
+  click() {
+    this.buttonClick.emit();
+  }
 }

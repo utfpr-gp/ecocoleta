@@ -10,7 +10,7 @@ import { PrimaryInputComponent } from '../../components/primary-input/primary-in
 import { ButtonLargerGreenComponent } from '../../components/button-larger-green/button-larger-green.component';
 import { ButtonLargerSecondaryComponent } from '../../components/button-larger-secondary/button-larger-secondary.component';
 import { Router } from '@angular/router';
-import { LoginService } from '../../services/login.service';
+import { LoginService } from '../../core/services/login.service';
 import { ToastrService } from 'ngx-toastr';
 
 interface LoginForm {

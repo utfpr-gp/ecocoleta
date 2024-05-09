@@ -1,4 +1,14 @@
+<!-- <div class="container">
+    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-1 align-items-center">
+    <app-form-waste-collector titlePage="Criar conta como Catador" />
+</div> -->
+
+<!-- MODO ALURA -->
 <div class="container">
-  <!-- <div class="row row-cols-1 row-cols-sm-1 row-cols-md-1 align-items-center"> -->
-  <app-form-waste-collector titlePage="Criar conta como Catador" />
+  <app-form-base
+    titlePage="Criar conta como Catador"
+    (actionButtonClick)="register()"
+    [formModeUpdate]="formModeUpdate"
+    formType="wasteCollector"
+  />
 </div>
