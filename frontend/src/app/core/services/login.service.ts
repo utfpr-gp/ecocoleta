@@ -4,6 +4,8 @@ import { LoginResponse } from '../types/login-response.type';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+const TOKEN_KEY = 'auth-token';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -36,19 +38,19 @@ export class LoginService {
   //TODO metodo logout, remove token da sesão e redireciona para a tela de login
 
   setToken(token: string) {
-    sessionStorage.setItem('auth-token', token);
+    localStorage.setItem(TOKEN_KEY, token);
   }
 
   getToken() {
-    return sessionStorage.getItem('auth-token');
+    return localStorage.getItem(TOKEN_KEY) ?? '';
   }
 
   existsToken() {
-    return !!sessionStorage.getItem('auth-token');
+    return !!this.getToken();
     //Se o valor for null, undefined, 0, NaN, "" (string vazia) ou false, o resultado será false. Caso contrário, o resultado será true.
   }
 
   removeToken() {
-    sessionStorage.removeItem('auth-token');
+    localStorage.removeItem(TOKEN_KEY);
   }
 }
