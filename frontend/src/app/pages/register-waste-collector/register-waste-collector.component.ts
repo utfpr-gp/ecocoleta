@@ -28,18 +28,19 @@ export class RegisterWasteCollectorComponent {
     if (formToRegister?.valid) {
       const newWasteCollector = formToRegister.getRawValue() as User;
 
-      newWasteCollector.picture = 'https://teste/imgteste.png'; //TODO apagar apos teste
+      console.log('newWasteCollector picture: ', newWasteCollector.picture);
+      // newWasteCollector.picture = 'https://teste/imgteste.png'; //TODO apagar apos teste
 
-      this.userService.createUserWasteCollector(newWasteCollector).subscribe({
-        next: (value) => {
-          // console.log('Cadastro realizado com sucesso', value);
-          this.router.navigate(['/user']);
-        },
-        error: (err) => {
-          // console.log('Erro ao realizar cadastro', err);
-          this.toastrService.error('Erro ao realizar cadastro', err);
-        },
-      });
+      // this.userService.createUserWasteCollector(newWasteCollector).subscribe({
+      //   next: (value) => {
+      //     // console.log('Cadastro realizado com sucesso', value);
+      //     this.router.navigate(['/user']);
+      //   },
+      //   error: (err) => {
+      //     // console.log('Erro ao realizar cadastro', err);
+      //     this.toastrService.error('Erro ao realizar cadastro', err);
+      //   },
+      // });
     }
   }
   //TODO fazer metodo cadastro com tratamento de erros e toastr
