@@ -35,6 +35,18 @@ interface LoginForm {
 export class LoginComponent {
   loginForm!: FormGroup<LoginForm>;
 
+  // Defina o objeto de mensagens de erro
+  errorMessages: any = {
+    email: {
+      required: 'O campo E-mail é obrigatório.',
+      email: 'Por favor, insira um e-mail válido.',
+    },
+    password: {
+      required: 'O campo Senha é obrigatório.',
+      minlength: 'A senha deve ter no mínimo 5 caracteres.',
+    },
+  };
+
   constructor(
     private router: Router,
     private loginService: LoginService,
@@ -47,6 +59,17 @@ export class LoginComponent {
         Validators.minLength(5),
       ]),
     });
+  }
+
+  runAction() {
+    if (this.loginForm.invalid) {
+      this.toastService.error('Por favor, corrija os erros no formulário.');
+      // Mostrar mensagens de erro personalizadas para campos específicos
+      this.showErrorMessage('email');
+      this.showErrorMessage('password');
+      return;
+    }
+    this.submit();
   }
 
   submit() {
@@ -65,6 +88,16 @@ export class LoginComponent {
           console.error('Erro durante o login:', err);
         },
       });
+  }
+
+  // Método para exibir o toast alert com as mensagens de erro personalizadas
+  showErrorMessage(field: string) {
+    const formField = this.loginForm.get(field);
+    if (formField?.errors) {
+      const errors = Object.keys(formField.errors);
+      const errorMessage = this.errorMessages[field][errors[0]];
+      this.toastService.error(errorMessage);
+    }
   }
 
   navigate() {
