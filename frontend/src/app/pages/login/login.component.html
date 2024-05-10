@@ -1,3 +1,4 @@
+<!-- TODO refazer pagina refatorar -->
 <app-login-default
   title="Login page"
   (submit)="submit()"
@@ -32,7 +33,7 @@
       </div>
       <div class="button-login">
         <app-button-larger-green
-          (submit)="submit()"
+          (click)="submit()"
           btnText="Entrar"
           [disabledBtn]="loginForm.invalid"
         ></app-button-larger-green>

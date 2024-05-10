@@ -16,16 +16,16 @@ import { FormularyService } from '../../core/services/formulary.service';
 import { CommonModule } from '@angular/common';
 import { FormValidations } from '../../core/utils/form-validation';
 
-interface FormBase {
-  email: FormControl;
-  emailCheck: FormControl;
-  password: FormControl;
-  passwordCheck: FormControl;
-  userName: FormControl;
-  phoneNumber: FormControl;
-  cpf: FormControl;
-  // picture: FormControl;
-}
+// interface FormBase {
+//   email: FormControl;
+//   emailCheck: FormControl;
+//   password: FormControl;
+//   passwordCheck: FormControl;
+//   userName: FormControl;
+//   phoneNumber: FormControl;
+//   cpf: FormControl;
+//   // picture: FormControl;
+// }
 
 type FormType = 'resident' | 'wasteCollector';
 
@@ -44,7 +44,8 @@ type FormType = 'resident' | 'wasteCollector';
   styleUrl: './form-base.component.scss',
 })
 export class FormBaseComponent implements OnInit {
-  formBase!: FormGroup<FormBase>;
+  // formBase!: FormGroup<FormBase>;
+  formBase!: FormGroup;
   @Input() titlePage: string = '';
   @Input() formModeUpdate: boolean = false; //se editar ou cadastrar
   @Input() formType: FormType = 'wasteCollector'; //perfilComponent = resident ou waste-collector...
@@ -70,12 +71,12 @@ export class FormBaseComponent implements OnInit {
       minlength: 'A senha deve ter no mínimo 5 caracteres.',
       equalTo: 'As senhas não correspondem.',
     },
-    userName: {
+    name: {
       required: 'O campo Nome e sobrenome é obrigatório.',
       minlength: 'O nome deve ter no mínimo 3 caracteres.',
       maxlength: 'O nome deve ter no máximo 250 caracteres.',
     },
-    phoneNumber: {
+    phone: {
       required: 'O campo Telefone é obrigatório.',
       minlength: 'O telefone deve ter no mínimo 11 caracteres.',
     },
@@ -113,12 +114,12 @@ export class FormBaseComponent implements OnInit {
         Validators.minLength(5),
         FormValidations.equalTo('password'),
       ]),
-      userName: new FormControl('', [
+      name: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(250),
       ]),
-      phoneNumber: new FormControl('', [
+      phone: new FormControl('', [
         Validators.required,
         Validators.minLength(11),
       ]),
@@ -128,10 +129,10 @@ export class FormBaseComponent implements OnInit {
           ? [Validators.required, Validators.minLength(11)]
           : []
       ),
-      // picture: new FormControl(
-      //   '',
-      //   this.formType === 'wasteCollector' ? [Validators.required] : []
-      // ),
+      picture: new FormControl(
+        '',
+        this.formType === 'wasteCollector' ? [Validators.required] : []
+      ),
     });
     this.formularyService.setRegister(this.formBase);
   }
@@ -154,10 +155,10 @@ export class FormBaseComponent implements OnInit {
       this.showErrorMessage('emailCheck');
       this.showErrorMessage('password');
       this.showErrorMessage('passwordCheck');
-      this.showErrorMessage('userName');
-      this.showErrorMessage('phoneNumber');
+      this.showErrorMessage('name');
+      this.showErrorMessage('phone');
       this.showErrorMessage('cpf');
-      // this.showErrorMessage('picture');
+      this.showErrorMessage('picture');
       return;
     }
     this.actionButtonClick.emit();

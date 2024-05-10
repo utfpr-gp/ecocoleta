@@ -1,89 +1,43 @@
-// import { Component } from '@angular/core';
-// import {
-//   FormControl,
-//   FormGroup,
-//   ReactiveFormsModule,
-//   Validators,
-// } from '@angular/forms';
-// import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
-// import { ButtonLargerGreenComponent } from '../../components/button-larger-green/button-larger-green.component';
-// import { ButtonLargerSecondaryComponent } from '../../components/button-larger-secondary/button-larger-secondary.component';
-// import { Router } from '@angular/router';
-// import { ToastrService } from 'ngx-toastr';
-// import { RegisterUserService } from '../../services/register-user.service';
-// // import { RegisterFormComponent } from '../../components/register-form/register-form.component';
+import { Component } from '@angular/core';
+import { FormBaseComponent } from '../../components/form-base/form-base.component';
+import { FormularyService } from '../../core/services/formulary.service';
+import { UserService } from '../../core/services/user.service';
+import { User } from '../../core/types/user.type';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
-// interface ResidentForm {
-//   email: FormControl;
-//   emailCheck: FormControl;
-//   password: FormControl;
-//   passwordCheck: FormControl;
-//   userName: FormControl;
-//   phoneNumber: FormControl;
-// }
+@Component({
+  selector: 'app-register-resident',
+  standalone: true,
+  imports: [FormBaseComponent],
+  templateUrl: './register-resident.component.html',
+  styleUrl: './register-resident.component.scss',
+})
+export class RegisterResidentComponent {
+  //se formulario esta para edição ou cadastro, false=cadastro, true=edicao
+  formModeUpdate: boolean = false;
+  constructor(
+    private formularyService: FormularyService,
+    private userService: UserService,
+    private router: Router,
+    private toastrService: ToastrService
+  ) {}
 
-// @Component({
-//   selector: 'app-register-resident',
-//   standalone: true,
-//   imports: [
-//     // RegisterFormComponent,
-//     ReactiveFormsModule,
-//     PrimaryInputComponent,
-//     ButtonLargerGreenComponent,
-//     ButtonLargerSecondaryComponent,
-//   ],
-//   providers: [RegisterUserService],
-//   templateUrl: './register-resident.component.html',
-//   styleUrl: './register-resident.component.scss',
-// })
-// export class RegisterResidentComponent {
-//   residentForm!: FormGroup<ResidentForm>;
+  registerResident() {
+    const formToRegister = this.formularyService.getRegister();
+    if (formToRegister?.valid) {
+      const newResident = formToRegister.getRawValue() as User;
 
-//   constructor(
-//     private router: Router,
-//     private registerUserService: RegisterUserService,
-//     private toastService: ToastrService
-//   ) {
-//     this.residentForm = new FormGroup({
-//       email: new FormControl('', [Validators.required, Validators.email]),
-//       emailCheck: new FormControl('', [Validators.required, Validators.email]),
-//       password: new FormControl('', [
-//         Validators.required,
-//         Validators.minLength(5),
-//       ]),
-//       passwordCheck: new FormControl('', [
-//         Validators.required,
-//         Validators.minLength(5),
-//       ]),
-//       userName: new FormControl('', [Validators.required]),
-//       phoneNumber: new FormControl('', [Validators.required]),
-//     });
-//   }
-
-//   submit() {
-//     this.registerUserService
-//       .registerUserResident(
-//         this.residentForm.value.userName,
-//         this.residentForm.value.email,
-//         this.residentForm.value.password,
-//         this.residentForm.value.phoneNumber
-//       )
-//       .subscribe({
-//         next: () => {
-//           this.toastService.success('Cadastro feito com sucesso!'),
-//             this.router.navigate(['/user']);
-//         },
-//         error: (err: any) => {
-//           this.toastService.error(
-//             'Erro inesperado! Tente novamente mais tarde'
-//           );
-//           // Se desejar, você pode lidar com o erro aqui também.
-//           console.error('Erro durante o cadastro:', err);
-//         },
-//       });
-//   }
-
-//   navigateRegister() {
-//     this.router.navigate(['register']);
-//   }
-// }
+      this.userService.createUserResident(newResident).subscribe({
+        next: (value) => {
+          //   console.log('Cadastro realizado com sucesso', value);
+          this.router.navigate(['/user']);
+        },
+        error: (err) => {
+          // console.log('Erro ao realizar cadastro', err);
+          this.toastrService.error('Erro ao realizar cadastro', err);
+        },
+      });
+    }
+  }
+}

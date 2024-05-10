@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBaseComponent } from '../../components/form-base/form-base.component';
 import { FormularyService } from '../../core/services/formulary.service';
 import { UserService } from '../../core/services/user.service';
-import { WasteCollector } from '../../core/types/user.type';
+import { User } from '../../core/types/user.type';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
@@ -26,14 +26,13 @@ export class RegisterWasteCollectorComponent {
   registerWasteCollector() {
     const formToRegister = this.formularyService.getRegister();
     if (formToRegister?.valid) {
-      const newWasteCollector = formToRegister.getRawValue() as WasteCollector;
+      const newWasteCollector = formToRegister.getRawValue() as User;
 
       newWasteCollector.picture = 'https://teste/imgteste.png'; //TODO apagar apos teste
-      console.log(newWasteCollector); //TODO apagar apos teste
 
       this.userService.createUserWasteCollector(newWasteCollector).subscribe({
         next: (value) => {
-          console.log('Cadastro realizado com sucesso', value);
+          // console.log('Cadastro realizado com sucesso', value);
           this.router.navigate(['/user']);
         },
         error: (err) => {

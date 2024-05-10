@@ -58,8 +58,11 @@ public class UserController {
 
 //            criando uma uri de forma automatica com spring passando para caminho user/id
             var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
+            String token = authenticationService.authenticateAndGetToken(userDTO.email(), userDTO.password());
+            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
 
-            return ResponseEntity.created(uri).body(new UserGetDTO(user));
+
+//            return ResponseEntity.created(uri).body(new UserGetDTO(user));
         } else {
             System.err.println("Email ja cadastrado ou sem permissão de admin");
             return ResponseEntity.badRequest().build();
@@ -79,8 +82,10 @@ public class UserController {
             User user = userService.createUser(resident);
 //            criando uma uri de forma automatica com spring passando para caminho user/id
             var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
+            String token = authenticationService.authenticateAndGetToken(residentDTO.email(), residentDTO.password());
+            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
 
-            return ResponseEntity.created(uri).body(new UserGetDTO(user));
+//            return ResponseEntity.created(uri).body(new UserGetDTO(user));
         } else {
             System.err.println("Email ja cadastrado");
             return ResponseEntity.badRequest().build();
@@ -126,8 +131,10 @@ public class UserController {
             User user = userService.createUser(company);
 //            criando uma uri de forma automatica com spring passando para caminho user/id
             var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
+            String token = authenticationService.authenticateAndGetToken(companyDTO.email(), companyDTO.password());
+            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
 
-            return ResponseEntity.created(uri).body(new UserGetDTO(user));
+//            return ResponseEntity.created(uri).body(new UserGetDTO(user));
         } else {
             System.err.println("Email ja cadastrado");
             return ResponseEntity.badRequest().build();
