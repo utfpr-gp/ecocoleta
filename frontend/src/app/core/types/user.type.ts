@@ -19,7 +19,7 @@ export type User = {
   phone: number;
   cpf?: number;
   cnpj?: number;
-  picture?: string;
+  picture?: string | File;
   role?: string;
   token?: string;
   createdAt?: string;

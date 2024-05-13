@@ -16,17 +16,6 @@ import { FormularyService } from '../../core/services/formulary.service';
 import { CommonModule } from '@angular/common';
 import { FormValidations } from '../../core/utils/form-validation';
 
-// interface FormBase {
-//   email: FormControl;
-//   emailCheck: FormControl;
-//   password: FormControl;
-//   passwordCheck: FormControl;
-//   userName: FormControl;
-//   phoneNumber: FormControl;
-//   cpf: FormControl;
-//   // picture: FormControl;
-// }
-
 type FormType = 'resident' | 'wasteCollector';
 
 @Component({
@@ -50,6 +39,8 @@ export class FormBaseComponent implements OnInit {
   @Input() formModeUpdate: boolean = false; //se editar ou cadastrar
   @Input() formType: FormType = 'wasteCollector'; //perfilComponent = resident ou waste-collector...
   @Output() actionButtonClick: EventEmitter<any> = new EventEmitter<any>();
+  // Variável para armazenar a URL local da imagem para exibição
+  imagePreview: string | ArrayBuffer | null = null;
 
   // Defina o objeto de mensagens de erro
   errorMessages: any = {
@@ -137,28 +128,23 @@ export class FormBaseComponent implements OnInit {
     this.formularyService.setRegister(this.formBase);
   }
 
-  // handleFileInput(files: FileList | null): void {
-  //   if (files && files.length > 0) {
-  //     const file = files[0];
-  //     this.formBase.patchValue({
-  //       picture: file,
-  //     });
-  //   }
-  // }
-
-  // getObjectURL(file: File | null): string | null {
-  //   return file ? URL.createObjectURL(file) : null;
-  // }
-
   handleFileInput(files: FileList | null): void {
+    // console.log('chamou metodo handlefilesinput: files: ', files);
+
     if (files && files.length > 0) {
       const file = files[0];
       const reader = new FileReader();
+
       reader.onload = (e: ProgressEvent<FileReader>) => {
+        // Atribui o resultado do FileReader (data URL) à variável imagePreview
+        this.imagePreview = e.target ? e.target.result : null;
+
+        // Armazena o arquivo no formulário, mas ainda não faz o upload
         this.formBase.patchValue({
-          picture: e.target ? e.target.result : null,
+          picture: file, // Aqui estamos passando o arquivo diretamente, não a URL
         });
       };
+
       reader.readAsDataURL(file);
     }
   }
@@ -174,9 +160,6 @@ export class FormBaseComponent implements OnInit {
   }
 
   runAction() {
-    //TODO teste remover
-    console.log('console do pcture:', this.formBase.value.picture);
-
     if (this.formBase.invalid) {
       this.toastrService.error('Por favor, corrija os erros no formulário.');
       // Mostrar mensagens de erro personalizadas para campos específicos

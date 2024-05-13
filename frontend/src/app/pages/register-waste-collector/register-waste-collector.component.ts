@@ -5,6 +5,7 @@ import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/types/user.type';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { UploadImgService } from '../../core/services/upload-img.service';
 
 @Component({
   selector: 'app-register-waste-collector',
@@ -14,34 +15,49 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './register-waste-collector.component.scss',
 })
 export class RegisterWasteCollectorComponent {
-  //se formulario esta para edição ou cadastro, false=cadastro, true=edicao
   formModeUpdate: boolean = false;
+
   constructor(
     private formularyService: FormularyService,
     private userService: UserService,
     private router: Router,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private uploadService: UploadImgService
   ) {}
 
-  registerWasteCollector() {
+  async registerWasteCollector() {
     const formToRegister = this.formularyService.getRegister();
     if (formToRegister?.valid) {
       const newWasteCollector = formToRegister.getRawValue() as User;
 
-      console.log('newWasteCollector picture: ', newWasteCollector.picture);
-      // newWasteCollector.picture = 'https://teste/imgteste.png'; //TODO apagar apos teste
+      //TODO verificar fazer cadastramento mais robusto
+      // Upload da imagem se presente
+      if (newWasteCollector.picture) {
+        try {
+          const file: File = newWasteCollector.picture as File;
+          const url = await this.uploadService.uploadImage(file);
+          // this.toastrService.success('Imagem carregada com sucesso!');
+          newWasteCollector.picture = url; // Atualiza o objeto com a URL da imagem
+        } catch (error) {
+          this.toastrService.error('Falha ao fazer upload da imagem.');
+          console.error('Erro ao fazer upload da imagem:', error);
+          return; // Interrompe o processo de registro se o upload falhar
+        }
+      }
 
-      // this.userService.createUserWasteCollector(newWasteCollector).subscribe({
-      //   next: (value) => {
-      //     // console.log('Cadastro realizado com sucesso', value);
-      //     this.router.navigate(['/user']);
-      //   },
-      //   error: (err) => {
-      //     // console.log('Erro ao realizar cadastro', err);
-      //     this.toastrService.error('Erro ao realizar cadastro', err);
-      //   },
-      // });
+      // Criação do usuário
+      this.userService.createUserWasteCollector(newWasteCollector).subscribe({
+        next: (value) => {
+          this.router.navigate(['/user']);
+          this.toastrService.success('Cadastro realizado com sucesso');
+        },
+        error: (err) => {
+          this.toastrService.error('Erro ao realizar cadastro', err);
+          console.error('Erro ao realizar cadastro', err);
+        },
+      });
+    } else {
+      this.toastrService.error('Por favor, corrija os erros no formulário.');
     }
   }
-  //TODO fazer metodo cadastro com tratamento de erros e toastr
 }

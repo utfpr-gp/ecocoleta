@@ -6,44 +6,12 @@
 
 <div class="row form-div">
   <form [formGroup]="formBase">
-    <!-- TODO fazer componente de icon e upload img -->
-
-    <!-- <div *ngIf="isTypeWasteCollector(formType)" class="row upload-picture-row">
-      <div class="card-body text-center">
-        <div class="mt-3 mb-4">
-          <img
-            [src]="
-              getObjectURL(formBase.get('picture')?.value) ||
-              'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp'
-            "
-            class="rounded-circle img-fluid"
-            style="width: 100px"
-            alt="Uploaded Image"
-          />
-        </div>
-
-        <input
-          type="file"
-          accept="image/*"
-          #fileInput
-          style="display: none"
-          (change)="handleFileInput(fileInput.files)"
-        />
-
-        <button (click)="fileInput.click()" class="upload-btn">
-          Selecione sua foto
-        </button>
-      </div>
-    </div> -->
-
-    <!-- versaõ 1 base64 -->
-
     <div *ngIf="isTypeWasteCollector(formType)" class="row upload-picture-row">
       <div class="card-body text-center">
         <div class="mt-3 mb-4">
           <img
             [src]="
-              formBase.get('picture')?.value ||
+              imagePreview ||
               'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp'
             "
             class="rounded-circle img-fluid"
@@ -51,7 +19,6 @@
             alt="Uploaded Image"
           />
         </div>
-
         <input
           type="file"
           accept="image/*"
@@ -59,7 +26,6 @@
           style="display: none"
           (change)="handleFileInput(fileInput.files)"
         />
-
         <button (click)="fileInput.click()" class="upload-btn">
           Selecione sua foto
         </button>
