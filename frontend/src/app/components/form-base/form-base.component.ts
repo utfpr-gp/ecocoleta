@@ -137,6 +137,19 @@ export class FormBaseComponent implements OnInit {
     this.formularyService.setRegister(this.formBase);
   }
 
+  // handleFileInput(files: FileList | null): void {
+  //   if (files && files.length > 0) {
+  //     const file = files[0];
+  //     this.formBase.patchValue({
+  //       picture: file,
+  //     });
+  //   }
+  // }
+
+  // getObjectURL(file: File | null): string | null {
+  //   return file ? URL.createObjectURL(file) : null;
+  // }
+
   handleFileInput(files: FileList | null): void {
     if (files && files.length > 0) {
       const file = files[0];
@@ -150,34 +163,6 @@ export class FormBaseComponent implements OnInit {
     }
   }
 
-  // handleFileInput(files: FileList): void {
-  //   if (files.length === 0) return;
-
-  //   const file = files[0];
-  //   const reader = new FileReader();
-  //   reader.onload = (e: any) => {
-  //     this.formBase.patchValue({
-  //       picture: e.target.result,
-  //     });
-  //   };
-  //   reader.readAsDataURL(file);
-  // }
-
-  // handleFileInput(event: Event): void {
-  //   const target = event.target as HTMLInputElement;
-  //   const file = target.files ? target.files[0] : null;
-
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = (e: ProgressEvent<FileReader>) => {
-  //       this.formBase.patchValue({
-  //         picture: e.target ? e.target.result : null
-  //       });
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // }
-
   // Método para exibir o toast alert com as mensagens de erro personalizadas
   showErrorMessage(field: string) {
     const formField = this.formBase.get(field);
@@ -189,6 +174,9 @@ export class FormBaseComponent implements OnInit {
   }
 
   runAction() {
+    //TODO teste remover
+    console.log('console do pcture:', this.formBase.value.picture);
+
     if (this.formBase.invalid) {
       this.toastrService.error('Por favor, corrija os erros no formulário.');
       // Mostrar mensagens de erro personalizadas para campos específicos
