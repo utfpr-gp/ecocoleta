@@ -31,4 +31,6 @@ export class authenticationInterceptor implements HttpInterceptor {
     }
     return next.handle(request);
   }
+
+  //TODO verificar interceptação não esta enviando o header authorization
 }

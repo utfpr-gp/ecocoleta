@@ -25,3 +25,5 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
   ],
 };
+
+//TODO verificar interceptação não esta enviando o header authorization

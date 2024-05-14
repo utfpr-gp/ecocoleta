@@ -4,8 +4,6 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { User } from '../types/user.type';
 import { environment } from '../../../environments/environment';
 import { LoginService } from './login.service';
-// import * as jwt_decode from 'jwt-decode';
-// const jwt_decode = require('jwt-decode');
 import jwt_decode from 'jwt-decode';
 
 @Injectable({

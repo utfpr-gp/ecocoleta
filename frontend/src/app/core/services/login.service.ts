@@ -4,7 +4,7 @@ import { LoginResponse } from '../types/login-response.type';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-const TOKEN_KEY = 'auth-token';
+const TOKEN_KEY = 'token';
 
 @Injectable({
   providedIn: 'root',
