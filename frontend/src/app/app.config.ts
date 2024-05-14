@@ -5,25 +5,23 @@ import {
   HTTP_INTERCEPTORS,
   provideHttpClient,
   withFetch,
+  withInterceptorsFromDi,
 } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { authenticationInterceptor } from './core/interceptors/authentication.interceptor';
+import { AuthenticationInterceptor } from './core/interceptors/authentication.interceptor';
 
 export const appConfig: ApplicationConfig = {
-  //injetando httpClient, ngx-toastr, Animations em toda aplicação
   providers: [
-    //provendo o token se existir em todas as requisição assim não precisando passar explicitamente no header de cada requisição
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: authenticationInterceptor,
-      multi: true,
-    },
     provideRouter(routes),
     provideAnimations(),
     provideToastr(),
-    provideHttpClient(withFetch()),
+    //provendo o token se existir em todas as requisição assim não precisando passar explicitamente no header de cada requisição
+    provideHttpClient(withFetch(), withInterceptorsFromDi()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthenticationInterceptor,
+      multi: true,
+    },
   ],
 };
-
-//TODO verificar interceptação não esta enviando o header authorization
