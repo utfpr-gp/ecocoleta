@@ -5,6 +5,7 @@ import { User } from '../types/user.type';
 import { environment } from '../../../environments/environment';
 import { LoginService } from './login.service';
 import jwt_decode from 'jwt-decode';
+// import { Token } from '../types/token.type';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,7 @@ export class UserService {
   apiUrlUser: string = `${environment.API}/user`;
 
   private userSubject = new BehaviorSubject<User | null>(null);
+  // private userTokenSubject = new BehaviorSubject<Token | null>(null);
 
   constructor(
     private httpClient: HttpClient,
@@ -27,13 +29,15 @@ export class UserService {
   //METHODS UTILS
   decodeJWT() {
     let token = this.loginService.getToken();
-    let user = jwt_decode(token) as User;
-    this.userSubject.next(user);
-
-    console.log('user service log> decodeJWT', user); //TODO apagar apos teste
+    let userTokenDecode = jwt_decode(token) as User;
+    this.userSubject.next(userTokenDecode);
+    // this.userTokenSubject.next(userTokenDecode);
+    console.log('user token service log> decodeJWT', userTokenDecode); //TODO apagar apos teste
+    // console.log('userTokenSubsect', this.userTokenSubject.value?.sub);
   }
 
   returnUser() {
+    // return this.userTokenSubject.asObservable();
     return this.userSubject.asObservable();
   }
 
@@ -44,6 +48,7 @@ export class UserService {
 
   logout() {
     this.loginService.removeToken();
+    // this.userTokenSubject.next(null);
     this.userSubject.next(null);
   }
 

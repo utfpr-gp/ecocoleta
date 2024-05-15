@@ -6,7 +6,8 @@
 
 <div class="row form-div">
   <form [formGroup]="formBase">
-    <div *ngIf="isTypeWasteCollector(formType)" class="row upload-picture-row">
+    @if (isTypeWasteCollector(formType)) {
+    <div class="row upload-picture-row">
       <div class="card-body text-center">
         <div class="mt-3 mb-4">
           <img
@@ -31,6 +32,7 @@
         </button>
       </div>
     </div>
+    }
 
     <div class="row">
       <div class="col-sm-10 col-md-4">

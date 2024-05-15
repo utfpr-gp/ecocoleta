@@ -10,31 +10,30 @@
       inputName="email"
       placeholder="Digite seu e-mail"
       label="E-mail"
-      ><!-- passar aqui o icone --></app-primary-input
-    >
+    ></app-primary-input>
     <app-primary-input
       formControlName="password"
       type="password"
       inputName="password"
       placeholder="Digite sua senha"
       label="Senha"
-      ><!-- passar aqui o icone --></app-primary-input
-    >
+    ></app-primary-input>
     <section>
       <div class="forgot-checkbox">
         <div class="remember-checkbox">
           <input type="checkbox" id="checkRemember" checked />
+          <!-- TODO - Implementar a funcionalidade de lembrar-me -->
           <label for="checkRemember">Lembrar-me</label>
         </div>
         <div class="forgot">
-          <span>Esqueci minha senha</span>
+          <!-- TODO - Implementar a rota para a página de recuperação de senha -->
+          <span routerLink="/">Esqueci minha senha</span>
         </div>
       </div>
       <div class="button-login">
         <app-button-larger-green
           (click)="runAction()"
           btnText="Entrar"
-          [disabledBtn]="loginForm.invalid"
         ></app-button-larger-green>
       </div>
       <div class="button-signup">

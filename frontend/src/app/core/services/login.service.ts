@@ -14,7 +14,6 @@ export class LoginService {
 
   constructor(private httpClient: HttpClient) {}
 
-  //TODO tratamento de erro mais robusto
   login(email: string, password: string): Observable<LoginResponse> {
     return this.httpClient
       .post<LoginResponse>(this.apiUrl + '/login', { email, password })
@@ -25,17 +24,8 @@ export class LoginService {
             this.setToken(value.token);
           }
         })
-        // catchError((error) => {
-        //   // Aqui você pode tratar o erro como preferir.
-        //   // Por exemplo, você pode registrar o erro ou notificar o usuário.
-        //   console.error(error.message);
-        //   // Propague o erro para que o código que chama este método possa lidar com ele.
-        //   return throwError(error);
-        // })
       );
   }
-
-  //TODO metodo logout, remove token da sesão e redireciona para a tela de login
 
   setToken(token: string) {
     localStorage.setItem(TOKEN_KEY, token);

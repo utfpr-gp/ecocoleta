@@ -9,7 +9,7 @@ import { LoginDefaultComponent } from '../../components/login-default/login-defa
 import { PrimaryInputComponent } from '../../components/primary-input/primary-input.component';
 import { ButtonLargerGreenComponent } from '../../components/button-larger-green/button-larger-green.component';
 import { ButtonLargerSecondaryComponent } from '../../components/button-larger-secondary/button-larger-secondary.component';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { LoginService } from '../../core/services/login.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -22,6 +22,7 @@ interface LoginForm {
   selector: 'app-login',
   standalone: true,
   imports: [
+    RouterLink,
     LoginDefaultComponent,
     ReactiveFormsModule,
     PrimaryInputComponent,
@@ -73,21 +74,20 @@ export class LoginComponent {
   }
 
   submit() {
-    this.loginService
-      .login(this.loginForm.value.email, this.loginForm.value.password)
-      .subscribe({
-        next: () => {
-          this.toastService.success('Login feito com sucesso!'),
+    if (this.loginForm.valid) {
+      this.loginService
+        .login(this.loginForm.value.email, this.loginForm.value.password)
+        .subscribe({
+          next: () => {
+            this.toastService.success('Login feito com sucesso!');
             this.router.navigate(['/user']);
-        },
-        error: (err: any) => {
-          this.toastService.error(
-            'Erro inesperado! Tente novamente mais tarde'
-          );
-          // Se desejar, você pode lidar com o erro aqui também.
-          console.error('Erro durante o login:', err);
-        },
-      });
+            this.loginForm.reset();
+          },
+          error: (err) => {
+            this.toastService.error(`'Erro durante o login: ${err?.message}`); // Se desejar, você pode lidar com o erro aqui também.
+          },
+        });
+    }
   }
 
   // Método para exibir o toast alert com as mensagens de erro personalizadas

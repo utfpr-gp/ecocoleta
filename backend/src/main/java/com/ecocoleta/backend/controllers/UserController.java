@@ -1,5 +1,6 @@
 package com.ecocoleta.backend.controllers;
 
+import com.ecocoleta.backend.domain.LoginResponseDTO;
 import com.ecocoleta.backend.domain.company.Company;
 import com.ecocoleta.backend.domain.company.CompanyDTO;
 import com.ecocoleta.backend.domain.resident.Resident;
@@ -57,9 +58,10 @@ public class UserController {
             userService.createUser(user);
 
 //            criando uma uri de forma automatica com spring passando para caminho user/id
-            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
+//            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
             String token = authenticationService.authenticateAndGetToken(userDTO.email(), userDTO.password());
-            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
+            return ResponseEntity.ok().body(new LoginResponseDTO(token));
+//            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
 
 
 //            return ResponseEntity.created(uri).body(new UserGetDTO(user));
@@ -81,9 +83,10 @@ public class UserController {
             Resident resident = new Resident(residentDTO.name(), residentDTO.email(), residentDTO.password(), residentDTO.phone(), residentDTO.role());
             User user = userService.createUser(resident);
 //            criando uma uri de forma automatica com spring passando para caminho user/id
-            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
+//            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
             String token = authenticationService.authenticateAndGetToken(residentDTO.email(), residentDTO.password());
-            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
+            return ResponseEntity.ok().body(new LoginResponseDTO(token));
+//            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
 
 //            return ResponseEntity.created(uri).body(new UserGetDTO(user));
         } else {
@@ -105,10 +108,11 @@ public class UserController {
             WasteCollector wasteCollector = new WasteCollector(wasteCollectorDTO.name(), wasteCollectorDTO.email(), wasteCollectorDTO.password(), wasteCollectorDTO.phone(), wasteCollectorDTO.role(), wasteCollectorDTO.cpf(), wasteCollectorDTO.picture());
             User user = userService.createUser(wasteCollector);
 //            criando uma uri de forma automatica com spring passando para caminho user/id
-            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
+//            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
 //            var uriToken = uriComponentsBuilder.path("/auth/login").buildAndExpand(wasteCollectorDTO.email(), wasteCollectorDTO.password()).toUri();
             String token = authenticationService.authenticateAndGetToken(wasteCollectorDTO.email(), wasteCollectorDTO.password());
-            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
+            return ResponseEntity.ok().body(new LoginResponseDTO(token));
+//            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
 
 //            return ResponseEntity.created(uriToken).body(new UserGetTokenDTO(user));
         } else {
@@ -130,9 +134,10 @@ public class UserController {
             Company company = new Company(companyDTO.name(), companyDTO.companyName(), companyDTO.email(), companyDTO.password(), companyDTO.phone(), companyDTO.role(), companyDTO.cnpj());
             User user = userService.createUser(company);
 //            criando uma uri de forma automatica com spring passando para caminho user/id
-            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
+//            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
             String token = authenticationService.authenticateAndGetToken(companyDTO.email(), companyDTO.password());
-            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
+            return ResponseEntity.ok().body(new LoginResponseDTO(token));
+//            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
 
 //            return ResponseEntity.created(uri).body(new UserGetDTO(user));
         } else {
@@ -144,6 +149,7 @@ public class UserController {
     //Get User by id
     @GetMapping("/{id}")
     public ResponseEntity getUser(@PathVariable Long id) {
+        //TODO verificar se user que solicitou req é o mesmo do id ou é admin ou company
         var user = userService.getUserById(id);
 
         return ResponseEntity.ok(new UserGetDTO(user));
