@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { User } from '../types/user.type';
@@ -12,7 +12,7 @@ import { UserRole } from '../types/user-role.type';
   providedIn: 'root',
 })
 export class UserService {
-  apiUrl: string = `${environment.API}`;
+  // apiUrl: string = `${environment.API}`;
   apiUrlUser: string = `${environment.API}/user`;
 
   public userRole: UserRole = UserRole.RESIDENT;
@@ -74,23 +74,10 @@ export class UserService {
   }
 
   //GET METHODS
-
-  // getUser(): Observable<User> {
-  //   // return this.httpClient.get<User>(`${this.apiUrl}/user`);
-  //   return this.httpClient.get<User>(`${this.apiUrl}/hello`); // TODO Alterado para testar a API
-  // }
-  getUser(): Observable<User> {
-    // return this.httpClient.get<User>(`${this.apiUrl}/user`);
-    return this.httpClient.get<any>(`${this.apiUrl}/hello`); // TODO Alterado para testar a API
+  getUser(id: any): Observable<User> {
+    // const headers = new HttpHeaders({'Authorization': `Bearer ${this.loginService.getToken()}`}); // desnecessario com o interceptor
+    return this.httpClient.get<User>(`${this.apiUrlUser}/${id}`);
   }
-
-  // buscarCadastro(): Observable<PessoaUsuaria> {
-  //   return this.http.get<PessoaUsuaria>(`${this.apiUrl}/auth/perfil`);
-  // }
-
-  // editarCadastro(pessoaUsuaria: PessoaUsuaria): Observable<PessoaUsuaria> {
-  //   return this.http.patch<PessoaUsuaria>(`${this.apiUrl}/auth/perfil`, pessoaUsuaria);
-  // }
 
   //CREATE METHODS
   createUserWasteCollector(user: User): Observable<User> {
@@ -127,5 +114,10 @@ export class UserService {
         }
       })
     );
+  }
+
+  // UPDATE METHODS
+  updateUser(user: User): Observable<User> {
+    return this.httpClient.put<User>(`${this.apiUrlUser}/`, user);
   }
 }

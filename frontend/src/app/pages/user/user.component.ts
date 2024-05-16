@@ -12,9 +12,9 @@ export class UserComponent implements OnInit {
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
-    this.userService.getUser().subscribe((response) => {
-      console.log(response);
-    });
+    // this.userService.getUser().subscribe((response) => {
+    //   console.log(response);
+    // });
     // throw new Error('Method not implemented.');
   }
 }

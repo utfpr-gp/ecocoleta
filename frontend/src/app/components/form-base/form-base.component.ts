@@ -35,6 +35,7 @@ import { UserService } from '../../core/services/user.service';
 export class FormBaseComponent implements OnInit {
   formBase!: FormGroup;
   @Input() titlePage: string = '';
+  @Input() titleBtn: string = 'Cadastrar';
   @Input() formModeUpdate: boolean = false; //se editar ou cadastrar
   @Output() actionButtonClick: EventEmitter<any> = new EventEmitter<any>();
   @Input() userRole: UserRole = UserRole.RESIDENT;
@@ -70,6 +71,10 @@ export class FormBaseComponent implements OnInit {
       required: 'O campo Telefone é obrigatório.',
       minlength: 'O telefone deve ter no mínimo 11 caracteres.',
     },
+    cnpj: {
+      required: 'O campo CNPJ é obrigatório.',
+      minlength: 'O CNPJ deve ter no mínimo 11 caracteres.',
+    },
     cpf: {
       required: 'O campo CPF é obrigatório.',
       minlength: 'O CPF deve ter no mínimo 11 caracteres.',
@@ -94,20 +99,32 @@ export class FormBaseComponent implements OnInit {
   ngOnInit() {
     this.formBase = this.formBuilder.group({
       email: new FormControl('', [Validators.required, Validators.email]),
-      emailCheck: new FormControl('', [
-        Validators.required,
-        Validators.email,
-        FormValidations.equalTo('email'),
-      ]),
-      password: new FormControl('', [
-        Validators.required,
-        Validators.minLength(5),
-      ]),
-      passwordCheck: new FormControl('', [
-        Validators.required,
-        Validators.minLength(5),
-        FormValidations.equalTo('password'),
-      ]),
+      emailCheck: new FormControl(
+        '',
+        !this.formModeUpdate
+          ? [
+              Validators.required,
+              Validators.email,
+              FormValidations.equalTo('email'),
+            ]
+          : []
+      ),
+      password: new FormControl(
+        '',
+        !this.formModeUpdate
+          ? [Validators.required, Validators.minLength(5)]
+          : []
+      ),
+      passwordCheck: new FormControl(
+        '',
+        !this.formModeUpdate
+          ? [
+              Validators.required,
+              Validators.minLength(5),
+              FormValidations.equalTo('password'),
+            ]
+          : []
+      ),
       name: new FormControl('', [
         Validators.required,
         Validators.minLength(3),
