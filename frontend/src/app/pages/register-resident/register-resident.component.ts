@@ -5,6 +5,7 @@ import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/types/user.type';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { UserRole } from '../../core/types/user-role.type';
 
 @Component({
   selector: 'app-register-resident',
@@ -16,6 +17,8 @@ import { ToastrService } from 'ngx-toastr';
 export class RegisterResidentComponent {
   //se formulario esta para edição ou cadastro, false=cadastro, true=edicao
   formModeUpdate: boolean = false;
+  userType: UserRole = UserRole.RESIDENT;
+
   constructor(
     private formularyService: FormularyService,
     private userService: UserService,

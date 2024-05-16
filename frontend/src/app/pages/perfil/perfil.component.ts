@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBaseComponent } from '../../components/form-base/form-base.component';
+import { UserService } from '../../core/services/user.service';
 
 @Component({
   selector: 'app-perfil',
@@ -10,8 +11,15 @@ import { FormBaseComponent } from '../../components/form-base/form-base.componen
 })
 export class PerfilComponent {
   formModeUpdate: boolean = true;
+  // userRole: string | undefined = 'WASTE_COLLECTOR';
 
-  constructor() {}
+  constructor(private userService: UserService) {
+    // console.log('userService.userRole', userService.userRole);
+    // this.userService.returnUser().subscribe((user) => {
+    //   this.userRole = user?.role;
+    //   console.log('user service log> returnUser', user);
+    // });
+  }
 
   async updateUser() {}
 }

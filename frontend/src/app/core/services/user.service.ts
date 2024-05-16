@@ -5,6 +5,7 @@ import { User } from '../types/user.type';
 import { environment } from '../../../environments/environment';
 import { LoginService } from './login.service';
 import jwt_decode from 'jwt-decode';
+import { UserRole } from '../types/user-role.type';
 // import { Token } from '../types/token.type';
 
 @Injectable({
@@ -14,6 +15,7 @@ export class UserService {
   apiUrl: string = `${environment.API}`;
   apiUrlUser: string = `${environment.API}/user`;
 
+  public userRole: UserRole = UserRole.RESIDENT;
   private userSubject = new BehaviorSubject<User | null>(null);
   // private userTokenSubject = new BehaviorSubject<Token | null>(null);
 
@@ -23,6 +25,7 @@ export class UserService {
   ) {
     if (this.loginService.existsToken()) {
       this.decodeJWT();
+      this.userRole = this.returnUserRole();
     }
   }
 
@@ -31,9 +34,23 @@ export class UserService {
     let token = this.loginService.getToken();
     let userTokenDecode = jwt_decode(token) as User;
     this.userSubject.next(userTokenDecode);
-    // this.userTokenSubject.next(userTokenDecode);
+
     console.log('user token service log> decodeJWT', userTokenDecode); //TODO apagar apos teste
-    // console.log('userTokenSubsect', this.userTokenSubject.value?.sub);
+  }
+
+  returnUserRole() {
+    switch (this.userSubject.value?.role) {
+      case 'WASTE_COLLECTOR':
+        return UserRole.WASTE_COLLECTOR;
+      case 'RESIDENT':
+        return UserRole.RESIDENT;
+      case 'COMPANY':
+        return UserRole.COMPANY;
+      case 'ADMIN':
+        return UserRole.ADMIN;
+      default:
+        return UserRole.RESIDENT;
+    }
   }
 
   returnUser() {
@@ -78,7 +95,7 @@ export class UserService {
   //CREATE METHODS
   createUserWasteCollector(user: User): Observable<User> {
     //Add role to user
-    user.role = 'WASTE_COLLECTOR';
+    user.role = UserRole.WASTE_COLLECTOR;
 
     //TODO refactor this, esta mandando o bjeto inteiro com emailchack etc, api nã oesta aceitando...
     console.log('user servic log> createUserWasteCollector', user); //TODO apagar apos teste
@@ -97,7 +114,7 @@ export class UserService {
 
   createUserResident(user: User): Observable<User> {
     //Add role to user
-    user.role = 'RESIDENT';
+    user.role = UserRole.RESIDENT;
 
     console.log('user servic log> createUserResident', user); //TODO apagar apos teste
 

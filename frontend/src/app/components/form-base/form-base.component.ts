@@ -15,8 +15,8 @@ import { ToastrService } from 'ngx-toastr';
 import { FormularyService } from '../../core/services/formulary.service';
 import { CommonModule } from '@angular/common';
 import { FormValidations } from '../../core/utils/form-validation';
-
-type FormType = 'resident' | 'wasteCollector';
+import { UserRole } from '../../core/types/user-role.type';
+import { UserService } from '../../core/services/user.service';
 
 @Component({
   selector: 'app-form-base',
@@ -33,12 +33,11 @@ type FormType = 'resident' | 'wasteCollector';
   styleUrl: './form-base.component.scss',
 })
 export class FormBaseComponent implements OnInit {
-  // formBase!: FormGroup<FormBase>;
   formBase!: FormGroup;
   @Input() titlePage: string = '';
   @Input() formModeUpdate: boolean = false; //se editar ou cadastrar
-  @Input() formType: FormType = 'wasteCollector'; //perfilComponent = resident ou waste-collector...
   @Output() actionButtonClick: EventEmitter<any> = new EventEmitter<any>();
+  @Input() userRole: UserRole = UserRole.RESIDENT;
   // Variável para armazenar a URL local da imagem para exibição
   imagePreview: string | ArrayBuffer | null = null;
 
@@ -85,8 +84,12 @@ export class FormBaseComponent implements OnInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private formularyService: FormularyService,
-    private toastrService: ToastrService
-  ) {}
+    private toastrService: ToastrService,
+    private userService: UserService
+  ) {
+    this.userRole = this.userService.userRole; // se user logado pega o role dele, ou do componente pai, caso não default é resident
+    console.log('userRole do form base', this.userRole); //TODO teste apagar
+  }
 
   ngOnInit() {
     this.formBase = this.formBuilder.group({
@@ -116,13 +119,19 @@ export class FormBaseComponent implements OnInit {
       ]),
       cpf: new FormControl(
         '',
-        this.formType === 'wasteCollector'
+        this.userRole === 'WASTE_COLLECTOR'
+          ? [Validators.required, Validators.minLength(11)]
+          : []
+      ),
+      cnpj: new FormControl(
+        '',
+        this.userRole === 'COMPANY'
           ? [Validators.required, Validators.minLength(11)]
           : []
       ),
       picture: new FormControl(
         '',
-        this.formType === 'wasteCollector' ? [Validators.required] : []
+        this.userRole === 'WASTE_COLLECTOR' ? [Validators.required] : []
       ),
     });
     this.formularyService.setRegister(this.formBase);
@@ -174,33 +183,6 @@ export class FormBaseComponent implements OnInit {
       return;
     }
     this.actionButtonClick.emit();
-  }
-
-  // runAction() {
-  //   if (this.formBase.invalid) {
-  //     this.toastrService.error('Por favor, corrija os erros no formulário.');
-  //     for (const controlName in this.formBase.controls) {
-  //       if (this.formBase.controls.hasOwnProperty(controlName)) {
-  //         const control = this.formBase.get(controlName);
-  //         if (control?.invalid) {
-  //           for (const errorKey in control?.errors) {
-  //             if (control?.errors.hasOwnProperty(errorKey)) {
-  //               const errorMessage = this.errorMessages[controlName][errorKey];
-  //               this.toastrService.error(errorMessage);
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   } else {
-  //     console.log('Formulário válido!');
-  //     this.actionButtonClick.emit();
-  //   }
-  // }
-
-  // retona um boolean se bater a typagem do formulario
-  isTypeWasteCollector(formType: FormType): boolean {
-    return formType === 'wasteCollector';
   }
 
   navigateRegister() {

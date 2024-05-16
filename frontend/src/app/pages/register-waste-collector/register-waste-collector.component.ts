@@ -6,6 +6,7 @@ import { User } from '../../core/types/user.type';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { UploadImgService } from '../../core/services/upload-img.service';
+import { UserRole } from '../../core/types/user-role.type';
 
 @Component({
   selector: 'app-register-waste-collector',
@@ -16,6 +17,7 @@ import { UploadImgService } from '../../core/services/upload-img.service';
 })
 export class RegisterWasteCollectorComponent {
   formModeUpdate: boolean = false;
+  userType: UserRole = UserRole.WASTE_COLLECTOR;
 
   constructor(
     private formularyService: FormularyService,
