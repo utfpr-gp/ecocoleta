@@ -12,12 +12,10 @@ import { UserRole } from '../types/user-role.type';
   providedIn: 'root',
 })
 export class UserService {
-  // apiUrl: string = `${environment.API}`;
   apiUrlUser: string = `${environment.API}/user`;
 
   public userRole: UserRole = UserRole.RESIDENT;
   private userSubject = new BehaviorSubject<User | null>(null);
-  // private userTokenSubject = new BehaviorSubject<Token | null>(null);
 
   constructor(
     private httpClient: HttpClient,
@@ -53,8 +51,7 @@ export class UserService {
     }
   }
 
-  returnUser() {
-    // return this.userTokenSubject.asObservable();
+  returnUser(): Observable<User | null> {
     return this.userSubject.asObservable();
   }
 

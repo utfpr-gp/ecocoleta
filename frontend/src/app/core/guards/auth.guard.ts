@@ -13,3 +13,11 @@ export const authGuard = () => {
     return false;
   }
 };
+
+//TODO fazer authGuard como admin
+// @Injectable()
+// export class AdminGuard implements CanActivate {
+//   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+//     return window.confirm('Você é um administrador?');
+//   }
+// }

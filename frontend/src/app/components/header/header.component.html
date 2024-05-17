@@ -19,8 +19,24 @@
             >Sobre</a
           >
         </li>
+        @if(userLogged){
+        <li class="nav-item">
+          <a class="nav-link active" [routerLink]="['/user/', userLogged.id]"
+            >Meu perfil</a
+          >
+        </li>
+
+        @if(userLogged.role === 'ADMIN' || userLogged.role === 'COMPANY') {
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['#']">Listar usuários</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['#']">Cadastrar novo usuário</a>
+        </li>
+        } }
       </ul>
-      @if(logged) {
+
+      @if(userLogged) {
       <a
         class="btn btn-outline-primary"
         routerLink="/login"

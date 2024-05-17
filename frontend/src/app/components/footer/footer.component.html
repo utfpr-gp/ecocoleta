@@ -1,9 +1,19 @@
 <footer class="app-footer">
   <div class="container">
     <div class="row">
+      @switch (userLogged?.role) { @case ('WASTE_COLLECTOR') {
       <div class="d-flex flex-column justify-content-center align-items-center">
-        Ecocoleta&reg;
+        Ecocoleta&reg; CATADOR
       </div>
+      } @case ('RESIDENT') {
+      <div class="d-flex flex-column justify-content-center align-items-center">
+        Ecocoleta&reg; RESIDENT
+      </div>
+      } @default {
+      <div class="d-flex flex-column justify-content-center align-items-center">
+        Ecocoleta&reg; DEFAULT DESLOGADO || ADMIN || CAOMPANY
+      </div>
+      } }
     </div>
   </div>
 </footer>

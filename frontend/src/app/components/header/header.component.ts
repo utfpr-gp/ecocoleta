@@ -1,8 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/types/user.type';
 import { Token } from '../../core/types/token.type';
+import { UserRole } from '../../core/types/user-role.type';
 
 @Component({
   selector: 'app-header',
@@ -11,19 +12,23 @@ import { Token } from '../../core/types/token.type';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
-export class HeaderComponent {
-  @Input() logged: boolean = false;
+export class HeaderComponent implements OnInit {
+  userLogged: User | null = null;
+  // userLoggedRole!: UserRole;
 
-  // ngOnInit(): void {}
+  constructor(private userService: UserService, private router: Router) {}
 
-  // logged: boolean = false;
-  // // tokenDecode: Token | null = null;
-  constructor(private userService: UserService, private router: Router) {
-    // this.logged = this.userService.isLogged();
+  ngOnInit(): void {
+    this.userService.returnUser().subscribe((user) => {
+      this.userLogged = user;
+      // this.userLoggedRole = user?.role as UserRole;
+    });
+
+    console.log('user log header> ', this.userLogged); //TODO apagar apos teste
+    // console.log('user log role> ', this.userLoggedRole); //TODO apagar apos teste
   }
-  // // tokenDecode$ = this.userService.returnUser();
+
   logout() {
-    this.logged = false;
     this.userService.logout();
     this.router.navigate(['/']);
   }
