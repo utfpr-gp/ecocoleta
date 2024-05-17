@@ -50,20 +50,63 @@ export class PerfilComponent implements OnInit {
     });
   }
 
+  //TODO melhorar retorno da img como wasteCollecgtor,
   //TODO continuar a implementação do updateUser fazer switch case para cada tipo de user um body...
   updateUser() {
-    console.log('this.returnapi', this.ReturnUserApi);
+    let updatedUser: User = {} as User;
+    console.log('this.returnapi', this.ReturnUserApi); //TODO apagar apos teste
+    console.log('var obj ', updatedUser); //TODO apagar apos teste
+
+    switch (this.ReturnUserApi.role) {
+      case 'RESIDENT':
+        updatedUser = {
+          id: String(this.form?.value.id || this.userId),
+          name: String(this.form?.value.name),
+          email: String(this.form?.value.email),
+          phone: Number(this.form?.value.phone),
+        };
+        break;
+      case 'WASTE_COLLECTOR':
+        updatedUser = {
+          id: String(this.form?.value.id || this.userId),
+          name: String(this.form?.value.name),
+          email: String(this.form?.value.email),
+          phone: Number(this.form?.value.phone),
+          cpf: Number(this.form?.value.cpf),
+          picture: String(this.form?.value.picture),
+        };
+        break;
+      case 'COMPANY':
+        updatedUser = {
+          id: String(this.form?.value.id || this.userId),
+          name: String(this.form?.value.name),
+          email: String(this.form?.value.email),
+          phone: Number(this.form?.value.phone),
+          cnpj: Number(this.form?.value.cnpj),
+        };
+        break;
+      case 'ADMIN':
+        updatedUser = {
+          id: String(this.form?.value.id || this.userId),
+          name: String(this.form?.value.name),
+          email: String(this.form?.value.email),
+          phone: Number(this.form?.value.phone),
+        };
+        break;
+    }
+
+    console.log('updatedUser apos switch case', updatedUser); //TODO apagar apos teste
     // const updatedUser = this.form?.value;
-    const updatedUser = {
-      id: String(this.form?.value.id || this.userId),
-      name: String(this.form?.value.name),
-      email: String(this.form?.value.email),
-      phone: Number(this.form?.value.phone),
-      cpf: Number(this.form?.value.cpf),
-      cnpj: Number(this.form?.value.cnpj),
-      picture: String(this.form?.value.picture),
-      // role: String(this.form?.value.role),
-    };
+    // updatedUser = {
+    //   id: String(this.form?.value.id || this.userId),
+    //   name: String(this.form?.value.name),
+    //   email: String(this.form?.value.email),
+    //   phone: Number(this.form?.value.phone),
+    //   cpf: Number(this.form?.value.cpf),
+    //   cnpj: Number(this.form?.value.cnpj),
+    //   picture: String(this.form?.value.picture),
+    //   // role: String(this.form?.value.role),
+    // };
 
     this.userService.updateUser(updatedUser).subscribe({
       next: () => {
@@ -71,7 +114,8 @@ export class PerfilComponent implements OnInit {
         this.router.navigate(['/user']);
       },
       error: (err) => {
-        this.toastrService.error(`Erro ao atualizar usuário!: ${err}`);
+        console.log('erro', err);
+        this.toastrService.error(`Erro ao atualizar usuário!: ${err?.message}`);
       },
     });
   }

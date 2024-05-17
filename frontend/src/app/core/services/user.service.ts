@@ -118,6 +118,6 @@ export class UserService {
 
   // UPDATE METHODS
   updateUser(user: User): Observable<User> {
-    return this.httpClient.put<User>(`${this.apiUrlUser}/`, user);
+    return this.httpClient.put<User>(`${this.apiUrlUser}`, user);
   }
 }

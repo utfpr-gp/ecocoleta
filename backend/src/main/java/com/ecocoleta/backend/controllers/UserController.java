@@ -149,7 +149,8 @@ public class UserController {
     //Get User by id
     @GetMapping("/{id}")
     public ResponseEntity getUser(@PathVariable Long id) {
-        //TODO verificar se user que solicitou req é o mesmo do id ou é admin ou company
+        //TODO verificar se user que solicitou req é o mesmo do id ou é admin ou company???
+        //TODO melhorar esse metodo trazendo dados de todos tipos de user roles, tip owaste... trazer cpf, picture...
         var user = userService.getUserById(id);
 
         return ResponseEntity.ok(new UserGetDTO(user));
@@ -166,16 +167,21 @@ public class UserController {
         return ResponseEntity.ok(page);
     }
 
-    //TODO update de senha, muda ra url colocando o parametro id...
+    //TODO update de senha...
 
     //update
     @PutMapping
     @Transactional
-    public ResponseEntity update(@Valid UserUpdateDTO userUpdateDTO) {
+    public ResponseEntity update(@RequestBody @Valid UserUpdateDTO userUpdateDTO) {
+        //TODO melhorar esse metodo para todos tipos de usuario, fazer um body dto generico para todas roles, etc
+        System.out.println("ENTROU UPDATE...");
+        System.out.println("tostring: " + userUpdateDTO.toString());
+
         var user = userService.getUserById(userUpdateDTO.id());
         user.get().update(userUpdateDTO);
 
         return ResponseEntity.ok(new UserGetDTO(user));
+//        return ResponseEntity.ok().build();
     }
 
     //delete*disableUser com parametro dinamico

@@ -15,9 +15,7 @@ export class AuthenticationInterceptor implements HttpInterceptor {
   constructor(
     private loginService: LoginService,
     private toastrservice: ToastrService
-  ) {
-    console.log('AuthenticationInterceptor instantiated');
-  }
+  ) {}
   intercept(
     request: HttpRequest<any>,
     next: HttpHandler

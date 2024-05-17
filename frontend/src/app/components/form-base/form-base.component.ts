@@ -93,7 +93,6 @@ export class FormBaseComponent implements OnInit {
     private userService: UserService
   ) {
     this.userRole = this.userService.userRole; // se user logado pega o role dele, ou do componente pai, caso não default é resident
-    console.log('userRole do form base', this.userRole); //TODO teste apagar
   }
 
   ngOnInit() {
