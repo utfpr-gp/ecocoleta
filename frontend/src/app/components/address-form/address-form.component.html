@@ -1,0 +1,92 @@
+<div class="row text-center title-page">
+  <div class="col-sm-12 col-md-12">
+    <h1>{{ titlePage }}</h1>
+  </div>
+</div>
+
+<div class="row form-div">
+  <form [formGroup]="formAddress">
+    <div class="row">
+      <div class="col-sm-10 col-md-6">
+        <app-primary-input
+          formControlName="cep"
+          type="text"
+          inputName="cep"
+          placeholder="Cep"
+          label="Cep"
+          ><!-- passar aqui o icone --></app-primary-input
+        >
+      </div>
+      <div class="col-sm-10 col-md-6">
+        <app-primary-input
+          formControlName="name"
+          type="text"
+          inputName="name"
+          placeholder="Nome do endereço: Casa, Trabalho, etc"
+          label="Nome do Endereço"
+          ><!-- passar aqui o icone --></app-primary-input
+        >
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-10 col-md-6">
+        <app-primary-input
+          formControlName="street"
+          type="text"
+          inputName="rua"
+          placeholder="Rua"
+          label="Rua"
+          ><!-- passar aqui o icone --></app-primary-input
+        >
+      </div>
+      <div class="col-sm-10 col-md-6">
+        <app-primary-input
+          formControlName="number"
+          type="text"
+          inputName="number"
+          placeholder="Número"
+          label="Número"
+          ><!-- passar aqui o icone --></app-primary-input
+        >
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-10 col-md-6">
+        <app-primary-input
+          formControlName="neighborhood"
+          type="text"
+          inputName="neighborhood"
+          placeholder="Bairro"
+          label="Bairro"
+          ><!-- passar aqui o icone --></app-primary-input
+        >
+      </div>
+      <div class="col-sm-10 col-md-6">
+        <app-primary-input
+          formControlName="city"
+          type="text"
+          inputName="city"
+          placeholder="Cidade"
+          label="Cidade"
+          ><!-- passar aqui o icone --></app-primary-input
+        >
+      </div>
+    </div>
+  </form>
+</div>
+<div class="row butons-div">
+  <div class="col-sm-10 col-md-6 back-button">
+    <app-button-larger-green
+      (click)="navigate()"
+      btnText="Voltar"
+      [disabledBtn]="false"
+    ></app-button-larger-green>
+  </div>
+  <div class="col-sm-10 col-md-6">
+    <app-button-larger-green
+      (click)="runAction()"
+      btnText="{{ titleBtn }}"
+      [disabledBtn]="false"
+    ></app-button-larger-green>
+  </div>
+</div>

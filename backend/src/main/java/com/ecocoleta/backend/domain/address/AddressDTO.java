@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Pattern;
 public record AddressDTO(
         Long addressId,
         @NotBlank
+        String name,
+        @NotBlank
         String city,
         @NotBlank
         String street,

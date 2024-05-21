@@ -7,6 +7,8 @@ import { RegisterWasteCollectorComponent } from './pages/register-waste-collecto
 import { HomeComponent } from './pages/home/home.component';
 import { authGuard } from './core/guards/auth.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
+import { AddressComponent } from './pages/address/address.component';
+import { AddressListComponent } from './pages/address-list/address-list.component';
 
 export const routes: Routes = [
   // { path: 'home', component: LandPageComponent }, //TODO fazer land page
@@ -20,6 +22,10 @@ export const routes: Routes = [
   },
   { path: 'user', component: UserComponent, canActivate: [authGuard] }, //rota protegida
   { path: 'user/:id', component: PerfilComponent, canActivate: [authGuard] }, //rota protegida
+
+  { path: 'address/list', component: AddressListComponent }, //TODO proteger rota
+  { path: 'address', component: AddressComponent }, //TODO proteger rota
+
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
   // { path: '**', component: PageNotFoundComponent }, //TODO fazer page not found

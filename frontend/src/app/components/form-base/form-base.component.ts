@@ -201,6 +201,7 @@ export class FormBaseComponent implements OnInit {
     this.actionButtonClick.emit();
   }
 
+  //TODO fazer inserindo um parametro tipo nome da rota para direcionare ficar reaproveitavel em outros componentes
   navigateRegister() {
     this.router.navigate(['register']);
   }

@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS users
     phone       VARCHAR(11)                  NOT NULL,
     role        VARCHAR(255)                 NOT NULL,
     activo      BOOLEAN                      NOT NULL,
+    check_phone BOOLEAN DEFAULT false,
+    check_email BOOLEAN DEFAULT false,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP
 );
@@ -16,6 +18,7 @@ CREATE TABLE IF NOT EXISTS users
 CREATE TABLE IF NOT EXISTS address
 (
     id           BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
+    name VARCHAR(255),
     city         VARCHAR(255),
     street       VARCHAR(255),
     number       VARCHAR(255),

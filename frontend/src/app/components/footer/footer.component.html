@@ -1,17 +1,18 @@
 <footer class="app-footer">
   <div class="container">
     <div class="row">
+      <!-- //TODO fazer footer melhor  -->
       @switch (userLogged?.role) { @case ('WASTE_COLLECTOR') {
       <div class="d-flex flex-column justify-content-center align-items-center">
-        Ecocoleta&reg; CATADOR
+        Ecocoleta&reg; LOGADO CATADOR
       </div>
       } @case ('RESIDENT') {
       <div class="d-flex flex-column justify-content-center align-items-center">
-        Ecocoleta&reg; RESIDENT
+        Ecocoleta&reg; LOGADO RESIDENT
       </div>
       } @default {
       <div class="d-flex flex-column justify-content-center align-items-center">
-        Ecocoleta&reg; DEFAULT DESLOGADO || ADMIN || CAOMPANY
+        Ecocoleta&reg; DEFAULT LOGADO || ADMIN || COMPANY
       </div>
       } }
     </div>

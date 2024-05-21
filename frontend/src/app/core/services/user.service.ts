@@ -51,6 +51,10 @@ export class UserService {
     }
   }
 
+  getUserLoggedId() {
+    return parseInt(this.userSubject.value?.id as string);
+  }
+
   returnUser(): Observable<User | null> {
     return this.userSubject.asObservable();
   }

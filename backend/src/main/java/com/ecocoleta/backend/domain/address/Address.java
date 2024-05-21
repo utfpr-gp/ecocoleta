@@ -17,6 +17,7 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Use GenerationType.IDENTITY para suportar autoincremento
     private Long id;
+    private String name;
     private String city;
     private String street;
     private String number;
@@ -29,7 +30,8 @@ public class Address {
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
-    public Address(String city, String street, String number, String neighborhood, String cep) {
+    public Address(String name, String city, String street, String number, String neighborhood, String cep) {
+        this.name = name;
         this.city = city;
         this.street = street;
         this.number = number;
@@ -38,8 +40,9 @@ public class Address {
         this.createTime = LocalDateTime.now();
     }
 
-    public Address(Long id, String city, String street, String number, String neighborhood, String cep) {
+    public Address(Long id, String name, String city, String street, String number, String neighborhood, String cep) {
         this.id = id;
+        this.name = name;
         this.city = city;
         this.street = street;
         this.number = number;
@@ -51,6 +54,7 @@ public class Address {
     @Override
     public String toString() {
         return "Address{" +
+                "name='" + name + '\'' +
                 "city='" + city + '\'' +
                 ", street='" + street + '\'' +
                 ", number='" + number + '\'' +
