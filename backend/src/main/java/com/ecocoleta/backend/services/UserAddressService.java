@@ -58,7 +58,7 @@ public class UserAddressService {
 
 //         Busca o usuário por ID
         Optional<User> optionalUser = userService.getUserById(userId);
-        Optional<Address> optionalAddress = addressService.getAddressById(addressDTO.addressId());
+        Optional<Address> optionalAddress = addressService.getAddressById(addressDTO.id());
 
         if (optionalUser.isPresent() && optionalAddress.isPresent()) {
             UserAddressPK userAddressPK = new UserAddressPK(optionalUser.get().getId(), optionalAddress.get().getId());

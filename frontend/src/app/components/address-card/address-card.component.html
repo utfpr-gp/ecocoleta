@@ -2,13 +2,19 @@
   <div class="col-sm-12 col-md-12">
     <div class="card w-100 mb-3">
       <div class="card-body">
-        <h5 class="card-title">Endereço titulo</h5>
+        <h5 class="card-title">{{ address.name }}</h5>
         <p class="card-text">
-          Rua: xv de novembrouss, 1001, Centro, Guarapuava-PR
+          Rua: {{ address.street }}, {{ address.number }},
+          {{ address.neighborhood }} -
+          {{ address.city }}
         </p>
-        <a [routerLink]="['/#']" class="btn btn-primary">Editar</a
-        >&nbsp;&nbsp;&nbsp;
-        <a [routerLink]="['/#']" class="btn btn-danger">Deletar</a>
+        <button type="button" class="btn btn-primary" (click)="update()">
+          Editar
+        </button>
+        &nbsp;&nbsp;&nbsp;
+        <button type="button" class="btn btn-danger" (click)="delete()">
+          Deletar
+        </button>
       </div>
     </div>
   </div>

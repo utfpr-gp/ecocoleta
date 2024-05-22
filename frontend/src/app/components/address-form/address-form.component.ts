@@ -15,6 +15,7 @@ import { ToastrService } from 'ngx-toastr';
 import { UserService } from '../../core/services/user.service';
 import { FormValidations } from '../../core/utils/form-validation';
 import { CommonModule } from '@angular/common';
+import { ViacepApiService } from '../../core/services/viacep-api.service';
 
 @Component({
   selector: 'app-address-form',
@@ -75,7 +76,8 @@ export class AddressFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private formularyService: FormularyService,
     private toastrService: ToastrService,
-    private userService: UserService
+    private userService: UserService,
+    private viacepApiService: ViacepApiService
   ) {
     this.userRole = this.userService.userRole; // se user logado pega o role dele, ou do componente pai, caso não default é resident
   }
@@ -139,5 +141,29 @@ export class AddressFormComponent implements OnInit {
 
   navigate() {
     this.router.navigate(['/home']);
+  }
+
+  onCepChange(cep: string): void {
+    console.log('CEP:', cep);
+
+    if (cep.length === 8) {
+      this.viacepApiService.buscarCep(cep).subscribe({
+        next: (dados) => {
+          this.toastrService.success('Buscando CEP');
+          if (dados.erro) {
+            this.toastrService.error('CEP não encontrado');
+          } else {
+            this.formAddress.patchValue({
+              street: dados.logradouro,
+              neighborhood: dados.bairro,
+              city: dados.localidade,
+            });
+          }
+        },
+        error: (error) => {
+          console.error('Erro ao buscar CEP:', error);
+        },
+      });
+    }
   }
 }

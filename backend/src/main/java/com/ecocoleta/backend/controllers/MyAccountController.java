@@ -85,28 +85,23 @@ public class MyAccountController {
     //GET
     @GetMapping("/address/{userId}")
     @Transactional
-    public ResponseEntity<List<AddressDTO>> getAddress(@PathVariable Long userId, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<List<AddressDTO>> getAddress(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long userId, UriComponentsBuilder uriComponentsBuilder) {
         System.out.println("ENTROU NO CONTORLLER GET ADDRESS");
 
         // Busca o usuário por ID
         Optional<User> optionalUser = userService.getUserById(userId);
 
-        if (optionalUser.isEmpty()) {
-            System.err.println("User não encontrado!!!!");
-            return ResponseEntity.notFound().build();
-        } else {
+        //validação se o user tem permissão admin ou user autenticado é o dono do endereço e se a relação user address existe
+        if (autorizationService.isAuthorized(userId, userDetails) && optionalUser.isPresent() && !userAddressService.findByUser(optionalUser.get()).isEmpty()) {
             System.out.println("User encontrado!!!!");
             User user = optionalUser.get();
-
-            if (userAddressService.findByUser(user).isEmpty()) {
-                System.err.println("SAIU DO CONTROLLER GET ADDRESS com erro");
-                return ResponseEntity.badRequest().build();
-            } else {
-                List<UserAddress> userAddress = userAddressService.findByUser(user);
-                List<AddressDTO> addressDTOs = userAddress.stream().map(address -> new AddressDTO(address.getAddress().getId(), address.getAddress().getName(), address.getAddress().getCity(), address.getAddress().getStreet(), address.getAddress().getNumber(), address.getAddress().getNeighborhood(), address.getAddress().getCep())).collect(Collectors.toList());
-                System.out.println("SAIU DO CONTROLLER GET ADDRESS com sucesso");
-                return ResponseEntity.ok(addressDTOs);
-            }
+            List<UserAddress> userAddress = userAddressService.findByUser(user);
+            List<AddressDTO> addressDTOs = userAddress.stream().map(address -> new AddressDTO(address.getAddress().getId(), address.getAddress().getName(), address.getAddress().getCity(), address.getAddress().getStreet(), address.getAddress().getNumber(), address.getAddress().getNeighborhood(), address.getAddress().getCep())).collect(Collectors.toList());
+            System.out.println("SAIU DO CONTROLLER GET ADDRESS com sucesso");
+            return ResponseEntity.ok(addressDTOs);
+        }else{
+            System.err.println("SAIU DO CONTROLLER GET ADDRESS com erro ou sem permissão");
+            return ResponseEntity.badRequest().build();
         }
     }
 

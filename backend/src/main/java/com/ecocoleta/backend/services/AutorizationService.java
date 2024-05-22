@@ -27,10 +27,10 @@ public class AutorizationService implements UserDetailsService {
         User userRequestParams = userRepository.findById(userId).get();
 
         if(userRequestParams.getEmail().equals(userDetails.getUsername()) || userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))){
-            System.out.println("Usuario tem permissão");
+            System.out.println("Usuario tem permissão"); //TODO remover
             return true;
         }else {
-            System.err.println("Usuario não tem permissão: " + userDetails.getUsername());
+            System.err.println("Usuario não tem permissão: " + userDetails.getUsername()); //TODO remover
             return false;
         }
     }

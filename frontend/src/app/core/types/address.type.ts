@@ -5,6 +5,7 @@ export type Address = {
   street: string;
   number: string;
   neighborhood: string;
+  city: string;
   createdAt?: string;
   updatedAt?: string;
 };

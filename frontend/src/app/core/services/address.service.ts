@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Address } from '../types/address.type';
 import { Observable, tap } from 'rxjs';
@@ -31,36 +31,21 @@ export class AddressService {
   }
 
   //GET METHODS
-  getAddressById(id: string): Observable<Address> {
-    console.log('address service log> getAddressById', id); //TODO apagar apos teste
+  getAllAddressByUserId(userID: number): Observable<Address[]> {
+    console.log('address service log> getAddressById', userID); //TODO apagar apos teste
 
-    return this.httpClient
-      .get<Address>(`${this.apiUrlMyAcountAddress}/${id}`)
-      .pipe(
-        tap((address: Address) => {
-          console.log(
-            'address service log retorno tap> getAddressById',
-            address
-          ); //TODO apagar apos teste
-        })
-      );
+    return this.httpClient.get<Address[]>(
+      `${this.apiUrlMyAcountAddress}/${userID}`
+    );
+    // .pipe(
+    //   tap((address: Address[]) => {
+    //     console.log(
+    //       'address service log retorno tap> getAddressById',
+    //       address
+    //     ); //TODO apagar apos teste
+    //   })
+    // );
   }
-
-  //TODO refatorar esse metodo tanto front e back não existe
-  // getAllAddressByUserId(userId: string): Observable<Address[]> {
-  //   console.log('address service log> getAllAddressByUserId', userId); //TODO apagar apos teste
-
-  //   return this.httpClient
-  //     .get<Address[]>(`${this.apiUrlMyAcountAddress}/user/${userId}`)
-  //     .pipe(
-  //       tap((address: Address[]) => {
-  //         console.log(
-  //           'address service log retorno tap> getAllAddressByUserId',
-  //           address
-  //         ); //TODO apagar apos teste
-  //       })
-  //     );
-  // }
 
   //UPDATE METHODS
   updateAddress(address: Address): Observable<Address> {
@@ -79,11 +64,20 @@ export class AddressService {
   }
 
   //DELETE METHODS
-  deleteAddress(id: string): Observable<Address> {
-    console.log('address service log> deleteAddress', id); //TODO apagar apos teste
+  deleteAddress(userId: number, addressId: number): Observable<Address> {
+    const params = new HttpParams()
+      .set('userId', userId)
+      .set('addressId', addressId);
+
+    console.log(
+      'address service log> deleteAddress',
+      userId,
+      'addressID',
+      addressId
+    ); //TODO apagar apos teste
 
     return this.httpClient
-      .delete<Address>(`${this.apiUrlMyAcountAddress}/${id}`)
+      .delete<Address>(`${this.apiUrlMyAcountAddress}/`, { params })
       .pipe(
         tap((address: Address) => {
           console.log(
