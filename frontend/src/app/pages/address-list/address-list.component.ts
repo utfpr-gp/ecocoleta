@@ -7,6 +7,7 @@ import { UserService } from '../../core/services/user.service';
 import { Address } from '../../core/types/address.type';
 import { UserRole } from '../../core/types/user-role.type';
 import { ToastrService } from 'ngx-toastr';
+import { AddressStateService } from '../../core/services/address-state.service';
 
 @Component({
   selector: 'app-address-list',
@@ -23,14 +24,16 @@ export class AddressListComponent implements OnInit {
   constructor(
     private router: Router,
     private addressService: AddressService,
+    private addressStateService: AddressStateService,
     private userService: UserService,
     private toastrService: ToastrService
   ) {}
 
   ngOnInit(): void {
+    //TODO iniciar no construtor pois é usaod em outros metodos
     const userId = this.userService.getUserLoggedId();
     this.userType = this.userService.returnUserRole();
-    this.verifyCanAddAddress();
+    // this.verifyCanAddAddress();
 
     console.log('Tipo de usuário logado:', this.userType); // TODO: Remover após teste
     console.log('ID do usuário logado:', userId); // TODO: Remover após teste
@@ -38,6 +41,7 @@ export class AddressListComponent implements OnInit {
     this.addressService.getAllAddressByUserId(userId).subscribe({
       next: (addresses) => {
         this.addresses = addresses;
+        this.verifyCanAddAddress();
         console.log('Lista de endereços:', this.addresses); // TODO: Remover após teste
       },
       error: (err) => {
@@ -63,19 +67,22 @@ export class AddressListComponent implements OnInit {
     const userId = this.userService.getUserLoggedId();
     this.addressService.deleteAddress(userId, addressId).subscribe({
       next: () => {
-        // this.addresses = this.addresses.filter(address => address.id !== addressId);
+        this.addresses = this.addresses.filter(
+          (address) => address.id !== addressId
+        );
         this.verifyCanAddAddress();
         this.toastrService.success('Endereço deletado com sucesso');
       },
       error: (err) => {
         this.toastrService.error('Erro ao deletar endereço', err?.message);
-        console.error('Erro ao deletar endereço:', err); //TODO   Remover após teste
+        console.error('Erro ao deletar endereço:', err);
       },
     });
   }
 
-  //TODO finalizar update de address
-  handleUpdateAddress(addressId: number) {
-    // this.router.navigate(['address', addressId]);
+  handleUpdateAddress(address: Address) {
+    console.log('address-list  função update, address', address);
+    this.addressStateService.setAddress(address);
+    this.router.navigate(['address', address.id]);
   }
 }

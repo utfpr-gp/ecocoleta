@@ -16,6 +16,7 @@ import { UserService } from '../../core/services/user.service';
 import { FormValidations } from '../../core/utils/form-validation';
 import { CommonModule } from '@angular/common';
 import { ViacepApiService } from '../../core/services/viacep-api.service';
+import { FormularyGenericService } from '../../core/services/formulary-generic.service';
 
 @Component({
   selector: 'app-address-form',
@@ -74,7 +75,8 @@ export class AddressFormComponent implements OnInit {
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
-    private formularyService: FormularyService,
+    private formularyGenericService: FormularyGenericService,
+    // private formularyService: FormularyService,
     private toastrService: ToastrService,
     private userService: UserService,
     private viacepApiService: ViacepApiService
@@ -83,6 +85,9 @@ export class AddressFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    // this.formAddress = this.formularyGenericService.getForm('addressForm');
+    console.log('log1 form  address:', this.formAddress);
+
     this.formAddress = this.formBuilder.group({
       cep: new FormControl('', [Validators.required, Validators.minLength(8)]),
       name: new FormControl('', [
@@ -111,7 +116,11 @@ export class AddressFormComponent implements OnInit {
         Validators.maxLength(250),
       ]),
     });
-    this.formularyService.setRegister(this.formAddress);
+
+    console.log('log 2 form-address:', this.formAddress);
+
+    this.formularyGenericService.setForm('formAddress', this.formAddress);
+    console.log('log 3 form-address:', this.formAddress);
   }
 
   // Método para exibir o toast alert com as mensagens de erro personalizadas

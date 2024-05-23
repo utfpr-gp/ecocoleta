@@ -37,7 +37,9 @@ export class PerfilComponent implements OnInit {
   }
 
   loadForm() {
+    console.log('vai carregar!!!!');
     this.form = this.formularyService.getRegister();
+    console.log('form carregou ', this.form);
     this.form?.patchValue({
       id: this.ReturnUserApi?.id || this.userId,
       name: this.ReturnUserApi.name,

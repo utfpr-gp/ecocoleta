@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AddressService } from '../../core/services/address.service';
 import { Address } from '../../core/types/address.type';
+import { FormularyGenericService } from '../../core/services/formulary-generic.service';
 
 @Component({
   selector: 'app-address',
@@ -22,7 +23,7 @@ export class AddressComponent {
   userType: UserRole = UserRole.RESIDENT;
 
   constructor(
-    private formularyService: FormularyService,
+    private formularyGenericService: FormularyGenericService,
     private userService: UserService,
     private addressService: AddressService,
     private router: Router,
@@ -30,7 +31,7 @@ export class AddressComponent {
   ) {}
 
   registerNewAddress() {
-    const formToRegister = this.formularyService.getRegister();
+    const formToRegister = this.formularyGenericService.getForm('addressForm');
     if (formToRegister?.valid) {
       const newAddress = formToRegister.getRawValue() as Address;
 
@@ -52,6 +53,4 @@ export class AddressComponent {
         });
     }
   }
-
-  // getAllAddressByUserId() {}
 }

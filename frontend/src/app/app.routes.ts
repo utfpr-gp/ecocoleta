@@ -9,6 +9,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { AddressComponent } from './pages/address/address.component';
 import { AddressListComponent } from './pages/address-list/address-list.component';
+import { AddressUpdateComponent } from './pages/address-update/address-update.component';
 
 export const routes: Routes = [
   // { path: 'home', component: LandPageComponent }, //TODO fazer land page
@@ -23,8 +24,17 @@ export const routes: Routes = [
   { path: 'user', component: UserComponent, canActivate: [authGuard] }, //rota protegida
   { path: 'user/:id', component: PerfilComponent, canActivate: [authGuard] }, //rota protegida
 
-  { path: 'address/list', component: AddressListComponent }, //TODO proteger rota
-  { path: 'address', component: AddressComponent }, //TODO proteger rota
+  {
+    path: 'address/list',
+    component: AddressListComponent,
+    canActivate: [authGuard],
+  }, //TODO proteger rota
+  { path: 'address', component: AddressComponent, canActivate: [authGuard] }, //TODO proteger rota
+  {
+    path: 'address/:id',
+    component: AddressUpdateComponent,
+    canActivate: [authGuard],
+  }, //TODO proteger rota
 
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },

@@ -10,7 +10,7 @@ import { PrimaryInputComponent } from '../../components/primary-input/primary-in
 import { ButtonLargerGreenComponent } from '../../components/button-larger-green/button-larger-green.component';
 import { ButtonLargerSecondaryComponent } from '../../components/button-larger-secondary/button-larger-secondary.component';
 import { Router } from '@angular/router';
-import { LoginService } from '../../core/services/login.service';
+// import { LoginService } from '../../core/services/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { FormularyService } from '../../core/services/formulary.service';
 import { CommonModule } from '@angular/common';
@@ -28,7 +28,7 @@ import { UserService } from '../../core/services/user.service';
     ButtonLargerGreenComponent,
     ButtonLargerSecondaryComponent,
   ],
-  providers: [LoginService],
+  // providers: [LoginService],
   templateUrl: './form-base.component.html',
   styleUrl: './form-base.component.scss',
 })
@@ -96,6 +96,8 @@ export class FormBaseComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('log1 form  base user:', this.formBase);
+
     this.formBase = this.formBuilder.group({
       email: new FormControl('', [Validators.required, Validators.email]),
       emailCheck: new FormControl(
@@ -150,7 +152,11 @@ export class FormBaseComponent implements OnInit {
         this.userRole === 'WASTE_COLLECTOR' ? [Validators.required] : []
       ),
     });
+    console.log('log 2 form  base user:', this.formBase);
+
     this.formularyService.setRegister(this.formBase);
+
+    console.log('log 3 form  base user:', this.formBase);
   }
 
   handleFileInput(files: FileList | null): void {
