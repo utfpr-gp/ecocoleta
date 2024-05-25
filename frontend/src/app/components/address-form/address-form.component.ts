@@ -75,8 +75,8 @@ export class AddressFormComponent implements OnInit {
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
-    private formularyGenericService: FormularyGenericService,
-    // private formularyService: FormularyService,
+    // private formularyGenericService: FormularyGenericService,
+    private formularyService: FormularyService,
     private toastrService: ToastrService,
     private userService: UserService,
     private viacepApiService: ViacepApiService
@@ -119,7 +119,9 @@ export class AddressFormComponent implements OnInit {
 
     console.log('log 2 form-address:', this.formAddress);
 
-    this.formularyGenericService.setForm('formAddress', this.formAddress);
+    // this.formularyGenericService.setForm('formAddress', this.formAddress);
+    this.formularyService.setRegister(this.formAddress);
+
     console.log('log 3 form-address:', this.formAddress);
   }
 

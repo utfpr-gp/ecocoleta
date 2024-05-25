@@ -23,7 +23,8 @@ export class AddressComponent {
   userType: UserRole = UserRole.RESIDENT;
 
   constructor(
-    private formularyGenericService: FormularyGenericService,
+    // private formularyGenericService: FormularyGenericService,
+    private formularyService: FormularyService,
     private userService: UserService,
     private addressService: AddressService,
     private router: Router,
@@ -31,7 +32,9 @@ export class AddressComponent {
   ) {}
 
   registerNewAddress() {
-    const formToRegister = this.formularyGenericService.getForm('addressForm');
+    // const formToRegister = this.formularyGenericService.getForm('addressForm');
+    const formToRegister = this.formularyService.getRegister();
+
     if (formToRegister?.valid) {
       const newAddress = formToRegister.getRawValue() as Address;
 

@@ -1,0 +1,17 @@
+@import "../styles/variables.scss";
+
+header{
+    min-height: 5vh;
+}
+
+main{
+    min-height: 88vh;
+    background-color: $primary-gray-color;
+
+    // border-style: dashed;
+    // border-color: red;
+}
+
+.footer-nav{
+    height: 7vh;
+}

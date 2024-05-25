@@ -1,6 +1,8 @@
+@if(!userLogged || userLogged.role === 'ADMIN' || userLogged.role ===
+'COMPANY'){
 <nav class="navbar navbar-expand-lg bg-secondary">
   <div class="container-fluid">
-    <a class="navbar-brand" routerLink="/">Ecocoleta</a>
+    <a class="navbar-brand" routerLink="/">EcoColeta</a>
     <button
       class="navbar-toggler"
       type="button"
@@ -51,3 +53,25 @@
     </div>
   </div>
 </nav>
+} @if (userLogged?.role === 'RESIDENT' || userLogged?.role ===
+'WASTE_COLLECTOR') {
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <div class="row w-100">
+      <div class="col-6 d-flex align-items-center">
+        <span class="navbar-brand">EcoColeta</span>
+      </div>
+      <div class="col-6 d-flex justify-content-end align-items-center">
+        <i class="bi bi-bell"></i>
+      </div>
+    </div>
+    <div class="row w-100">
+      <div class="col-12 d-flex justify-content-center">
+        <span class="navbar-subtitle"> Subtítulo</span>
+      </div>
+    </div>
+  </div>
+</nav>
+}
+
+<!-- //TODO continuar verifacando tipos de usuario no header -->

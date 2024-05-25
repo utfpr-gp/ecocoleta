@@ -27,40 +27,43 @@ export class AddressUpdateComponent implements OnInit {
   addressId!: number | string;
   address!: Address;
   formAddress!: FormGroup<any> | null;
-  private addressSubscription!: Subscription;
+  // private addressSubscription!: Subscription;
 
   constructor(
-    private formularyGenericService: FormularyGenericService,
-    private userService: UserService,
-    private addressService: AddressService,
+    // private formularyGenericService: FormularyGenericService,
+    private formularyService: FormularyService,
+    // private userService: UserService,
+    // private addressService: AddressService,
     private addressStateService: AddressStateService,
-    private router: Router,
-    private toastrService: ToastrService,
-    private activatedRoute: ActivatedRoute
-  ) {}
+    private router: Router
+  ) // private toastrService: ToastrService,
+  // private activatedRoute: ActivatedRoute
+  {}
 
   //TODO verificar porque esta carregando varias vezes esse componente
   ngOnInit(): void {
-    // this.addressStateService.currentAddress.subscribe((address) => {
-    this.addressSubscription =
-      this.addressStateService.currentAddress.subscribe((address) => {
-        console.log('log 1 - Endereço init:', address);
-        if (address) {
-          console.log('log 2 -  entoru if addres..:', address);
-          this.address = address;
+    // this.addressSubscription =
+    this.addressStateService.currentAddress.subscribe((address) => {
+      // this.addressStateService.currentAddress.subscribe((address) => {
+      console.log('log 1 - Endereço init:', address);
+      if (address) {
+        console.log('log 2 -  entoru if addres..:', address);
+        this.address = address;
 
-          this.loadForm();
-          // this.formularyService.setRegister(this.address); // Supondo que você tenha um método no serviço de formulários para definir os valores do formulário
-        } else {
-          this.router.navigate(['/address/list']);
-        }
-      });
+        this.loadForm();
+        // this.formularyService.setRegister(this.address); // Supondo que você tenha um método no serviço de formulários para definir os valores do formulário
+      } else {
+        this.router.navigate(['/address/list']);
+      }
+    });
     // this.formularyGenericService.setForm('addressForm', this.formAddress);
   }
 
   loadForm() {
     console.log('log 3 - load form vai carregar!:');
-    this.formAddress = this.formularyGenericService.getForm('formAddress');
+    // this.formAddress = this.formularyGenericService.getForm('formAddress');
+    this.formAddress = this.formularyService.getRegister();
+
     console.log('log 4 - form caregou :', this.formAddress);
 
     // this.formAddress?.patchValue(this.address);

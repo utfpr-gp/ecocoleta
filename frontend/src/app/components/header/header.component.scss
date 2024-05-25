@@ -1,0 +1,24 @@
+@import "../../../styles/variables.scss";
+
+nav{
+    background-color: $white-color;
+}
+
+.navbar-brand {
+    color: $primary-green-color;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .navbar-subtitle {
+    color: $primary-green-color;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+  
+  .bi-bell {
+    color: $primary-green-color;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
