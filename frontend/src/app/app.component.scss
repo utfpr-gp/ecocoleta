@@ -1,17 +1,37 @@
 @import "../styles/variables.scss";
 
 header{
-    min-height: 5vh;
+    min-height: 8vh;
+    height: 8vh;
 }
 
 main{
-    min-height: 88vh;
+    min-height: 85vh;
     background-color: $primary-gray-color;
-
-    // border-style: dashed;
-    // border-color: red;
 }
 
 .footer-nav{
-    height: 7vh;
+  min-height: 7vh;
+  height: 7vh;
+  width: 100%;
+  padding: 0;
+  margin: 0;
 }
+
+/* Estilos para telas pequenas */
+@media (max-width: 576px) {
+    header {
+      min-height: 10vh;
+      height: 10vh;
+    }
+  
+    main {
+      min-height: 78vh;
+      background-color: $primary-gray-color;
+    }
+  
+    .footer-nav {
+      min-height: 12vh;
+      height: 12vh;
+    }
+  }

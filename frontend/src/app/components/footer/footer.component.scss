@@ -1,0 +1,45 @@
+@import "../../../styles/variables.scss";
+
+.container-fluid{
+    background-color: $white-color;
+    height: 100%;
+    width: 100%;
+  }
+
+.row-icons{    
+    font-weight: bold;
+    color: $black-color;
+    padding-top: 10px;
+    height: 100%;
+    width: 100%;
+    margin: 0 !important;
+}
+
+.no-decoration {
+    color: inherit; /* Herda a cor do pai */
+    text-decoration: none;
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+  }
+  
+  .no-decoration:hover,
+  .no-decoration:focus {
+    color: $primary-green-color;
+    // text-decoration: none;
+  }
+
+  .row-default{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: bold;
+    color: $black-color;
+    padding-top: 5px;
+    height: 100%;
+    width: 100%;
+    margin: 0 !important;
+  }

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, input, Input, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/types/user.type';
@@ -14,6 +14,9 @@ import { UserRole } from '../../core/types/user-role.type';
 })
 export class HeaderComponent implements OnInit {
   userLogged: User | null = null;
+  @Input() title: string = 'EcoColeta';
+  @Input() subTitle!: string;
+  hasNotification: boolean = true;
   // userLoggedRole!: UserRole;
 
   constructor(private userService: UserService, private router: Router) {}
@@ -23,9 +26,6 @@ export class HeaderComponent implements OnInit {
       this.userLogged = user;
       // this.userLoggedRole = user?.role as UserRole;
     });
-
-    console.log('user log header> ', this.userLogged); //TODO apagar apos teste
-    // console.log('user log role> ', this.userLoggedRole); //TODO apagar apos teste
   }
 
   logout() {
