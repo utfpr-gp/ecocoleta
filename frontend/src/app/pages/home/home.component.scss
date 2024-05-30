@@ -1,0 +1,70 @@
+@import "../../../styles/variables.scss";
+
+.container-fluid{
+    height: 100%;
+    width: 100%;
+  }
+
+  .main-header-resident{
+    background-color: $white-color;
+    height: 30%;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    h5{
+        text-align: center;
+        padding-bottom: 40px;
+        font-weight: bold;
+        color: $secondary-green-color;
+    }
+
+    
+    // border-style: dotted;
+    // border-color: black;
+  }
+
+  .main-mid-buttons-resident{
+    height: 10%;
+    display: flex;
+    justify-content: space-between; /* Garantir que os botões se alinhem corretamente */
+    align-items: flex-end; /* Alinhar os botões na parte inferior da div */
+
+    border-style: dotted;
+    border-color: red;
+  }
+
+.btn {
+    height: 50px;
+    padding: 0;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $black-color;
+    // background-color: lightgray; /* Cor de fundo inicial */
+    cursor: pointer; /* Mudar cursor para indicar que é clicável */
+    
+    
+    // border-style: dotted;
+    // border-color: blue;
+  }
+
+  /* Estilo para o botão quando clicado */
+.btn.clicked {
+    background-color: $white-color; /* Cor de fundo após o clique */
+  }
+
+  .main-footer-collections{
+    height: 60%;
+    padding: 0;
+
+
+    
+    
+    border-style: dotted;
+    border-color: yellow;
+  }

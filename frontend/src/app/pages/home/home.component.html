@@ -1,1 +1,30 @@
-<p>home works!</p>
+<div class="container-fluid">
+  @switch (userLogged?.role) { @case ('RESIDENT') {
+  <div class="row main-header-resident">
+    <div class="col-12">
+      <div class="container">
+        <h5>Tem material para Descartar?</h5>
+        <app-button-larger-green
+          btnText="Nova coleta"
+        ></app-button-larger-green>
+      </div>
+    </div>
+  </div>
+  <div class="row main-mid-buttons-resident">
+    <div class="col-6 btn btn-0" (click)="changeClickedButton($event, 0)">
+      <i class="bi bi-arrow-clockwise"></i>&nbsp; Coletas em andamento
+    </div>
+    <div class="col-6 btn btn-1" (click)="changeClickedButton($event, 1)">
+      <i class="bi bi-card-list"></i>&nbsp; Histórico de coletas
+    </div>
+  </div>
+  <div class="row main-footer-collections">
+    <div class="col-12">
+      oicoletas
+      <app-home-resident-collections-progress></app-home-resident-collections-progress>
+    </div>
+  </div>
+  } @default {
+  <app-home-default></app-home-default>
+  } }
+</div>
