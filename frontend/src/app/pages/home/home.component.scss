@@ -32,8 +32,8 @@
     justify-content: space-between; /* Garantir que os botões se alinhem corretamente */
     align-items: flex-end; /* Alinhar os botões na parte inferior da div */
 
-    border-style: dotted;
-    border-color: red;
+    // border-style: dotted;
+    // border-color: red;
   }
 
 .btn {
@@ -58,13 +58,15 @@
     background-color: $white-color; /* Cor de fundo após o clique */
   }
 
-  .main-footer-collections{
+  .main-components-collections{
     height: 60%;
     padding: 0;
-
-
     
     
-    border-style: dotted;
-    border-color: yellow;
+    // border-style: dotted;
+    // border-color: yellow;
+
+    .component-tag{
+      padding: 0;
+    }
   }

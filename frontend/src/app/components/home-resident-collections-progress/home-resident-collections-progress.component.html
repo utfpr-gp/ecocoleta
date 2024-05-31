@@ -1,3 +1,25 @@
-<div class="teste">
-  <p>home-resident-collections-progress works!</p>
+<div class="container-fluid main-content">
+  <div class="container title-page">
+    <h2>Coletas</h2>
+  </div>
+  <div class="list-container">
+    <!-- //TODO fazer com iteraça~odo back end -->
+    <ol class="list-group list-group-numbered">
+      @for (colect of listColects; track $index) {
+      <li
+        class="list-group-item d-flex justify-content-between align-items-start"
+      >
+        <div class="ms-2 me-auto">
+          <div class="fw-bold">Subheading</div>
+          Content for list item
+        </div>
+        <span class="badge text-bg-primary rounded-pill">14</span>
+      </li>
+      }@empty {
+      <div class="sub-title-empty">
+        <h5>Sem Coletas</h5>
+      </div>
+      }
+    </ol>
+  </div>
 </div>
