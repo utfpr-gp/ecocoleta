@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { HomeDefaultComponent } from '../../components/home-default/home-default.component';
 import { User } from '../../core/types/user.type';
 import { UserService } from '../../core/services/user.service';
@@ -22,7 +22,9 @@ import { HomeResidentCollectionsProgressComponent } from '../../components/home-
 })
 export class HomeComponent implements OnInit {
   userLogged: User | null = null;
-  activeButtonIndex: number | null = 0; //butto 0 ninitially active
+  activeButtonIndex: number = 0; //butto 0 ninitially active
+  @ViewChild('containerRef', { read: ViewContainerRef })
+  containerRef!: ViewContainerRef;
 
   constructor(private userService: UserService, private router: Router) {}
 
@@ -35,6 +37,8 @@ export class HomeComponent implements OnInit {
   ngAfterViewInit(): void {
     // Set the initial active button after the view has been initialized
     this.setActiveButton(this.activeButtonIndex);
+    // Get the main component based on the initial active button
+    this.getMainComponent(this.activeButtonIndex);
   }
 
   changeClickedButton(event: Event, index: number): void {
@@ -54,6 +58,9 @@ export class HomeComponent implements OnInit {
     // Add 'clicked' class to the currently clicked button
     element.classList.add('clicked');
     this.activeButtonIndex = index;
+
+    // Get the main component based on the clicked button
+    this.getMainComponent(index);
   }
 
   private setActiveButton(index: number | null): void {
@@ -63,5 +70,18 @@ export class HomeComponent implements OnInit {
         initialActiveButton.classList.add('clicked');
       }
     }
+  }
+
+  getMainComponent(index: number): void {
+    console.log('getMainComponent', index);
+    this.containerRef.clear();
+    index === 0
+      ? this.containerRef.createComponent(
+          HomeResidentCollectionsProgressComponent
+        )
+      : this.containerRef.createComponent(
+          HomeResidentCollectionsHistoryComponent
+        );
+    // this.containerRef.createComponent(HomeResidentCollectionsProgressComponent);
   }
 }
