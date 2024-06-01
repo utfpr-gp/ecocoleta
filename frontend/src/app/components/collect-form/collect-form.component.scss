@@ -1,0 +1,75 @@
+@import "../../../styles/variables.scss";
+
+.main-content{
+    height: 100%;
+    width: 100%;
+    padding: 30px 30px;
+
+    form{
+        width: 100%;
+
+        .padding-top{
+            padding-top: 15px;
+        }
+
+        .form-label{
+            display: flex;
+            flex-direction: column;
+            font-size: 20px;
+            font-weight: bold;
+            color: $secondary-green-color;
+            text-align: start;
+        }
+
+        .div-address{
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .div-checkeds{
+            max-height: 16vh;
+            height: 16vh;
+        }
+    }
+
+    .butons-div{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        padding-top: 20px;
+
+        .back-button{
+            padding-bottom: 20px;
+        }
+    }
+}
+
+// @import '../../../../node_modules/bootstrap/scss/utilities';
+
+//   "overflow": (
+//     property: overflow,
+//     values: auto hidden visible scroll,
+//   ),
+//   "overflow-x": (
+//     property: overflow-x,
+//     values: auto hidden visible scroll,
+//   ),
+//   "overflow-y": (
+//     property: overflow-y,
+//     values: auto hidden visible scroll,
+//   ),
+// );
+
+// "overflow": (
+//   property: overflow,
+//   values: auto hidden visible scroll,
+// ),
+// "overflow-x": (
+//   property: overflow-x,
+//   values: auto hidden visible scroll,
+// ),
+// "overflow-y": (
+//   property: overflow-y,
+//   values: auto hidden visible scroll,
+// ),

@@ -20,10 +20,6 @@
         font-weight: bold;
         color: $secondary-green-color;
     }
-
-    
-    // border-style: dotted;
-    // border-color: black;
   }
 
   .main-mid-buttons-resident{
@@ -31,9 +27,6 @@
     display: flex;
     justify-content: space-between; /* Garantir que os botões se alinhem corretamente */
     align-items: flex-end; /* Alinhar os botões na parte inferior da div */
-
-    // border-style: dotted;
-    // border-color: red;
   }
 
 .btn {
@@ -45,13 +38,8 @@
     align-items: center;
     justify-content: center;
     color: $black-color;
-    // background-color: lightgray; /* Cor de fundo inicial */
     cursor: pointer; /* Mudar cursor para indicar que é clicável */
-    
-    
-    // border-style: dotted;
-    // border-color: blue;
-  }
+    }
 
   /* Estilo para o botão quando clicado */
 .btn.clicked {
@@ -62,10 +50,6 @@
     height: 60%;
     padding: 0;
     
-    
-    // border-style: dotted;
-    // border-color: yellow;
-
     .component-tag{
       padding: 0;
     }

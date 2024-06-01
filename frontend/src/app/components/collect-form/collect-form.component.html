@@ -1,0 +1,180 @@
+<div class="container-fluid main-content">
+  <div class="row form-div">
+    <form [formGroup]="formCollect">
+      <!-- //TODO inserir imagem?? -->
+      <div class="row">
+        <div class="col-sm-10 col-md-6 div-checkeds overflow-y-auto">
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value=""
+              id="flexCheckDefault"
+            />
+            <label class="form-check-label" for="flexCheckDefault">
+              Papel e Papelão - Papel sulfite e papel de escritório
+            </label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value=""
+              id="flexCheckDefault"
+            />
+            <label class="form-check-label" for="flexCheckDefault">
+              Default checkbox
+            </label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value=""
+              id="flexCheckDefault"
+            />
+            <label class="form-check-label" for="flexCheckDefault">
+              Default checkbox
+            </label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value=""
+              id="flexCheckDefault"
+            />
+            <label class="form-check-label" for="flexCheckDefault">
+              Default checkbox
+            </label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value=""
+              id="flexCheckDefault"
+            />
+            <label class="form-check-label" for="flexCheckDefault">
+              Default checkbox
+            </label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value=""
+              id="flexCheckDefault"
+            />
+            <label class="form-check-label" for="flexCheckDefault">
+              Default checkbox
+            </label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value=""
+              id="flexCheckDefault"
+            />
+            <label class="form-check-label" for="flexCheckDefault">
+              Default checkbox
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value=""
+              id="flexCheckChecked"
+              checked
+            />
+            <label class="form-check-label" for="flexCheckChecked">
+              Checked checkbox
+            </label>
+          </div>
+        </div>
+
+        <div class="col-sm-10 col-md-6 padding-top">
+          <app-primary-input
+            formControlName="amount"
+            type="number"
+            inputName="amount"
+            placeholder="Quantidade de sacos Ex: 2"
+          ></app-primary-input>
+        </div>
+      </div>
+
+      <div class="row padding-top">
+        <div class="col-sm-10 col-md-6 div-address">
+          <div class="col-sm-10 col-md-6">
+            <label for="inputAddress" class="form-label"
+              >Selecione o endereço</label
+            >
+            <select
+              id="inputAddress"
+              class="form-select"
+              aria-label="Default select example"
+            >
+              <option selected>end 1</option>
+              <option value="1">end 2</option>
+              <option value="2">3</option>
+              <option value="3">4</option>
+            </select>
+          </div>
+
+          <div class="col-sm-10 col-md-5">
+            <button
+              type="button"
+              class="btn btn-primary"
+              routerLink="/address/list"
+            >
+              Adicionar endereço
+            </button>
+          </div>
+        </div>
+
+        <div class="col-sm-10 col-md-6 padding-top">
+          <label for="div-radio-buttons" class="form-label"
+            >Selecione o tipo de coleta</label
+          >
+          <div id="div-radio-buttons" class="div-radio-buttons">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="typeCollect"
+                id="typeCollectIntern"
+              />
+              <label class="form-check-label" for="typeCollectIntern">
+                Interna
+              </label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="typeCollect"
+                id="typeCollectExtern"
+                checked
+              />
+              <label class="form-check-label" for="typeCollectExtern">
+                Externa/Rua
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="row butons-div">
+    <div class="col-sm-12 col-md-6">
+      <app-button-larger-green
+        (click)="runAction()"
+        btnText="{{ titleBtn }}"
+        [disabledBtn]="false"
+      ></app-button-larger-green>
+    </div>
+  </div>
+</div>
