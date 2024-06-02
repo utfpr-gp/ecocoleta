@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS materials
 (
     id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
     name        VARCHAR(255)                 NOT NULL,
-    score       BIGSERIAL                    NOT NULL,
+    score       BIGINT                       NOT NULL,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP
 );

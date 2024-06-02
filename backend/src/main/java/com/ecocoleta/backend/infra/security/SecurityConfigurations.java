@@ -31,15 +31,22 @@ public class SecurityConfigurations {
                                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 
                                 //USER
-                                .requestMatchers(HttpMethod.POST, "/user/**").permitAll() // teste
-                                .requestMatchers(HttpMethod.GET, "/user/**").authenticated() // teste
-                                .requestMatchers(HttpMethod.PUT, "/user/**").authenticated() // teste
-                                .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN") // teste
+                                .requestMatchers(HttpMethod.POST, "/user/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/user/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/user/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
+
                                 //MY-ACCOUNT
-                                .requestMatchers(HttpMethod.POST, "/myaccount/**").authenticated() // teste
-                                .requestMatchers(HttpMethod.GET, "/myaccount/**").authenticated() // teste
-                                .requestMatchers(HttpMethod.PUT, "/myaccount/**").authenticated() // teste
-                                .requestMatchers(HttpMethod.DELETE, "/myaccount/**").authenticated() // teste
+                                .requestMatchers(HttpMethod.POST, "/myaccount/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/myaccount/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/myaccount/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/myaccount/**").authenticated()
+
+                                //MATERIAL
+                                .requestMatchers(HttpMethod.POST, "/material/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/material/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/material/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/material/**").authenticated()
 
                                 //OTHER ROUTES
                                 .requestMatchers(HttpMethod.GET, "/hello").permitAll() //todos user -- teste

@@ -1,8 +1,10 @@
+/*
 package com.ecocoleta.backend.controllers;
 
 public class IndexController {
 
- /*   @GetMapping("/cliente")
+ */
+/*   @GetMapping("/cliente")
     @PermitAll
     public String showClientPage(HttpSession httpSession, RedirectAttributes redirectAttributes) {
         httpSession.setAttribute(SessionNames.ACCESS_USER_KEY, SessionNames.ACCESS_USER_CLIENT_VALUE);
@@ -28,5 +30,7 @@ public class IndexController {
     @PermitAll
     public String notAuthorized() {
         return "error/not-authorized";
-    }*/
+    }*//*
+
 }
+*/
