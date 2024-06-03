@@ -1,5 +1,8 @@
 package com.ecocoleta.backend.domain.collect;
 
+import com.ecocoleta.backend.domain.address.Address;
+import com.ecocoleta.backend.domain.resident.Resident;
+import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,14 +29,15 @@ public class Collect {
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
-//    @OneToOne
-//    @JoinColumn(name = "address_id")
-//    private Address address;
-//    @ManyToOne
-//    @JoinColumn(name = "resident_id")
-//    private Resident resident;
-//    @OneToOne
-//    @JoinColumn(name = "waste_collectors_id")
-//    private WasteCollector wasteCollector;
+    //TODO ids de relação???
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "resident_id")
+    private Resident resident;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "waste_collectors_id")
+    private WasteCollector wasteCollector;
 
 }

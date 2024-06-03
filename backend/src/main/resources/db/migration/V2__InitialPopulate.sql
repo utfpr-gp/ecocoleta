@@ -13,11 +13,11 @@ INSERT INTO waste_collectors (id, user_id, cpf) VALUES
 INSERT INTO companys (id, user_id, cnpj, company_name) VALUES
                                         (1, 4, '12345678901', 'Empresa Teste');
 
-INSERT INTO address (id, name, city, street, number, neighborhood, cep) VALUES
-                                                                        (1, 'Casa', 'Guarapuava', 'Rua Emiliano Perneta', 303, 'Alto da XV', 85065070),
-                                                                        (2, 'Empresa', 'Guarapuava', 'Rua Castro Alves', 186, 'Alto da XV', 85065100),
-                                                                        (3, 'Casa', 'Guarapuava', 'Rua Guaíra', 1000, 'Centro', 85010010),
-                                                                        (4, 'Empresa', 'Guarapuava', 'Rua Benjamin Constant', 862, 'Centro', 85010190);
+INSERT INTO address (id, name, city, street, number, neighborhood, cep, latitude, longitude) VALUES
+                                                                        (1, 'Casa', 'Guarapuava', 'Rua Emiliano Perneta', 303, 'Alto da XV', 85065070, '-25.3813', '-51.45775'),
+                                                                        (2, 'Empresa', 'Guarapuava', 'Rua Souza Naves', 77, 'Alto da XV', 85065080, '-25.3800', '-51.4573'),
+                                                                        (3, 'Casa', 'Guarapuava', 'Rua Guaíra', 1379, 'Centro', 85015280, '-25.3808', '-51.4558'),
+                                                                        (4, 'Empresa', 'Guarapuava', 'Rua Benjamin Constant', 862, 'Centro', 85010190, '-25.3888', '-51.4628');
 
 INSERT INTO user_addresses (user_id, address_id) VALUES
                                                 (2, 1),

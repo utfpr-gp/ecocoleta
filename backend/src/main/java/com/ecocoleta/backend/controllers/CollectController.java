@@ -1,6 +1,6 @@
 package com.ecocoleta.backend.controllers;
 
-import com.ecocoleta.backend.domain.collect.CollectDTO;
+import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
 import com.ecocoleta.backend.services.CollectService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +22,10 @@ public class CollectController {
     //Nova coleta
     @PostMapping
     @Transactional
-    public ResponseEntity agendar(@RequestBody @Valid CollectDTO data) {
-//        TESTE ******
-        System.out.println(data);
+    public ResponseEntity createNewCollect(@RequestBody @Valid CollectDTO collectDTO) {
+
+        System.out.println(collectDTO);
+
         return ResponseEntity.ok(new CollectDTO(true, null, null, null, null,null,null));
     }
 

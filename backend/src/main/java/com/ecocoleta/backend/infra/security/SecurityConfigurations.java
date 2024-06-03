@@ -48,6 +48,12 @@ public class SecurityConfigurations {
                                 .requestMatchers(HttpMethod.PUT, "/material/**").authenticated()
                                 .requestMatchers(HttpMethod.DELETE, "/material/**").authenticated()
 
+                                //COLLECT
+                                .requestMatchers(HttpMethod.POST, "/collect/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/collect/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/collect/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/collect/**").authenticated()
+
                                 //OTHER ROUTES
                                 .requestMatchers(HttpMethod.GET, "/hello").permitAll() //todos user -- teste
 //                                .requestMatchers(HttpMethod.GET, "/hello").hasRole("ADMIN") //apenas usuarios admin -- teste

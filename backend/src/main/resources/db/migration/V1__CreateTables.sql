@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS address
     number       VARCHAR(255),
     neighborhood VARCHAR(255),
     cep          VARCHAR(255),
+    latitude     DOUBLE PRECISION,
+    longitude    DOUBLE PRECISION,
     create_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time  TIMESTAMP
 );
@@ -102,9 +104,9 @@ CREATE TABLE IF NOT EXISTS collects
         FOREIGN KEY (waste_collectors_id)
             REFERENCES waste_collectors (id)
             ON DELETE NO ACTION
-            ON UPDATE NO ACTION,
-    CONSTRAINT unique_collects
-        UNIQUE (id, address_id, residents_id, waste_collectors_id)
+            ON UPDATE NO ACTION
+--     CONSTRAINT unique_collects
+--         UNIQUE (id, address_id, residents_id, waste_collectors_id)
 );
 
 
@@ -141,6 +143,16 @@ CREATE TABLE IF NOT EXISTS materials
     update_time TIMESTAMP
 );
 
+-- Table ecocoleta_db.collects_materials
+CREATE TABLE IF NOT EXISTS collects_materials
+(
+    collect_id BIGSERIAL NOT NULL,
+    material_id   BIGSERIAL NOT NULL,
+    PRIMARY KEY (collect_id, material_id),
+    FOREIGN KEY (collect_id) REFERENCES collects (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    FOREIGN KEY (material_id) REFERENCES materials (id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
 -- Table ecocoleta_db.products
 CREATE TABLE IF NOT EXISTS products
 (
@@ -168,20 +180,20 @@ CREATE TABLE IF NOT EXISTS exchanges
     update_time TIMESTAMP
 );
 
--- Table ecocoleta_db.collects_has_materials
-CREATE TABLE IF NOT EXISTS collects_has_materials
-(
-    collects_id  BIGSERIAL NOT NULL,
-    materials_id BIGSERIAL NOT NULL,
-    FOREIGN KEY (collects_id)
-        REFERENCES collects (id)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION,
-    FOREIGN KEY (materials_id)
-        REFERENCES materials (id)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION
-);
+-- -- Table ecocoleta_db.collects_has_materials
+-- CREATE TABLE IF NOT EXISTS collects_has_materials
+-- (
+--     collects_id  BIGSERIAL NOT NULL,
+--     materials_id BIGSERIAL NOT NULL,
+--     FOREIGN KEY (collects_id)
+--         REFERENCES collects (id)
+--         ON DELETE NO ACTION
+--         ON UPDATE NO ACTION,
+--     FOREIGN KEY (materials_id)
+--         REFERENCES materials (id)
+--         ON DELETE NO ACTION
+--         ON UPDATE NO ACTION
+-- );
 
 -- Table ecocoleta_db.products_has_exchanges
 CREATE TABLE IF NOT EXISTS products_has_exchanges
