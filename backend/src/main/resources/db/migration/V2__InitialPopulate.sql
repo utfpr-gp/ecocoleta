@@ -57,3 +57,16 @@ INSERT INTO materials (name, score) VALUES
                                         ('Tecidos e Têxteis - Roupas usadas', 10),
                                         ('Tecidos e Têxteis - Tecidos de algodão, lã, poliéster, etc.', 10),
                                         ('Tecidos e Têxteis - Panos e retalhos', 10);
+
+
+--setando o id das tabelas
+SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
+SELECT setval('address_id_seq', (SELECT MAX(id) FROM address));
+SELECT setval('residents_id_seq', (SELECT MAX(id) FROM residents));
+SELECT setval('waste_collectors_id_seq', (SELECT MAX(id) FROM waste_collectors));
+SELECT setval('companys_id_seq', (SELECT MAX(id) FROM companys));
+SELECT setval('collects_id_seq', (SELECT MAX(id) FROM collects));
+SELECT setval('evaluations_id_seq', (SELECT MAX(id) FROM evaluations));
+SELECT setval('materials_id_seq', (SELECT MAX(id) FROM materials));
+SELECT setval('products_id_seq', (SELECT MAX(id) FROM products));
+SELECT setval('exchanges_id_seq', (SELECT MAX(id) FROM exchanges));

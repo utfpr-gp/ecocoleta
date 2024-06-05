@@ -24,12 +24,13 @@ public class Collect {
     private boolean isIntern;
     private LocalDateTime schedule;
     private String picture;
-    private String amount;
+    private Integer amount;
+    @Enumerated(EnumType.STRING)
+    private CollectStatus status;
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
-    //TODO ids de relação???
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private Address address;
@@ -37,7 +38,36 @@ public class Collect {
     @JoinColumn(name = "resident_id")
     private Resident resident;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "waste_collectors_id")
+    @JoinColumn(name = "waste_collector_id")
     private WasteCollector wasteCollector;
 
+    //TODO relations on materials nxn???
+
+
+    public Collect(boolean isIntern, String picture, Integer amount, CollectStatus status, Address address, Resident resident) {
+        this.isIntern = isIntern;
+        this.picture = picture;
+        this.amount = amount;
+        this.status = status;
+        this.createTime = LocalDateTime.now();
+        this.address = address;
+        this.resident = resident;
+    }
+
+    @Override
+    public String toString() {
+        return "Collect{" +
+                "id=" + id +
+                ", isIntern=" + isIntern +
+                ", schedule=" + schedule +
+                ", picture='" + picture + '\'' +
+                ", amount=" + amount +
+                ", status=" + status +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", address=" + address +
+                ", resident=" + resident +
+                ", wasteCollector=" + wasteCollector +
+                '}';
+    }
 }

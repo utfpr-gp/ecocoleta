@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 public class WasteCollector extends User {
 
     private String cpf;
-    private int score;
+    private Integer score;
     private String picture;
     @Column(name = "create_time")
     private LocalDateTime createTime;
@@ -31,7 +31,6 @@ public class WasteCollector extends User {
     public WasteCollector(String name, String email, String password, String phone, UserRole role, String cpf, String picture) {
         super(name, email, password, phone, role);
         this.cpf = cpf;
-        this.score = 0;
         this.picture = picture;
         this.createTime = LocalDateTime.now();
     }

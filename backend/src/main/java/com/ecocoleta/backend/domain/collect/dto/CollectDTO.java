@@ -8,20 +8,19 @@ import java.time.LocalDateTime;
 
 public record CollectDTO(
         @NotNull
-        @JsonAlias({"intern", "interno"}) boolean is_intern,
-        //    @NotNull
+        @JsonAlias({"intern", "interno"})
+        boolean is_intern,
         @Future
 //        @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
         LocalDateTime schedule,
-        //    @NotBlank
         String picture,
-        @NotBlank
-        String amount,
+//        @NotBlank
+//        @Pattern(regexp = "^([1-9]|[1-9][0-9])$", message = "O número deve ser entre 1 e 99")
+        Integer amount,
         @NotNull
         Long idAddress,
         @NotNull
         Long idResident,
-        @NotNull
         Long idWasteCollector) {
 }
 

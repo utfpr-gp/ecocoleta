@@ -1,5 +1,6 @@
 package com.ecocoleta.backend.infra.exception;
 
+import com.ecocoleta.backend.domain.ValidException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,4 +54,9 @@ public class ErrorController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso negado");
     }
 
+    //classe validação exception de regras de negócio genéricas
+    @ExceptionHandler(ValidException.class)
+    public ResponseEntity exceptionErrorTreatBusinessRule(ValidException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 }

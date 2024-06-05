@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS address
 CREATE TABLE IF NOT EXISTS residents
 (
     id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    user_id     BIGSERIAL UNIQUE             NOT NULL,
+    user_id     BIGINT UNIQUE                NOT NULL,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS residents
 -- Table ecocoleta_db.user_address
 CREATE TABLE IF NOT EXISTS user_addresses
 (
-    user_id BIGSERIAL NOT NULL,
-    address_id   BIGSERIAL NOT NULL,
+    user_id     BIGINT                 NOT NULL,
+    address_id  BIGINT                 NOT NULL,
     PRIMARY KEY (user_id, address_id),
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
     FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -54,13 +54,12 @@ CREATE TABLE IF NOT EXISTS user_addresses
 CREATE TABLE IF NOT EXISTS waste_collectors
 (
     id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    user_id     BIGSERIAL UNIQUE,
+    user_id     BIGINT                       NOT NULL,
     cpf         VARCHAR(11),
-    score       INT,
+    score       INTEGER DEFAULT null,
     picture     VARCHAR(255),
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP,
-    CONSTRAINT uc_waste_collectors_user_id UNIQUE (user_id), -- Adicionando uma restrição única
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
@@ -68,7 +67,7 @@ CREATE TABLE IF NOT EXISTS waste_collectors
 CREATE TABLE IF NOT EXISTS companys
 (
     id           BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    user_id      BIGSERIAL UNIQUE,
+    user_id      BIGINT                       NOT NULL,
     cnpj         VARCHAR(11)                  NOT NULL,
     company_name VARCHAR(255)                 NOT NULL,
     create_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -81,32 +80,31 @@ CREATE TABLE IF NOT EXISTS companys
 CREATE TABLE IF NOT EXISTS collects
 (
     id                  BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    is_intern           SMALLINT,
-    schedule            TIMESTAMP                    NOT NULL,
+    is_intern           BOOLEAN DEFAULT false,
+    schedule            TIMESTAMP,
     picture             VARCHAR(255),
-    amount              VARCHAR(45)                  NOT NULL,
+    amount              INTEGER,
+    status              VARCHAR(255)                 NOT NULL,
     create_time         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time         TIMESTAMP,
-    address_id          BIGSERIAL,
-    residents_id        BIGSERIAL,
-    waste_collectors_id BIGSERIAL,
+    address_id          BIGSERIAL                    NOT NULL,
+    resident_id        BIGSERIAL                     NOT NULL,
+    waste_collector_id BIGSERIAL,
     CONSTRAINT fk_collects_address1
         FOREIGN KEY (address_id)
             REFERENCES address (id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
-    CONSTRAINT fk_collects_residents1
-        FOREIGN KEY (residents_id)
+    CONSTRAINT fk_collects_resident1
+        FOREIGN KEY (resident_id)
             REFERENCES residents (id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
-    CONSTRAINT fk_collects_waste_collectors1
-        FOREIGN KEY (waste_collectors_id)
+    CONSTRAINT fk_collects_waste_collector1
+        FOREIGN KEY (waste_collector_id)
             REFERENCES waste_collectors (id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
---     CONSTRAINT unique_collects
---         UNIQUE (id, address_id, residents_id, waste_collectors_id)
 );
 
 
@@ -146,8 +144,8 @@ CREATE TABLE IF NOT EXISTS materials
 -- Table ecocoleta_db.collects_materials
 CREATE TABLE IF NOT EXISTS collects_materials
 (
-    collect_id BIGSERIAL NOT NULL,
-    material_id   BIGSERIAL NOT NULL,
+    collect_id    BIGINT                 NOT NULL,
+    material_id   BIGINT                 NOT NULL,
     PRIMARY KEY (collect_id, material_id),
     FOREIGN KEY (collect_id) REFERENCES collects (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
     FOREIGN KEY (material_id) REFERENCES materials (id) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -171,7 +169,6 @@ CREATE TABLE IF NOT EXISTS products
         ON UPDATE NO ACTION
 );
 
-
 -- Table ecocoleta_db.exchanges
 CREATE TABLE IF NOT EXISTS exchanges
 (
@@ -180,26 +177,11 @@ CREATE TABLE IF NOT EXISTS exchanges
     update_time TIMESTAMP
 );
 
--- -- Table ecocoleta_db.collects_has_materials
--- CREATE TABLE IF NOT EXISTS collects_has_materials
--- (
---     collects_id  BIGSERIAL NOT NULL,
---     materials_id BIGSERIAL NOT NULL,
---     FOREIGN KEY (collects_id)
---         REFERENCES collects (id)
---         ON DELETE NO ACTION
---         ON UPDATE NO ACTION,
---     FOREIGN KEY (materials_id)
---         REFERENCES materials (id)
---         ON DELETE NO ACTION
---         ON UPDATE NO ACTION
--- );
-
 -- Table ecocoleta_db.products_has_exchanges
 CREATE TABLE IF NOT EXISTS products_has_exchanges
 (
-    products_id  BIGSERIAL NOT NULL,
-    exchanges_id BIGSERIAL NOT NULL,
+    products_id  BIGINT                 NOT NULL,
+    exchanges_id BIGINT                 NOT NULL,
     FOREIGN KEY (products_id)
         REFERENCES products (id)
         ON DELETE NO ACTION
@@ -209,3 +191,7 @@ CREATE TABLE IF NOT EXISTS products_has_exchanges
         ON DELETE NO ACTION
         ON UPDATE NO ACTION
 );
+
+-- Alter to acept null
+ALTER TABLE collects
+    ALTER COLUMN waste_collector_id DROP NOT NULL;

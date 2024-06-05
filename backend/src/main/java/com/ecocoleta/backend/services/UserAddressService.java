@@ -25,17 +25,6 @@ public class UserAddressService {
     @Autowired
     private AddressService addressService;
 
-    //    public Optional<Integer> selectRatingByProfessionalAndExpertise(Long professional_id, Long expertise_id) {
-//        return this.professionalExpertiseRepository.selectRatingByProfessionalAndExpertise(professional_id, expertise_id);
-//    }
-//
-//    public List<ProfessionalExpertise> findByExpertise(Expertise expertise) {
-//        return this.professionalExpertiseRepository.findByExpertise(expertise);
-//    }
-//
-//    public List<ProfessionalExpertise> findByProfessional(User user) {
-//        return this.professionalExpertiseRepository.findByProfessional(user);
-//    }
     public Optional<UserAddress> findByUserAndAddress(User user, Address address) {
         return this.userAddressRepository.findByUserAndAddress(user, address);
     }
@@ -77,6 +66,8 @@ public class UserAddressService {
             existingAddress.setNumber(addressDTO.number());
             existingAddress.setNeighborhood(addressDTO.neighborhood());
             existingAddress.setCep(addressDTO.cep());
+            existingAddress.setLatitude(addressDTO.latitude());
+            existingAddress.setLongitude(addressDTO.longitude());
 
 //            // Salvar o UserAddress (não é necessário, a menos que haja algo específico a ser feito)
             save(userAddress);

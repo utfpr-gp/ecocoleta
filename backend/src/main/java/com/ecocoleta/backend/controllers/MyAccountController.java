@@ -67,9 +67,9 @@ public class MyAccountController {
             System.out.println("User encontrado!!!!");
             User user = optionalUser.get();
 
-            System.out.println("AddressDTO: " + addressDTO.city() + " " + addressDTO.street() + " " + addressDTO.number() + " " + addressDTO.neighborhood() + " " + addressDTO.cep());
+//            System.out.println("AddressDTO: " + addressDTO.city() + " " + addressDTO.street() + " " + addressDTO.number() + " " + addressDTO.neighborhood() + " " + addressDTO.cep());
             //TODO fazer Mapper para transformar AddressDTO em Address
-            Address address = new Address(addressDTO.name(), addressDTO.city(), addressDTO.street(), addressDTO.number(), addressDTO.neighborhood(), addressDTO.cep());
+            Address address = new Address(addressDTO.name(), addressDTO.city(), addressDTO.street(), addressDTO.number(), addressDTO.neighborhood(), addressDTO.cep(), addressDTO.latitude(), addressDTO.longitude());
             UserAddress userAddress = new UserAddress(user, address);
 
             if (userAddressService.createAddress(userAddress)) {
@@ -96,7 +96,7 @@ public class MyAccountController {
             System.out.println("User encontrado!!!!");
             User user = optionalUser.get();
             List<UserAddress> userAddress = userAddressService.findByUser(user);
-            List<AddressDTO> addressDTOs = userAddress.stream().map(address -> new AddressDTO(address.getAddress().getId(), address.getAddress().getName(), address.getAddress().getCity(), address.getAddress().getStreet(), address.getAddress().getNumber(), address.getAddress().getNeighborhood(), address.getAddress().getCep())).collect(Collectors.toList());
+            List<AddressDTO> addressDTOs = userAddress.stream().map(address -> new AddressDTO(address.getAddress().getId(), address.getAddress().getName(), address.getAddress().getCity(), address.getAddress().getStreet(), address.getAddress().getNumber(), address.getAddress().getNeighborhood(), address.getAddress().getCep(), address.getAddress().getLatitude(), address.getAddress().getLatitude())).collect(Collectors.toList());
             System.out.println("SAIU DO CONTROLLER GET ADDRESS com sucesso");
             return ResponseEntity.ok(addressDTOs);
         }else{

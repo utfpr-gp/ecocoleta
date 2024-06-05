@@ -26,7 +26,9 @@ public class CollectController {
 
         System.out.println(collectDTO);
 
-        return ResponseEntity.ok(new CollectDTO(true, null, null, null, null,null,null));
+        var dto = collectService.createCollect(collectDTO);
+        
+        return ResponseEntity.ok().body(dto);
     }
 
     //solicitação de coleta, delete, etc...

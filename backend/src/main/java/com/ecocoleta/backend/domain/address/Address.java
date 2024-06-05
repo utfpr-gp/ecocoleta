@@ -23,24 +23,28 @@ public class Address {
     private String number;
     private String neighborhood;
     private String cep;
-//    @ManyToOne
-//    private User user;
+    @Column(name = "latitude")
+    private Double latitude;
+    @Column(name = "longitude")
+    private Double longitude;
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
-    public Address(String name, String city, String street, String number, String neighborhood, String cep) {
+    public Address(String name, String city, String street, String number, String neighborhood, String cep, Double latitude, Double longitude) {
         this.name = name;
         this.city = city;
         this.street = street;
         this.number = number;
         this.neighborhood = neighborhood;
         this.cep = cep;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.createTime = LocalDateTime.now();
     }
 
-    public Address(Long id, String name, String city, String street, String number, String neighborhood, String cep) {
+    public Address(Long id, String name, String city, String street, String number, String neighborhood, String cep, Double latitude, Double longitude) {
         this.id = id;
         this.name = name;
         this.city = city;
@@ -48,18 +52,23 @@ public class Address {
         this.number = number;
         this.neighborhood = neighborhood;
         this.cep = cep;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.createTime = LocalDateTime.now();
     }
 
     @Override
     public String toString() {
         return "Address{" +
-                "name='" + name + '\'' +
-                "city='" + city + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", city='" + city + '\'' +
                 ", street='" + street + '\'' +
                 ", number='" + number + '\'' +
                 ", neighborhood='" + neighborhood + '\'' +
                 ", cep='" + cep + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';
