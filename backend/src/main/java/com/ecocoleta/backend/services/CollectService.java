@@ -77,8 +77,8 @@ public class CollectService {
         Collect collect = new Collect(collectDTO.is_intern(), collectDTO.picture(), collectDTO.amount(), CollectStatus.PENDING, addressOptional.get(), residentOptional.get());
         System.out.println("COLLECT A SER <>>criada>>: " + collect.toString());
 
-//        collectRepository.save(collect);
-//        System.out.println("COLLECT criada>>: " + collect.toString());
+        collectRepository.save(collect);
+        System.out.println("COLLECT criada>>: " + collect.toString());
 
 
         System.out.println("to string resident .... " + residentOptional.get().getEmail());

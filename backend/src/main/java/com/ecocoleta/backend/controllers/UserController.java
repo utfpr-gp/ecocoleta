@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -76,23 +77,36 @@ public class UserController {
     @Transactional
     public ResponseEntity createUser(@RequestBody @Valid ResidentDTO residentDTO, UriComponentsBuilder uriComponentsBuilder) {
         System.out.println("ENTROU CONTROLLER RESIDENT...");
-        if (userService.findByEmail(residentDTO.email()) == null && residentDTO.role().equals(UserRole.RESIDENT)) {
-            System.out.println("criando novo usuario");
-            //TODO Mapper user...
-//            // Crie um novo Resident a partir do ResidentDTO
-            Resident resident = new Resident(residentDTO.name(), residentDTO.email(), residentDTO.password(), residentDTO.phone(), residentDTO.role());
-            User user = userService.createUser(resident);
-//            criando uma uri de forma automatica com spring passando para caminho user/id
-//            var uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
-            String token = authenticationService.authenticateAndGetToken(residentDTO.email(), residentDTO.password());
-            return ResponseEntity.ok().body(new LoginResponseDTO(token));
-//            return ResponseEntity.created(uri).body(new UserGetTokenDTO(user, token));
 
-//            return ResponseEntity.created(uri).body(new UserGetDTO(user));
-        } else {
-            System.err.println("Email ja cadastrado");
-            return ResponseEntity.badRequest().build();
+        // Verifica se o e-mail já está cadastrado e se o papel é de RESIDENT
+        if (userService.findByEmail(residentDTO.email()) != null) {
+            System.err.println("Email já cadastrado");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email já cadastrado");
         }
+
+        if (!residentDTO.role().equals(UserRole.RESIDENT)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Role inválido para este endpoint");
+        }
+
+        System.out.println("Criando novo usuário");
+
+//        TODO criar classe mapper resident
+        // Converte o DTO em uma entidade Resident
+//        Resident resident = userMapper.toEntity(residentDTO);
+        Resident resident = new Resident(residentDTO.name(), residentDTO.email(), residentDTO.password(), residentDTO.phone(), residentDTO.role());
+
+        // Cria o usuário usando o serviço
+        userService.createUser(resident);
+
+        // Gera o token de autenticação
+        String token = authenticationService.authenticateAndGetToken(residentDTO.email(), residentDTO.password());
+
+        // Cria uma URI para o novo recurso
+//        var uri = uriComponentsBuilder.path("/api/v1/users/{id}").buildAndExpand(user.getId()).toUri();
+
+        // Retorna a resposta com o token de login
+//        return ResponseEntity.created(uri).body(new LoginResponseDTO(token));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new LoginResponseDTO(token));
     }
 
     //CRIAÇÃO DO TIPO WASTE-COLLECTOR

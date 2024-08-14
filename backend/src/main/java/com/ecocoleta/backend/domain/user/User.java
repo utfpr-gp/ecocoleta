@@ -22,7 +22,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User implements UserDetails, Serializable {
 
-    //TODO TESTE DE SERIALIZAÇÃO ***VERIFICAR*****
+    //TESTE DE SERIALIZAÇÃO ***VERIFICAR*****
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -40,9 +40,6 @@ public class User implements UserDetails, Serializable {
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
-//    @OneToOne(cascade = CascadeType.PERSIST)
-//    @JoinColumn(name = "address_id")
-//    protected Address address;
 
 
     public User(String name, String email, String password, String phone, UserRole role) {

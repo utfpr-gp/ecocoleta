@@ -14,19 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-//@EqualsAndHashCode(callSuper = true)
-@PrimaryKeyJoinColumn(name = "user_id")
+@PrimaryKeyJoinColumn(name = "id")
 public class Resident extends User {
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//
-//    //TODO verifcicar relação de resident e user
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @MapsId("user_id")
-//    @PrimaryKeyJoinColumn(name = "user_id")
-//    private User user;
 
     @Column(name = "create_time")
     private LocalDateTime createTime;

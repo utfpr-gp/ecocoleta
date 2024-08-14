@@ -33,11 +33,10 @@ CREATE TABLE IF NOT EXISTS address
 -- Tabela para detalhes de residentes
 CREATE TABLE IF NOT EXISTS residents
 (
-    id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    user_id     BIGINT UNIQUE                NOT NULL,
+    id          BIGINT PRIMARY KEY,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
+    FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 -- Table ecocoleta_db.user_address
@@ -46,33 +45,31 @@ CREATE TABLE IF NOT EXISTS user_addresses
     user_id     BIGINT                 NOT NULL,
     address_id  BIGINT                 NOT NULL,
     PRIMARY KEY (user_id, address_id),
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-    FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE NO ACTION ON UPDATE NO ACTION
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION,
+    FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 -- Table ecocoleta_db.waste_collectors
 CREATE TABLE IF NOT EXISTS waste_collectors
 (
-    id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    user_id     BIGINT                       NOT NULL,
+    id          BIGINT PRIMARY KEY,
     cpf         VARCHAR(11),
     score       INTEGER DEFAULT null,
     picture     VARCHAR(255),
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
+    FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 -- Table ecocoleta_db.companys
 CREATE TABLE IF NOT EXISTS companys
 (
-    id           BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    user_id      BIGINT                       NOT NULL,
+    id          BIGINT PRIMARY KEY,
     cnpj         VARCHAR(11)                  NOT NULL,
     company_name VARCHAR(255)                 NOT NULL,
     create_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time  TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
+    FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 
@@ -98,7 +95,7 @@ CREATE TABLE IF NOT EXISTS collects
     CONSTRAINT fk_collects_resident1
         FOREIGN KEY (resident_id)
             REFERENCES residents (id)
-            ON DELETE NO ACTION
+            ON DELETE CASCADE
             ON UPDATE NO ACTION,
     CONSTRAINT fk_collects_waste_collector1
         FOREIGN KEY (waste_collector_id)
@@ -147,7 +144,7 @@ CREATE TABLE IF NOT EXISTS collects_materials
     collect_id    BIGINT                 NOT NULL,
     material_id   BIGINT                 NOT NULL,
     PRIMARY KEY (collect_id, material_id),
-    FOREIGN KEY (collect_id) REFERENCES collects (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    FOREIGN KEY (collect_id) REFERENCES collects (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     FOREIGN KEY (material_id) REFERENCES materials (id) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 

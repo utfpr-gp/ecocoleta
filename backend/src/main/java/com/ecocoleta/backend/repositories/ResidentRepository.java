@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface ResidentRepository extends JpaRepository<Resident, Long> {
-
+//
 //    boolean existsByUserId(Long userId);
 //    Optional<Resident> findByUserId(Long userId);
 }

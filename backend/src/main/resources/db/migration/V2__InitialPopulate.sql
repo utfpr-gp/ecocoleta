@@ -1,23 +1,23 @@
-INSERT INTO users (id, name, email, password, phone, role, activo) VALUES
-                                                                   (1, 'alvaro', 'admin@admin.com', '$2a$10$zNBVSnByhydlUd5m1sTS7erEbEtTrE9xiVtjSukJPHzXj1SStGgzK', '42999660090', 'ADMIN', true), -- passaword: admin--
-                                                                   (2, 'Separador Teste', 'resident1@teste.com', '$2a$10$i3bOy2CnlO6Mmk63710I0O3.BTTiGDke7ptEXL0Dm.bQgeGr2Dhuy', '42999660090', 'RESIDENT', true), -- passaword: 12345--
-                                                                   (3, 'Catador  Teste', 'catador1@teste.com', '$2a$10$.J9iJ8m/tFZ2onVabsUY4.TDfSCVVDt4zA8vrUCsrbXL1C9yX1Yha', '42999660090', 'WASTE_COLLECTOR', true), -- passaword: 12345--
-                                                                   (4, 'Empresa Teste', 'empresa1@teste.com', '$2a$10$MRK0pecpBNU3FEKTu2q4FO8ep.hml2eaTUjUXoG0QicJapS32f8vu', '42999660090', 'COMPANY', true); -- passaword: 12345--
+INSERT INTO users (name, email, password, phone, role, activo) VALUES
+                                                                   ('alvaro', 'admin@admin.com', '$2a$10$zNBVSnByhydlUd5m1sTS7erEbEtTrE9xiVtjSukJPHzXj1SStGgzK', '42999660090', 'ADMIN', true), -- passaword: admin--
+                                                                   ('Separador Teste', 'resident1@teste.com', '$2a$10$i3bOy2CnlO6Mmk63710I0O3.BTTiGDke7ptEXL0Dm.bQgeGr2Dhuy', '42999660090', 'RESIDENT', true), -- passaword: 12345--
+                                                                   ('Catador  Teste', 'catador1@teste.com', '$2a$10$.J9iJ8m/tFZ2onVabsUY4.TDfSCVVDt4zA8vrUCsrbXL1C9yX1Yha', '42999660090', 'WASTE_COLLECTOR', true), -- passaword: 12345--
+                                                                   ('Empresa Teste', 'empresa1@teste.com', '$2a$10$MRK0pecpBNU3FEKTu2q4FO8ep.hml2eaTUjUXoG0QicJapS32f8vu', '42999660090', 'COMPANY', true); -- passaword: 12345--
 
-INSERT INTO residents (id, user_id) VALUES
-                                        (1, 2);
+INSERT INTO residents (id) VALUES
+                                        (2);
 
-INSERT INTO waste_collectors (id, user_id, cpf) VALUES
-                                        (1, 3, '12345678901');
+INSERT INTO waste_collectors (id, cpf) VALUES
+                                        (3, '12345678901');
 
-INSERT INTO companys (id, user_id, cnpj, company_name) VALUES
-                                        (1, 4, '12345678901', 'Empresa Teste');
-
-INSERT INTO address (id, name, city, street, number, neighborhood, cep, latitude, longitude) VALUES
-                                                                        (1, 'Casa', 'Guarapuava', 'Rua Emiliano Perneta', 303, 'Alto da XV', 85065070, '-25.3813', '-51.45775'),
-                                                                        (2, 'Empresa', 'Guarapuava', 'Rua Souza Naves', 77, 'Alto da XV', 85065080, '-25.3800', '-51.4573'),
-                                                                        (3, 'Casa', 'Guarapuava', 'Rua Guaíra', 1379, 'Centro', 85015280, '-25.3808', '-51.4558'),
-                                                                        (4, 'Empresa', 'Guarapuava', 'Rua Benjamin Constant', 862, 'Centro', 85010190, '-25.3888', '-51.4628');
+INSERT INTO companys (id, cnpj, company_name) VALUES
+                                        (4, '12345678901', 'Empresa Teste');
+--
+INSERT INTO address (name, city, street, number, neighborhood, cep, latitude, longitude) VALUES
+                                                                        ('Casa', 'Guarapuava', 'Rua Emiliano Perneta', 303, 'Alto da XV', 85065070, '-25.3813', '-51.45775'),
+                                                                        ('Empresa', 'Guarapuava', 'Rua Souza Naves', 77, 'Alto da XV', 85065080, '-25.3800', '-51.4573'),
+                                                                        ('Casa', 'Guarapuava', 'Rua Guaíra', 1379, 'Centro', 85015280, '-25.3808', '-51.4558'),
+                                                                        ('Empresa', 'Guarapuava', 'Rua Benjamin Constant', 862, 'Centro', 85010190, '-25.3888', '-51.4628');
 
 INSERT INTO user_addresses (user_id, address_id) VALUES
                                                 (2, 1),
@@ -58,15 +58,15 @@ INSERT INTO materials (name, score) VALUES
                                         ('Tecidos e Têxteis - Tecidos de algodão, lã, poliéster, etc.', 10),
                                         ('Tecidos e Têxteis - Panos e retalhos', 10);
 
-
---setando o id das tabelas
-SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
-SELECT setval('address_id_seq', (SELECT MAX(id) FROM address));
-SELECT setval('residents_id_seq', (SELECT MAX(id) FROM residents));
-SELECT setval('waste_collectors_id_seq', (SELECT MAX(id) FROM waste_collectors));
-SELECT setval('companys_id_seq', (SELECT MAX(id) FROM companys));
-SELECT setval('collects_id_seq', (SELECT MAX(id) FROM collects));
-SELECT setval('evaluations_id_seq', (SELECT MAX(id) FROM evaluations));
-SELECT setval('materials_id_seq', (SELECT MAX(id) FROM materials));
-SELECT setval('products_id_seq', (SELECT MAX(id) FROM products));
-SELECT setval('exchanges_id_seq', (SELECT MAX(id) FROM exchanges));
+--
+-- --setando o id das tabelas
+-- SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
+-- SELECT setval('address_id_seq', (SELECT MAX(id) FROM address));
+-- SELECT setval('residents_id_seq', (SELECT MAX(id) FROM residents));
+-- SELECT setval('waste_collectors_id_seq', (SELECT MAX(id) FROM waste_collectors));
+-- SELECT setval('companys_id_seq', (SELECT MAX(id) FROM companys));
+-- SELECT setval('collects_id_seq', (SELECT MAX(id) FROM collects));
+-- SELECT setval('evaluations_id_seq', (SELECT MAX(id) FROM evaluations));
+-- SELECT setval('materials_id_seq', (SELECT MAX(id) FROM materials));
+-- SELECT setval('products_id_seq', (SELECT MAX(id) FROM products));
+-- SELECT setval('exchanges_id_seq', (SELECT MAX(id) FROM exchanges));

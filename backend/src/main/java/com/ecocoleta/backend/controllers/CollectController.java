@@ -24,8 +24,6 @@ public class CollectController {
     @Transactional
     public ResponseEntity createNewCollect(@RequestBody @Valid CollectDTO collectDTO) {
 
-        System.out.println(collectDTO);
-
         var dto = collectService.createCollect(collectDTO);
         
         return ResponseEntity.ok().body(dto);

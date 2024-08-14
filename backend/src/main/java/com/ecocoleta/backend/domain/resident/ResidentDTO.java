@@ -9,6 +9,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
+import java.time.LocalDateTime;
+
 public record ResidentDTO(
         @NotBlank
         String name,
@@ -22,6 +24,8 @@ public record ResidentDTO(
         String phone,
         @NotNull
         UserRole role,
+        LocalDateTime createTime,
+        LocalDateTime updateTime,
         @Valid
         AddressDTO address
 ) {
