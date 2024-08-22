@@ -1,13 +1,12 @@
 package com.ecocoleta.backend.services;
 
-import com.ecocoleta.backend.domain.ValidException;
+import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.collect.Collect;
 import com.ecocoleta.backend.domain.collect.CollectStatus;
 import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectResponseDTO;
 import com.ecocoleta.backend.domain.resident.Resident;
-import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.repositories.CollectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +27,8 @@ public class CollectService {
     @Autowired
     private ResidentService residentService;
 
-    @Autowired
-    private WasteCollectorService wasteCollectorService;
+//    @Autowired
+//    private WasteCollectorService wasteCollectorService;
 
 
     public CollectResponseDTO createCollect(CollectDTO collectDTO) {
@@ -81,7 +80,6 @@ public class CollectService {
         System.out.println("COLLECT criada>>: " + collect.toString());
 
 
-        System.out.println("to string resident .... " + residentOptional.get().getEmail());
 
         return new CollectResponseDTO(collect);
     }

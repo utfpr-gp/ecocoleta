@@ -1,6 +1,5 @@
 package com.ecocoleta.backend.infra.exception;
 
-import com.ecocoleta.backend.domain.ValidException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
