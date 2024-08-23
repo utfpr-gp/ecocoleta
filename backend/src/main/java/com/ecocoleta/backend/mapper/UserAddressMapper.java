@@ -1,7 +1,7 @@
 //package com.ecocoleta.backend.mapper;
 //
-//import com.ecocoleta.backend.domain.user.UserAddress;
-//import com.ecocoleta.backend.domain.user.UserAddressDTO;
+//import com.ecocoleta.backend.domain.userAddress.UserAddress;
+//import com.ecocoleta.backend.domain.userAddress.UserAddressDTO;
 //import org.modelmapper.ModelMapper;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Component;

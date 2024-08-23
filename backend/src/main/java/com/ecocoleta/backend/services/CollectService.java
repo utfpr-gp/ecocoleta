@@ -1,5 +1,9 @@
 package com.ecocoleta.backend.services;
 
+import com.ecocoleta.backend.domain.collectMaterial.CollectMaterial;
+import com.ecocoleta.backend.domain.material.Material;
+import com.ecocoleta.backend.domain.material.MaterialDTO;
+import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.collect.Collect;
@@ -13,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,59 +32,37 @@ public class CollectService {
     @Autowired
     private ResidentService residentService;
 
-//    @Autowired
-//    private WasteCollectorService wasteCollectorService;
+    @Autowired
+    private WasteCollectorService wasteCollectorService;
+
+    @Autowired
+    private MaterialService materialService;
 
 
     public CollectResponseDTO createCollect(CollectDTO collectDTO) {
-        //TODO fazer logica de coleta, pegar objetos addres, watercollector e resident pelo id
-
         System.out.println("ENTROU SERVICE CREATE COLLECT");
-        System.out.println(collectDTO);
-        System.out.println("ID Address: " + collectDTO.idAddress());
-        System.out.println("ID Resident: " + collectDTO.idResident());
 
-        var existAddress = addressService.existsAddressById(collectDTO.idAddress());
-        var existResident = residentService.existsResidentById(collectDTO.idResident());
-//        var existResident = residentService.existsResidentByUserId(collectDTO.idResident());
+        Optional<Address> address = addressService.getAddressById(collectDTO.idAddress());
+//                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
+        Optional<Resident> resident = residentService.getResidentById(collectDTO.idResident());
+//                .orElseThrow(() -> new ResourceNotFoundException("Resident not found"));
+        Optional<WasteCollector> wasteCollector = wasteCollectorService.getWasteCollectorById(collectDTO.idWasteCollector());
+//                .orElse(null); // WasteCollector pode ser opcional
 
-        System.out.println("EXIST ADDRESS: " + existAddress + " EXIST RESIDENT: " + existResident);
+        Collect collect = new Collect(collectDTO.is_intern(), collectDTO.picture(), collectDTO.amount(), CollectStatus.PENDING, address.get(), resident.get());
 
-        //LÓGICA
-        if (!existAddress || !existResident) {
-            System.out.println("ENTROU NO IF DE DONT !EXIST ADDRESS");
-            throw new ValidException("Endereço ou Usúario invalido!");
+
+        for (MaterialDTO materialId : collectDTO.materials()) {
+
+            Material material = materialService.getMaterialById(materialId.id()).orElseThrow(() -> new ValidException("Material not found"));
+
+            CollectMaterial collectMaterial = new CollectMaterial(collect, material);
+//        #TODO fazer relação do materias com coleta
+//            if (userAddressService.createAddress(userAddress)) {
+
         }
 
-        //TODO validação for each das interfaces,...
-        //validar lista de ids de amteriais
-        //validar se o endereço pertence ao resident
-        //validar quantidade de sacos/caixa "AMOUNT"
-        /*
-         * verificar se tem ou é null o wasteCollector id - pode ser opcional pois depois que sera direcionado um ctador
-         * verificar se address id pertençe ao mesmo resident
-         * os IDs são ids de User, pois entidade derivadas estão marcando para joinId
-         *Salvar como default o enum correto de inicio da coleta
-         * verificar como fazer o service do catador pegar a coleta
-         *  */
-
-
-//        Address address = addressService.getReferenceAddressById(collectDTO.idAddress());
-//        Resident resident = residentService.getReferenceResidentById(collectDTO.idResident());
-//        Collect collect = new Collect(collectDTO.is_intern(), collectDTO.picture(), collectDTO.amount(), CollectStatus.PENDING, address, resident);
-
-        Optional<Address> addressOptional = addressService.getAddressById(collectDTO.idAddress());
-        Optional<Resident> residentOptional = residentService.getResidentById(collectDTO.idResident());
-//        Optional<Resident> residentOptional = residentService.getResidentByUserId(collectDTO.idResident());
-
-
-        Collect collect = new Collect(collectDTO.is_intern(), collectDTO.picture(), collectDTO.amount(), CollectStatus.PENDING, addressOptional.get(), residentOptional.get());
-        System.out.println("COLLECT A SER <>>criada>>: " + collect.toString());
-
         collectRepository.save(collect);
-        System.out.println("COLLECT criada>>: " + collect.toString());
-
-
 
         return new CollectResponseDTO(collect);
     }

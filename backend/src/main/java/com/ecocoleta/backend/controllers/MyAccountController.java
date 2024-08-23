@@ -3,7 +3,7 @@ package com.ecocoleta.backend.controllers;
 import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.user.User;
-import com.ecocoleta.backend.domain.user.UserAddress;
+import com.ecocoleta.backend.domain.userAddress.UserAddress;
 import com.ecocoleta.backend.services.AddressService;
 import com.ecocoleta.backend.services.AutorizationService;
 import com.ecocoleta.backend.services.UserAddressService;

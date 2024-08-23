@@ -1,6 +1,7 @@
-package com.ecocoleta.backend.domain.user;
+package com.ecocoleta.backend.domain.userAddress;
 
 import com.ecocoleta.backend.domain.address.Address;
+import com.ecocoleta.backend.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +10,6 @@ import java.io.Serializable;
 /**
  * Classe para armazenar as informações necessárias para a classe auxiliar n x n
  */
-//@Data
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

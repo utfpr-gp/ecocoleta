@@ -1,4 +1,4 @@
-package com.ecocoleta.backend.domain.user;
+package com.ecocoleta.backend.domain.userAddress;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
