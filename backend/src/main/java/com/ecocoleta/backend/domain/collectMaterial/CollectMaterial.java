@@ -17,7 +17,7 @@ import lombok.*;
 @Setter
 public class CollectMaterial {
     /**
-     * Chave composta referenciando um Resident e um Address.
+     * Chave composta referenciando um Collect e um Material.
      */
     @EmbeddedId
     private CollectMaterialPK id;

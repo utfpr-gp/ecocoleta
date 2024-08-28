@@ -1,8 +1,7 @@
 package com.ecocoleta.backend.domain.collect.dto;
 
-import com.ecocoleta.backend.domain.material.MaterialDTO;
+import com.ecocoleta.backend.domain.material.MaterialIdDTO;
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
@@ -24,7 +23,7 @@ public record CollectDTO(
         @NotNull
         Long idResident,
         Long idWasteCollector,
-        List<MaterialDTO> materials // Lista de materiais
+        List<MaterialIdDTO> materials // Lista de materiais
 ) {
 }
 
