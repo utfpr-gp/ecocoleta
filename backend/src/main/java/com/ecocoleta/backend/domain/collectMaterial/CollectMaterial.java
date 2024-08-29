@@ -11,7 +11,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "collect_materials")
+@Table(name = "collects_materials")
 @Entity
 @Getter
 @Setter
