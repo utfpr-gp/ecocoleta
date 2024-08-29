@@ -41,9 +41,6 @@ public class Collect {
     @JoinColumn(name = "waste_collector_id")
     private WasteCollector wasteCollector;
 
-    //TODO relations on materials nxn???
-
-
     public Collect(boolean isIntern, String picture, Integer amount, CollectStatus status, Address address, Resident resident) {
         this.isIntern = isIntern;
         this.picture = picture;

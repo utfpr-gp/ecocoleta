@@ -22,7 +22,6 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User implements UserDetails, Serializable {
 
-    //TESTE DE SERIALIZAÇÃO ***VERIFICAR*****
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -54,7 +53,8 @@ public class User implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        if (this.role == UserRole.ADMIN)
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
@@ -83,22 +83,22 @@ public class User implements UserDetails, Serializable {
         return true;
     }
 
-    public void update(UserUpdateDTO userUpdateDTO){
-        if (userUpdateDTO.name() != null){
+    public void update(UserUpdateDTO userUpdateDTO) {
+        if (userUpdateDTO.name() != null) {
             this.name = userUpdateDTO.name();
             this.updateTime = LocalDateTime.now();
         }
-        if (userUpdateDTO.phone() != null){
+        if (userUpdateDTO.phone() != null) {
             this.phone = userUpdateDTO.phone();
             this.updateTime = LocalDateTime.now();
         }
-        if (userUpdateDTO.role() != null){
+        if (userUpdateDTO.role() != null) {
             this.role = userUpdateDTO.role();
             this.updateTime = LocalDateTime.now();
         }
     }
 
-    //TODO verificaqr reset de senha
+    //TODO verificar reset de senha
     /*public void setPassword(String password) {
         this.password = PasswordUtil.generateBCrypt(password);
     }*/

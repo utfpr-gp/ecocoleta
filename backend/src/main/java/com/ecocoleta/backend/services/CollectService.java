@@ -60,8 +60,7 @@ public class CollectService {
 
         collectRepository.save(collect);
 
-//        #TODO continuar debugar e como salvar aqui collectmaterial
-        //        validação de materiais
+        /*criação de relação entre coleta e materiais*/
         if(!collectDTO.materials().isEmpty()){
 
             for (MaterialIdDTO materialId : collectDTO.materials()) {
