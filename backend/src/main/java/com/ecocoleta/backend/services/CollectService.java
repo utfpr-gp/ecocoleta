@@ -110,6 +110,7 @@ public class CollectService {
      * a api do front leaflet monta os locais no mapa com a array.
      * a cada 1 min ou 30 segundos verifica a lcoalização e se esta em um dos pontos indicados no mapa, caso sim manda para o back que foi realizado a acoleta, para mais tarde ser avaliada?
      *
+     * para o calculo e consulta pelo raio usar o >>> calculo de haversine
      */
 
 }
