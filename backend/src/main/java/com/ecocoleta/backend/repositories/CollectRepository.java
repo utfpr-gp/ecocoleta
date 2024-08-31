@@ -17,4 +17,8 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
     Page<Collect> getAllByOrderByAddress(Pageable pageable);
 
     List<Collect> getAllByOrderById();
+
+    // TODO fazer query para pegar pelo longitude perot de 5 km,
+
+    List<Collect> getColectBy
 }
