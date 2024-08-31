@@ -111,6 +111,5 @@ public class CollectService {
      * a cada 1 min ou 30 segundos verifica a lcoalização e se esta em um dos pontos indicados no mapa, caso sim manda para o back que foi realizado a acoleta, para mais tarde ser avaliada?
      *
      */
-    /
 
 }

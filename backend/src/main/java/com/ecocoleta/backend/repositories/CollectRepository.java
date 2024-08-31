@@ -20,5 +20,5 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
 
     // TODO fazer query para pegar pelo longitude perot de 5 km,
 
-    List<Collect> getColectBy
+//    List<Collect> getColectBy
 }
