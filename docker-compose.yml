@@ -1,9 +1,9 @@
 #version: '3'
 
 services:
-# CONTAINER POSTGRES
+  # CONTAINER POSTGRES
   db:
-    image: postgres:latest
+    image: postgis/postgis:latest
     container_name: ecocoleta-database
     restart: always
     env_file:
@@ -19,8 +19,7 @@ services:
       - 5432:5432
     networks:
       - app-network
-
-# CONTAINER MARIADB
+  # CONTAINER MARIADB
   # db:
   #   #image: mysql:5.7
   #   image: mariadb
@@ -40,7 +39,7 @@ services:
   #   ports:
   #     - '3307:3306'
 
-# CONTAINERS BACKEND E FRONTEND - not use now
+  # CONTAINERS BACKEND E FRONTEND - not use now
   # backend:
   #   image: ronifabio/ecocoleta-backend:latest
   #   container_name: ecocoleta-backend
@@ -70,7 +69,7 @@ services:
   #     - db
   #   networks:
   #     - app-network
-      
+
   # frontend:
   #   image: ronifabio/ecocoleta-frontend:latest
   #   container_name: ecocoleta-frontend
@@ -87,7 +86,7 @@ services:
   #     - backend
   #   networks:
   #     - app-network
-      
+
 volumes:
   pgdata:
     driver: local
