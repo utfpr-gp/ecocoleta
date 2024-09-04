@@ -2,6 +2,7 @@ package com.ecocoleta.backend.domain.address;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 
@@ -23,14 +24,16 @@ public class Address {
     private String number;
     private String neighborhood;
     private String cep;
-    @Column(name = "latitude")
     private Double latitude;
-    @Column(name = "longitude")
     private Double longitude;
+    @Column(columnDefinition = "geometry(Point, 4326)")
+    private Point location;
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")
     private LocalDateTime updateTime;
+
+//    todo ao construir setar o location
 
     public Address(String name, String city, String street, String number, String neighborhood, String cep, Double latitude, Double longitude) {
         this.name = name;

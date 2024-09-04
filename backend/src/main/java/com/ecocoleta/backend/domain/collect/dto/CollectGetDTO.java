@@ -9,6 +9,8 @@ public record CollectGetDTO(
         @NotBlank
         Double currentLatitude,
         @NotBlank
-        Double currentLongitude
+        Double currentLongitude,
+        @NotBlank
+        String city
 ) {
 }

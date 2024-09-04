@@ -26,9 +26,13 @@ CREATE TABLE IF NOT EXISTS address
     cep          VARCHAR(255),
     latitude     DOUBLE PRECISION,
     longitude    DOUBLE PRECISION,
+    location     GEOGRAPHY(POINT, 4326), -- Coluna para armazenar a localização
     create_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time  TIMESTAMP
 );
+
+-- Uso de Índices Espaciais: Para consultas eficientes baseadas em localização
+CREATE INDEX idx_location ON address USING GIST (location);
 
 -- Tabela para detalhes de residentes
 CREATE TABLE IF NOT EXISTS residents
