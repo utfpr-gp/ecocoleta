@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record CollectDTO(
+        long id,
         @NotNull
         @JsonAlias({"intern", "interno"})
         boolean is_intern,

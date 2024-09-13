@@ -103,23 +103,23 @@ public class CollectController {
 //    ONDE RECEBE O ID DO WASTECOLLECTOR, FAZ FILTRO DAS COLETAS COM STATUS PEDENTE, ANALIZA SE A LONGITUDE E LATIDUDE ESTA PROXIMO.
 
 
-//    @PostMapping("/{userId}")
-//    @Transactional
-//    public ResponseEntity<List<CollectDTO>> getCollects(@PathVariable Long userId, @RequestBody @Valid CollectGetDTO collectGetDTO) {
-//
-//        // Busca o usuário por ID
-//        if (!wasteCollectorService.existsWasteCollectorById(userId)){
-//            throw new ValidException("Catador não encontrado!");
-//        }
-//
-//
-//        WasteCollector wasteCollector =  wasteCollectorService.getWasteCollectorById(userId).get();
-//
-//        var returnDto = collectService.getCollectAvaibleList(wasteCollector, collectGetDTO);
-//
-//        return ResponseEntity.ok().body(returnDto);
-//
-//    }
+    @PostMapping("/{userId}")
+    @Transactional
+    public ResponseEntity<List<CollectDTO>> getCollects(@PathVariable Long userId, @RequestBody @Valid CollectGetDTO collectGetDTO) {
+
+        // Busca o usuário por ID
+        if (!wasteCollectorService.existsWasteCollectorById(userId)){
+            throw new ValidException("Catador não encontrado!");
+        }
+
+
+        WasteCollector wasteCollector =  wasteCollectorService.getWasteCollectorById(userId).get();
+
+        var returnDto = collectService.getCollectAvaibleList(wasteCollector, collectGetDTO);
+
+        return ResponseEntity.ok().body(returnDto);
+
+    }
 
     //solicitação de coleta, delete, etc...
 }

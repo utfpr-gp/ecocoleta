@@ -3,6 +3,8 @@ package com.ecocoleta.backend.domain.address;
 import jakarta.persistence.*;
 import lombok.*;
 import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 
 import java.time.LocalDateTime;
 
@@ -33,8 +35,6 @@ public class Address {
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
-//    todo ao construir setar o location
-
     public Address(String name, String city, String street, String number, String neighborhood, String cep, Double latitude, Double longitude) {
         this.name = name;
         this.city = city;
@@ -45,6 +45,7 @@ public class Address {
         this.latitude = latitude;
         this.longitude = longitude;
         this.createTime = LocalDateTime.now();
+        this.setLocationFromCoordinates(); // Define o Point automaticamente
     }
 
     public Address(Long id, String name, String city, String street, String number, String neighborhood, String cep, Double latitude, Double longitude) {
@@ -58,6 +59,22 @@ public class Address {
         this.latitude = latitude;
         this.longitude = longitude;
         this.createTime = LocalDateTime.now();
+        this.setLocationFromCoordinates(); // Define o Point automaticamente
+    }
+
+    // Método para criar o Point (location) a partir de latitude e longitude
+    public void setLocationFromCoordinates() {
+        if (latitude != null && longitude != null) {
+            GeometryFactory geometryFactory = new GeometryFactory();
+            this.location = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+        }
+    }
+
+    // Se precisar modificar a latitude ou longitude, você pode usar este setter
+    public void setLatitudeAndLongitude(Double latitude, Double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.setLocationFromCoordinates(); // Atualiza o Point com as novas coordenadas
     }
 
     @Override
@@ -72,6 +89,7 @@ public class Address {
                 ", cep='" + cep + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
+                ", location=" + location +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';

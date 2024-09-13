@@ -12,18 +12,23 @@ INSERT INTO waste_collectors (id, cpf) VALUES
 
 INSERT INTO companys (id, cnpj, company_name) VALUES
                                         (4, '12345678901', 'Empresa Teste');
---
-INSERT INTO address (name, city, street, number, neighborhood, cep, latitude, longitude) VALUES
-                                                                        ('Casa', 'Guarapuava', 'Rua Emiliano Perneta', 303, 'Alto da XV', 85065070, '-25.3813', '-51.45775'),
-                                                                        ('Empresa', 'Guarapuava', 'Rua Souza Naves', 77, 'Alto da XV', 85065080, '-25.3800', '-51.4573'),
-                                                                        ('Casa', 'Guarapuava', 'Rua Guaíra', 1379, 'Centro', 85015280, '-25.3808', '-51.4558'),
-                                                                        ('Empresa', 'Guarapuava', 'Rua Benjamin Constant', 862, 'Centro', 85010190, '-25.3888', '-51.4628');
 
+-- ST_SetSRID: Define o SRID (Sistema de Referência Espacial) da geometria, neste caso, usamos o 4326, que é o SRID padrão para coordenadas GPS (latitude/longitude).
+-- ST_MakePoint: Cria um ponto a partir das coordenadas de longitude e latitude, onde o primeiro valor é a longitude e o segundo é a latitude.
+-- Valores de latitude e longitude: São inseridos como números reais (sem aspas), pois são coordenadas geográficas.
+-- Inserindo dados na tabela address com o campo location geoespacial
+INSERT INTO address (name, city, street, number, neighborhood, cep, latitude, longitude, location) VALUES
+                                                                                                       ('Casa', 'Guarapuava', 'Rua Emiliano Perneta', 303, 'Alto da XV', 85065070, -25.3813, -51.45775, ST_SetSRID(ST_MakePoint(-51.45775, -25.3813), 4326)),
+                                                                                                       ('Empresa', 'Guarapuava', 'Rua Souza Naves', 77, 'Alto da XV', 85065080, -25.3800, -51.4573, ST_SetSRID(ST_MakePoint(-51.4573, -25.3800), 4326)),
+                                                                                                       ('Casa', 'Guarapuava', 'Rua Guaíra', 1379, 'Centro', 85015280, -25.3808, -51.4558, ST_SetSRID(ST_MakePoint(-51.4558, -25.3808), 4326)),
+                                                                                                       ('Empresa', 'Guarapuava', 'Rua Benjamin Constant', 862, 'Centro', 85010190, -25.3888, -51.4628, ST_SetSRID(ST_MakePoint(-51.4628, -25.3888), 4326));
+
+-- Vinculando usuários com os endereços
 INSERT INTO user_addresses (user_id, address_id) VALUES
-                                                (2, 1),
-                                                (2, 2),
-                                                (3, 3),
-                                                (4, 4);
+                                                     (2, 1),
+                                                     (2, 2),
+                                                     (3, 3),
+                                                     (4, 4);
 
 INSERT INTO materials (name, score) VALUES
                                         ('Papel e Papelão - Jornais e revistas', 10),
@@ -57,6 +62,29 @@ INSERT INTO materials (name, score) VALUES
                                         ('Tecidos e Têxteis - Roupas usadas', 10),
                                         ('Tecidos e Têxteis - Tecidos de algodão, lã, poliéster, etc.', 10),
                                         ('Tecidos e Têxteis - Panos e retalhos', 10);
+
+-- Inserindo 20 coletas fictícias para testes
+INSERT INTO collects (is_intern, schedule, picture, amount, status, address_id, resident_id, waste_collector_id) VALUES
+                                                                                                                     (false, '2024-09-10 10:00:00', 'collect_1.jpg', 5, 'PENDING', 1, 2, 3),
+                                                                                                                     (true, '2024-09-12 11:30:00', 'collect_2.jpg', 3, 'COMPLETED', 2, 2, 3),
+                                                                                                                     (false, '2024-09-14 14:00:00', 'collect_3.jpg', 7, 'PENDING', 3, 2, NULL),
+                                                                                                                     (true, '2024-09-15 09:00:00', 'collect_4.jpg', 2, 'COMPLETED', 4, 2, 3),
+                                                                                                                     (false, '2024-09-16 08:00:00', 'collect_5.jpg', 10, 'PENDING', 1, 2, 3),
+                                                                                                                     (true, '2024-09-17 12:00:00', 'collect_6.jpg', 6, 'COMPLETED', 2, 2, 3),
+                                                                                                                     (false, '2024-09-18 16:00:00', 'collect_7.jpg', 4, 'PENDING', 3, 2, NULL),
+                                                                                                                     (true, '2024-09-19 18:00:00', 'collect_8.jpg', 8, 'COMPLETED', 4, 2, 3),
+                                                                                                                     (false, '2024-09-20 19:00:00', 'collect_9.jpg', 9, 'PENDING', 1, 2, 3),
+                                                                                                                     (true, '2024-09-21 20:00:00', 'collect_10.jpg', 5, 'COMPLETED', 2, 2, 3),
+                                                                                                                     (false, '2024-09-22 21:00:00', 'collect_11.jpg', 7, 'PENDING', 3, 2, NULL),
+                                                                                                                     (true, '2024-09-23 22:00:00', 'collect_12.jpg', 3, 'COMPLETED', 4, 2, 3),
+                                                                                                                     (false, '2024-09-24 23:00:00', 'collect_13.jpg', 6, 'PENDING', 1, 2, 3),
+                                                                                                                     (true, '2024-09-25 07:00:00', 'collect_14.jpg', 4, 'COMPLETED', 2, 2, 3),
+                                                                                                                     (false, '2024-09-26 08:30:00', 'collect_15.jpg', 9, 'PENDING', 3, 2, NULL),
+                                                                                                                     (true, '2024-09-27 09:45:00', 'collect_16.jpg', 10, 'COMPLETED', 4, 2, 3),
+                                                                                                                     (false, '2024-09-28 10:15:00', 'collect_17.jpg', 5, 'PENDING', 1, 2, 3),
+                                                                                                                     (true, '2024-09-29 11:20:00', 'collect_18.jpg', 7, 'COMPLETED', 2, 2, 3),
+                                                                                                                     (false, '2024-09-30 12:35:00', 'collect_19.jpg', 8, 'PENDING', 3, 2, NULL),
+                                                                                                                     (true, '2024-10-01 14:00:00', 'collect_20.jpg', 6, 'COMPLETED', 4, 2, 3);
 
 --
 -- --setando o id das tabelas
