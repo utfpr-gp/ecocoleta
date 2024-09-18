@@ -3,14 +3,14 @@ package com.ecocoleta.backend.domain.collect.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record CollectGetDTO(
+public record CollectGetAvaibleListDTO(
         @NotNull
         Long idWasteCollector,
-        @NotBlank
+        @NotNull(message = "Latitude não pode ser vazio")
         Double currentLatitude,
-        @NotBlank
+        @NotNull(message = "Longitude não pode ser vazio")
         Double currentLongitude,
-        @NotBlank
+        @NotBlank(message = "cidade não pode ser vazio")
         String city
 ) {
 }

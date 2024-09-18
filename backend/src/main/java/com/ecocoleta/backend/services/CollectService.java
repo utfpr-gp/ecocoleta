@@ -1,6 +1,6 @@
 package com.ecocoleta.backend.services;
 
-import com.ecocoleta.backend.domain.collect.dto.CollectGetDTO;
+import com.ecocoleta.backend.domain.collect.dto.CollectGetAvaibleListDTO;
 import com.ecocoleta.backend.domain.collectMaterial.CollectMaterial;
 import com.ecocoleta.backend.domain.material.Material;
 import com.ecocoleta.backend.domain.material.MaterialIdDTO;
@@ -17,8 +17,11 @@ import com.ecocoleta.backend.repositories.ResidentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.Pageable;
 import java.util.stream.Collectors; // Import necessário
 
 import javax.transaction.Transactional;
@@ -93,33 +96,36 @@ public class CollectService {
     }
 
     @Transactional
-    public List<CollectDTO> getCollectAvaibleList(WasteCollector wasteCollector, CollectGetDTO collectGetDTO) {
-        Double currentLatitude = collectGetDTO.currentLatitude();
-        Double currentLongitude = collectGetDTO.currentLongitude();
-        String city = collectGetDTO.city();
+    public List<CollectDTO> getCollectAvaibleList(WasteCollector wasteCollector, CollectGetAvaibleListDTO collectGetAvaibleListDTO) {
+//        Pageable pageable
+        Double currentLatitude = collectGetAvaibleListDTO.currentLatitude();
+        Double currentLongitude = collectGetAvaibleListDTO.currentLongitude();
+        String city = collectGetAvaibleListDTO.city();
 
         // Usar GeometryFactory para criar um Point a partir das coordenadas do WasteCollector
         GeometryFactory geometryFactory = new GeometryFactory();
-        var collectorLocation = geometryFactory.createPoint(new Coordinate(currentLongitude, currentLatitude));
+        Point currentCollectorLocation = geometryFactory.createPoint(new Coordinate(currentLongitude, currentLatitude));
 
         // Chamar o repositório para fazer a consulta
-        List<Collect> collects = collectRepository.findAvailableCollects(city, collectorLocation, wasteCollector);
+        List<Collect> collectList = collectRepository.findAvailableCollects(city, currentCollectorLocation, wasteCollector); /*pageable*/
+        List<CollectDTO> collectDTOS = collectList.stream().map(collect -> new CollectDTO(collect.getId(), collect.isIntern(), collect.getSchedule(), collect.getPicture(), collect.getAmount(), collect.getAddress().getId(), collect.getResident().getId(), collect.getWasteCollector().getId(), null)).collect(Collectors.toList());
 
+        return collectDTOS;
 //        #TODO verificar retorno
         // Converter e retornar a lista de CollectDTO diretamente
-        return collects.stream()
-                .map(collect -> new CollectDTO(
-                        collect.getId(),
-                        collect.isIntern(),
-                        collect.getSchedule(),
-                        collect.getPicture(),
-                        collect.getAmount(),
-                        collect.getAddress().getId(), // Mantendo Long para idAddress
-                        collect.getResident().getId(),
-                        wasteCollector.getId(), // Assumindo que você também quer incluir o WasteCollector
-                        null // Materiais ou outro campo que precise mapear
-                ))
-                .collect(Collectors.toList()); // Finaliza o stream, convertendo para uma lista
+//        return collects.stream()
+//                .map(collect -> new CollectDTO(
+//                        collect.getId(),
+//                        collect.isIntern(),
+//                        collect.getSchedule(),
+//                        collect.getPicture(),
+//                        collect.getAmount(),
+//                        collect.getAddress().getId(), // Mantendo Long para idAddress
+//                        collect.getResident().getId(),
+//                        wasteCollector.getId(), // Assumindo que você também quer incluir o WasteCollector
+//                        null // Materiais ou outro campo que precise mapear
+//                ))
+//                .collect(Collectors.toList()); // Finaliza o stream, convertendo para uma lista
     }
 
 //    public List<CollectDTO> convertToDTO(List<Collect> collects) {

@@ -37,13 +37,21 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
 //            "ORDER BY c.schedule ASC " +  // Ordenar por data de agendamento
 //            "LIMIT 10")  // Limitar a 10 resultados
 //    List<Collect> findAvailableCollects(String city, Point collectorLocation, WasteCollector wasteCollector);
+//    @Query("SELECT c FROM Collect c " +
+//            "WHERE c.status = 'PENDING' " +
+//            "AND c.address.city = :city " +
+//            "AND FUNCTION('ST_DistanceSphere', c.address.location::geography, :collectorLocation::geography) <= 5000 " +  // Filtro por raio de 5 km
+//            "AND (c.wasteCollector IS NULL OR c.wasteCollector = :wasteCollector) " +  // Coletas disponíveis ou associadas ao coletor
+//            "ORDER BY c.schedule ASC")
+//    List<Collect> findAvailableCollects(String city, Point collectorLocation, WasteCollector wasteCollector);
+
     @Query("SELECT c FROM Collect c " +
             "WHERE c.status = 'PENDING' " +
             "AND c.address.city = :city " +
-            "AND FUNCTION('ST_DistanceSphere', c.address.location, :collectorLocation) <= 5000 " +  // Filtro por raio de 5 km
-            "AND (c.wasteCollector IS NULL OR c.wasteCollector = :wasteCollector) " +  // Coletas disponíveis ou associadas ao coletor
+            "AND ST_Distance(c.address.location, :collectorLocation) <= 5000 " +
+            "AND (c.wasteCollector IS NULL OR c.wasteCollector = :wasteCollector) " +
             "ORDER BY c.schedule ASC")
-    List<Collect> findAvailableCollects(String city, Point collectorLocation, WasteCollector wasteCollector, Pageable pageable);
+    List<Collect> findAvailableCollects(String city, Point collectorLocation, WasteCollector wasteCollector);
 
 
 }

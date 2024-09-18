@@ -41,6 +41,8 @@ public class Collect {
     @JoinColumn(name = "waste_collector_id")
     private WasteCollector wasteCollector;
 
+//    TODO fazer atributo 'lista de materias', assim não tendo relação direta nxn para entidade materials, salva uma lista de ids de materiais e ai retronar e salvar fica mais facil ?
+
     public Collect(boolean isIntern, String picture, Integer amount, CollectStatus status, Address address, Resident resident) {
         this.isIntern = isIntern;
         this.picture = picture;
