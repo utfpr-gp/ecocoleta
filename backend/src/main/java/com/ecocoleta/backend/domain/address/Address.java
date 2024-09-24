@@ -28,7 +28,7 @@ public class Address {
     private String cep;
     private Double latitude;
     private Double longitude;
-    @Column(columnDefinition = "geometry(Point, 4326)")
+    @Column(columnDefinition = "geography(Point, 4326)")
     private Point location;
     @Column(name = "create_time")
     private LocalDateTime createTime;
@@ -62,7 +62,7 @@ public class Address {
         this.setLocationFromCoordinates(); // Define o Point automaticamente
     }
 
-    // Método para criar o Point (location) a partir de latitude e longitude
+    // Método para criar o Point (location) a partir de longitude e latitude
     public void setLocationFromCoordinates() {
         if (latitude != null && longitude != null) {
             GeometryFactory geometryFactory = new GeometryFactory();
@@ -90,7 +90,7 @@ public class Address {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", location=" + location +
-                ", createTime=" + createTime +
+                ", create_time=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';
     }

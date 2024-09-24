@@ -2,6 +2,7 @@ package com.ecocoleta.backend.controllers;
 
 import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectGetAvaibleListDTO;
+import com.ecocoleta.backend.domain.collect.dto.CollectReturnAvaibleDTO;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.repositories.WasteCollectorRespository;
@@ -60,7 +61,7 @@ public class CollectController {
      * Para o cálculo e consulta pelo raio, utilizar o cálculo de Haversine.
      *
      * Criar DTO que recebe:
-     * - idWasteCollector
+     * - waste_Collector_id
      * - longitude
      * - latitude
      * - city
@@ -99,7 +100,7 @@ public class CollectController {
 
     @PostMapping("get_avaible_collects/{userId}")
     @Transactional
-    public ResponseEntity<List<CollectDTO>> getCollects(@PathVariable Long userId, @RequestBody @Valid CollectGetAvaibleListDTO collectGetAvaibleListDTO) {
+    public ResponseEntity<List<CollectReturnAvaibleDTO>> getCollects(@PathVariable Long userId, @RequestBody @Valid CollectGetAvaibleListDTO collectGetAvaibleListDTO) {
 //        @PageableDefault(size = 10, sort = {"name"}) Pageable pageable
 
         // Busca o usuário por ID

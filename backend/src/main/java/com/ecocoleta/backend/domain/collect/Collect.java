@@ -62,7 +62,7 @@ public class Collect {
                 ", picture='" + picture + '\'' +
                 ", amount=" + amount +
                 ", status=" + status +
-                ", createTime=" + createTime +
+                ", create_time=" + createTime +
                 ", updateTime=" + updateTime +
                 ", address=" + address +
                 ", resident=" + resident +

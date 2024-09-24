@@ -30,7 +30,7 @@ public class Resident extends User {
     @Override
     public String toString() {
         return "Resident{" +
-                "createTime=" + createTime +
+                "create_time=" + createTime +
                 ", updateTime=" + updateTime +
                 ", id=" + id +
                 '}';

@@ -34,9 +34,9 @@ public record CollectDTO(
 //        "schedule": "2024-09-01T10:00:00",
 //        "picture": "coleta1.jpg",
 //        "amount": 5,
-//        "idAddress": 1,
-//        "idResident": 2,
-//        "idWasteCollector": 3,
+//        "address_id": 1,
+//        "resident_id": 2,
+//        "waste_Collector_id": 3,
 //        "materials": [
 //        {
 //        "materialId": 10,
