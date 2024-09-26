@@ -2,7 +2,7 @@ package com.ecocoleta.backend.controllers;
 
 import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectGetAvaibleListDTO;
-import com.ecocoleta.backend.domain.collect.dto.CollectReturnAvaibleDTO;
+import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.repositories.WasteCollectorRespository;
@@ -11,8 +11,6 @@ import com.ecocoleta.backend.services.UserService;
 import com.ecocoleta.backend.services.WasteCollectorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -100,7 +98,7 @@ public class CollectController {
 
     @PostMapping("get_avaible_collects/{userId}")
     @Transactional
-    public ResponseEntity<List<CollectReturnAvaibleDTO>> getCollects(@PathVariable Long userId, @RequestBody @Valid CollectGetAvaibleListDTO collectGetAvaibleListDTO) {
+    public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollects(@PathVariable Long userId, @RequestBody @Valid CollectGetAvaibleListDTO collectGetAvaibleListDTO) {
 //        @PageableDefault(size = 10, sort = {"name"}) Pageable pageable
 
         // Busca o usuário por ID

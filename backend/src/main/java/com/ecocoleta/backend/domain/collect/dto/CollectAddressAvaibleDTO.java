@@ -1,23 +1,22 @@
 package com.ecocoleta.backend.domain.collect.dto;
 
-import com.ecocoleta.backend.domain.collect.CollectStatus;
 import jakarta.validation.constraints.NotNull;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 
-public record CollectReturnAvaibleDTO(
+public record CollectAddressAvaibleDTO(
         @NotNull
         long id,
-        @NotNull
-        boolean is_intern,
+        boolean isIntern,
         LocalDateTime schedule,
         String picture,
         Integer amount,
         @NotNull
-        CollectStatus status,
+        String status,
         @NotNull
-        LocalDateTime create_time,
+        LocalDateTime createTime,
+        LocalDateTime updateTime,
         @NotNull
         Long address_id,
         @NotNull
@@ -25,6 +24,9 @@ public record CollectReturnAvaibleDTO(
         Long waste_Collector_id,
         Double longitude,
         Double latitude,
-        Point location
+        // TODO verificar como retornar o Point - Point location
+        String location
+
+
 ) {
 }

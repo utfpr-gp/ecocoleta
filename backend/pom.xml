@@ -133,6 +133,12 @@
             <version>42.6.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+            <version>2.5.0</version> <!-- ou a versão mais recente disponível -->
+        </dependency>
+
         <!--DATABASES DEPENDENCIAS GEOESPACIAIS-->
         <dependency>
             <groupId>org.hibernate</groupId>

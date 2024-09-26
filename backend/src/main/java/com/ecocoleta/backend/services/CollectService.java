@@ -1,7 +1,8 @@
 package com.ecocoleta.backend.services;
 
+import com.ecocoleta.backend.Utils.DataUtils;
 import com.ecocoleta.backend.domain.collect.dto.CollectGetAvaibleListDTO;
-import com.ecocoleta.backend.domain.collect.dto.CollectReturnAvaibleDTO;
+import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.domain.collectMaterial.CollectMaterial;
 import com.ecocoleta.backend.domain.material.Material;
 import com.ecocoleta.backend.domain.material.MaterialIdDTO;
@@ -16,9 +17,12 @@ import com.ecocoleta.backend.repositories.CollectMaterialRepository;
 import com.ecocoleta.backend.repositories.CollectRepository;
 import com.ecocoleta.backend.repositories.ResidentRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Tuple;
+import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.stream.Collectors; // Import necessário
 
 import javax.transaction.Transactional;
@@ -93,36 +97,34 @@ public class CollectService {
     }
 
     @Transactional
-    public List<CollectReturnAvaibleDTO> getCollectAvaibleList(WasteCollector wasteCollector, CollectGetAvaibleListDTO collectGetAvaibleListDTO) {
+    public List<CollectAddressAvaibleDTO> getCollectAvaibleList(WasteCollector wasteCollector, CollectGetAvaibleListDTO collectGetAvaibleListDTO) {
 //        Pageable pageable
         Double currentLatitude = collectGetAvaibleListDTO.currentLatitude();
         Double currentLongitude = collectGetAvaibleListDTO.currentLongitude();
-        String city = collectGetAvaibleListDTO.city();
-
-        // Usar GeometryFactory para criar um Point a partir das coordenadas do WasteCollector
-//        GeometryFactory geometryFactory = new GeometryFactory();
-//        Point currentCollectorLocation = geometryFactory.createPoint(new Coordinate(currentLongitude, currentLatitude));
+//        String city = collectGetAvaibleListDTO.city();
 
         // Chamar o repositório para fazer a consulta
-        List<CollectReturnAvaibleDTO> collectList = collectRepository.findAvailableCollects(currentLongitude, currentLatitude, wasteCollector.getId()); /*pageable*/
-//        List<CollectDTO> collectDTOS = collectList.stream().map(collect -> new CollectDTO(collect.getId(), collect.isIntern(), collect.getSchedule(), collect.getPicture(), collect.getAmount(), collect.getAddress().getId(), collect.getResident().getId(), collect.getWasteCollector().getId(), null)).collect(Collectors.toList());
-
-        return collectList.stream().map(collect -> new CollectReturnAvaibleDTO(collect.id(), collect.is_intern(), collect.schedule(), collect.picture(), collect.amount(), collect.status(), collect.create_time(), collect.address_id(), collect.resident_id(), collect.waste_Collector_id(), collect.longitude(), collect.latitude(), collect.location())).collect(Collectors.toList());
-//        #TODO verificar retorno
-        // Converter e retornar a lista de CollectDTO diretamente
-//        return collects.stream()
-//                .map(collect -> new CollectDTO(
-//                        collect.getId(),
-//                        collect.isIntern(),
-//                        collect.getSchedule(),
-//                        collect.getPicture(),
-//                        collect.getAmount(),
-//                        collect.getAddress().getId(), // Mantendo Long para address_id
-//                        collect.getResident().getId(),
-//                        wasteCollector.getId(), // Assumindo que você também quer incluir o WasteCollector
-//                        null // Materiais ou outro campo que precise mapear
-//                ))
-//                .collect(Collectors.toList()); // Finaliza o stream, convertendo para uma lista
+        List<Tuple> tuples = collectRepository.findAvailableCollects(currentLongitude, currentLatitude, wasteCollector.getId());
+        return tuples.stream().map(tuple -> new CollectAddressAvaibleDTO(
+                    tuple.get("id", Long.class),
+                    tuple.get("isIntern", Boolean.class),
+                    DataUtils.convertToLocalDateTime(tuple.get("schedule", Timestamp.class)),
+                    tuple.get("picture", String.class),
+                    tuple.get("amount", Integer.class),
+                    tuple.get("status", String.class),
+                    DataUtils.convertToLocalDateTime(tuple.get("createTime", Timestamp.class)),
+                    DataUtils.convertToLocalDateTime(tuple.get("updateTime", Timestamp.class)),
+                    tuple.get("addressId", Long.class),
+                    tuple.get("residentId", Long.class),
+                    tuple.get("wasteCollectorId", Long.class),
+                    tuple.get("longitude", Double.class),
+                    tuple.get("latitude", Double.class),
+                    tuple.get("location", String.class)
+//                    TODO verificar como retornar o Point
+//                    DataUtils.convertToPoint(tuple.get("location", String.class))
+//                    tuple.get("location", Point.class)
+//                    DataUtils.convertToPoint(tuple.get("location", byte[].class)) // Conversão de binário para Point
+        )).collect(Collectors.toList());
     }
 
 //    public List<CollectDTO> convertToDTO(List<Collect> collects) {
