@@ -1,7 +1,7 @@
 package com.ecocoleta.backend.domain.collect.dto;
 
 import jakarta.validation.constraints.NotNull;
-import org.locationtech.jts.geom.Point;
+
 
 import java.time.LocalDateTime;
 
@@ -14,7 +14,6 @@ public record CollectAddressAvaibleDTO(
         Integer amount,
         @NotNull
         String status,
-        @NotNull
         LocalDateTime createTime,
         LocalDateTime updateTime,
         @NotNull
@@ -24,9 +23,7 @@ public record CollectAddressAvaibleDTO(
         Long waste_Collector_id,
         Double longitude,
         Double latitude,
-        // TODO verificar como retornar o Point - Point location
+        //Pode ser retornado com o tipo Point - Point location, porém tem que ser feito a conversão de byte wkt para Point...
         String location
-
-
 ) {
 }

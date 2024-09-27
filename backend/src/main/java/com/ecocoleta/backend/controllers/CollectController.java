@@ -1,9 +1,8 @@
 package com.ecocoleta.backend.controllers;
 
 import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
-import com.ecocoleta.backend.domain.collect.dto.CollectGetAvaibleListDTO;
+import com.ecocoleta.backend.domain.collect.dto.CollectSearchAvaibleListDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
-import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.repositories.WasteCollectorRespository;
 import com.ecocoleta.backend.services.CollectService;
@@ -83,37 +82,32 @@ public class CollectController {
      */
 
 
-//    //GET 10 COLETAS DISPONIVEIS
-//    @PostMapping
-//    @Transactional
-//    public ResponseEntity createNewCollect(@RequestBody @Valid CollectDTO collectDTO) {
-//
-//        var dto = collectService.createCollect(collectDTO);
-//
-//        return ResponseEntity.ok().body(dto);
-//    }
-//    //TODO METODO DE PEGAR AS 10 COLETAS
-//    ONDE RECEBE O ID DO WASTECOLLECTOR, FAZ FILTRO DAS COLETAS COM STATUS PEDENTE, ANALIZA SE A LONGITUDE E LATIDUDE ESTA PROXIMO.
-
-
-    @PostMapping("get_avaible_collects/{userId}")
+    // Endpoint para buscar as coletas disponíveis
+    @PostMapping("get_avaible_collects")
     @Transactional
-    public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollects(@PathVariable Long userId, @RequestBody @Valid CollectGetAvaibleListDTO collectGetAvaibleListDTO) {
-//        @PageableDefault(size = 10, sort = {"name"}) Pageable pageable
+    public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollects(@RequestBody @Valid CollectSearchAvaibleListDTO collectSearchAvaibleListDTO) {
 
-        // Busca o usuário por ID
-        if (!wasteCollectorService.existsWasteCollectorById(userId)){
+        // Busca o Catador por ID
+        if (!wasteCollectorService.existsWasteCollectorById(collectSearchAvaibleListDTO.idWasteCollector())){
             throw new ValidException("Catador não encontrado!");
         }
 
+        List<CollectAddressAvaibleDTO> collectAddressAvaibleDTOS = collectService.getCollectAvaibleList(collectSearchAvaibleListDTO);
 
-        WasteCollector wasteCollector =  wasteCollectorService.getWasteCollectorById(userId).get();
-
-        var returnDto = collectService.getCollectAvaibleList(wasteCollector, collectGetAvaibleListDTO);
-
-        return ResponseEntity.ok().body(returnDto);
-
+        return ResponseEntity.ok().body(collectAddressAvaibleDTOS);
     }
 
-    //solicitação de coleta, delete, etc...
+    //TODO enpoints > finalizar coleta, desistir da coleta, etc...
+
+    /*
+    * endpoint para finalizar coleta
+    * pode receber o id catador, id coleta
+    * retorna aviso qeu finalizou para o front
+    * obs. no front fazer aviso sonoro, pontuação etc */
+    /*@PostMapping("finish_collect")
+    @Transactional
+    public ResponseEntity finishCollect(@RequestBody @Valid CollectDTO collectDTO) {
+        collectService.finishCollect(collectDTO);
+        return ResponseEntity.ok().build();
+    }*/
 }

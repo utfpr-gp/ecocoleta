@@ -23,44 +23,7 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
 
     List<Collect> getAllByOrderById();
 
-    // TODO fazer query para pegar pelo longitude perot de 5 km
-    /*
-     * Filtro de cidade: O campo c.address.city é comparado com a cidade fornecida no DTO.
-     * Distância geoespacial: A função ST_DistanceSphere do PostGIS calcula a distância esférica entre o ponto de coleta e as coordenadas atuais do coletor, limitando as coletas a 5 km.
-     * Filtro por status PENDING: As coletas retornadas devem ter o status CollectStatus.PENDING.
-     * Associação opcional ao WasteCollector: Coletas que ainda não têm um coletor atribuído (ou já estão atribuídas ao coletor atual) são selecionadas.
-     * Limitação de resultados: A consulta é limitada a 10 resultados.
-     */
-
-//    @Query("select c, a.longitude, a.latitude, a.location from Collect c left join Address a on c.address = a and ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, 5000) where c.status = 'PENDING' and (c.wasteCollector is null or c.wasteCollector = :wasteCollector) order by a.location limit 10")
-//    List<Collect> findAvailableCollects(@Param("city") String city,
-//                                        @Param("wasteCollector") WasteCollector wasteCollector,
-//                                        @Param("longitude") Double longitude,
-//                                        @Param("latitude") Double latitude);
-
-    /*
-    * select c.*, a.longitude, a.latitude, a."location" from collects c
-left join address a on c.address_id = a.id
-and ST_DWithin(ST_SetSRID(ST_MakePoint(-51.45775, -25.3813), 4326), a."location", 5000)
-where c.status = 'PENDING'
-and (c.waste_collector_id is null or c.waste_collector_id = 350)
-order by a."location"
-limit 10
-*/
-
-//    @Query(value = "select c.*, a.longitude, a.latitude, a.location " +
-//            "from collects c " +
-//            "left join address a on c.address_id = a.id " +
-//            "and ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, 5000) " +
-//            "where c.status = 'PENDING' " +
-//            "and (c.waste_collector_id is null or c.waste_collector_id = :wasteCollectorId) " +
-//            "order by a.location " +
-//            "limit 10",
-//            nativeQuery = true)
-//    List<CollectAddressAvaibleDTO> findAvailableCollects(@Param("longitude") Double longitude,
-//                                                         @Param("latitude") Double latitude,
-//                                                         @Param("wasteCollectorId") Long wasteCollectorId);
-
+    // metodo para buscar coletas disponiveis onde calcula a distancia entre o coletor e a coleta em um raio de 5000 metros limitando a 10 coletas e ordenando pela localizacao, usando tupla para retornar os dados nomeados
     @Query(value = "select c.id as id, c.is_intern as isIntern, c.schedule as schedule, c.picture as picture, c.amount as amount, " +
             "c.status as status, c.create_time as createTime, c.update_time as updateTime, " +
             "c.address_id as addressId, c.resident_id as residentId, c.waste_collector_id as wasteCollectorId, " +
@@ -73,9 +36,36 @@ limit 10
             "order by a.location " +
             "limit 10",
             nativeQuery = true)
-    List<Tuple> findAvailableCollects(@Param("longitude") Double longitude,
-                                      @Param("latitude") Double latitude,
-                                      @Param("wasteCollectorId") Long wasteCollectorId);
-
-
+    List<Tuple> findAvailableCollects(@Param("longitude") Double longitude, @Param("latitude") Double latitude, @Param("wasteCollectorId") Long wasteCollectorId);
+    /*
+    * Query nativa para buscar coletas disponiveis
+    * SELECT
+            c.id as id,
+            c.is_intern as isIntern,
+            c.schedule as schedule,
+            c.picture as picture,
+            c.amount as amount,
+            c.status as status,
+            c.create_time as createTime,
+            c.update_time as updateTime,
+            c.address_id as addressId,
+            c.resident_id as residentId,
+            c.waste_collector_id as wasteCollectorId,
+            a.longitude as longitude,
+            a.latitude as latitude,
+            ST_AsText(a.location) as location -- Ou use ST_AsText(a.location)
+        FROM
+            collects c
+        LEFT JOIN
+            address a ON c.address_id = a.id
+        AND
+            ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, 5000)
+        WHERE
+            c.status = 'PENDING'
+        AND
+            (c.waste_collector_id IS NULL OR c.waste_collector_id = :wasteCollectorId)
+        ORDER BY
+            a.location
+        LIMIT 10;
+        * */
 }
