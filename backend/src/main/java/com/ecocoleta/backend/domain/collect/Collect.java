@@ -27,6 +27,10 @@ public class Collect {
     private Integer amount;
     @Enumerated(EnumType.STRING)
     private CollectStatus status;
+    @Column(name = "init_time")
+    private LocalDateTime initTime;
+    @Column(name = "end_time")
+    private LocalDateTime endTime;
     @Column(name = "create_time")
     private LocalDateTime createTime;
     @Column(name = "update_time")
@@ -62,7 +66,9 @@ public class Collect {
                 ", picture='" + picture + '\'' +
                 ", amount=" + amount +
                 ", status=" + status +
-                ", create_time=" + createTime +
+                ", initTime=" + initTime +
+                ", endTime=" + endTime +
+                ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", address=" + address +
                 ", resident=" + resident +

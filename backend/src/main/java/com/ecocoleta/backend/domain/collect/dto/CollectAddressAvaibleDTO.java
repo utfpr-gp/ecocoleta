@@ -14,6 +14,8 @@ public record CollectAddressAvaibleDTO(
         Integer amount,
         @NotNull
         String status,
+        LocalDateTime initTime,
+        LocalDateTime endTime,
         LocalDateTime createTime,
         LocalDateTime updateTime,
         @NotNull

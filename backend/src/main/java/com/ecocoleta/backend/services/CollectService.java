@@ -107,6 +107,8 @@ public class CollectService {
                 tuple.get("picture", String.class),
                 tuple.get("amount", Integer.class),
                 tuple.get("status", String.class),
+                DataUtils.convertToLocalDateTime(tuple.get("initTime", Timestamp.class)),
+                DataUtils.convertToLocalDateTime(tuple.get("endTime", Timestamp.class)),
                 DataUtils.convertToLocalDateTime(tuple.get("createTime", Timestamp.class)),
                 DataUtils.convertToLocalDateTime(tuple.get("updateTime", Timestamp.class)),
                 tuple.get("addressId", Long.class),
@@ -119,5 +121,8 @@ public class CollectService {
         // TODO ao pegar as coletas , setar o wasteCollectorId para o wasteCollector que pegou a coleta, criar uma nova
         //  coluna de inicio da coleta para se caso ocatador desista e não notificar desistencia uma trigger zerar o id
         //  do wasteCollector e setar a coluna de inicio da coleta como null e status como pending
+
+//        TODO ao pegar as coletas, ja iterar sobre a lista e salvar elas com o id do catador e tempo de inicio, etc ?
+//        TODO service de finalizar coleta, desistir da coleta, etc...
     }
 }

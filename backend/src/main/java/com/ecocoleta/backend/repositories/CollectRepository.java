@@ -25,14 +25,14 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
 
     // metodo para buscar coletas disponiveis onde calcula a distancia entre o coletor e a coleta em um raio de 5000 metros limitando a 10 coletas e ordenando pela localizacao, usando tupla para retornar os dados nomeados
     @Query(value = "select c.id as id, c.is_intern as isIntern, c.schedule as schedule, c.picture as picture, c.amount as amount, " +
-            "c.status as status, c.create_time as createTime, c.update_time as updateTime, " +
+            "c.status as status, c.init_time as initTime, c.end_time as endTime, c.create_time as createTime, c.update_time as updateTime, " +
             "c.address_id as addressId, c.resident_id as residentId, c.waste_collector_id as wasteCollectorId, " +
             "a.longitude as longitude, a.latitude as latitude, ST_AsText(a.location) as location " +
             "from collects c " +
             "left join address a on c.address_id = a.id " +
             "and ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, 5000) " +
             "where c.status = 'PENDING' " +
-            "and (c.waste_collector_id is null or c.waste_collector_id = :wasteCollectorId) " +
+            "and (c.waste_collector_id = :wasteCollectorId or c.waste_collector_id is null) " +
             "order by a.location " +
             "limit 10",
             nativeQuery = true)

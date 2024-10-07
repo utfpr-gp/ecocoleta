@@ -86,6 +86,8 @@ CREATE TABLE IF NOT EXISTS collects
     picture             VARCHAR(255),
     amount              INTEGER,
     status              VARCHAR(255)                 NOT NULL,
+    init_time           TIMESTAMP,
+    end_time            TIMESTAMP,
     create_time         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time         TIMESTAMP,
     address_id          BIGSERIAL                    NOT NULL,
