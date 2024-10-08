@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 import java.util.stream.Collectors; // Import necessário
 
 import javax.transaction.Transactional;
@@ -99,6 +100,20 @@ public class CollectService {
         // Chamar o repositório para fazer a consulta
         List<Tuple> tuples = collectRepository.findAvailableCollects(currentLongitude, currentLatitude, wasteCollectorId);
 
+        LocalDateTime now = LocalDateTime.now();
+
+        // Marcar as coletas com o wasteCollectorId, status e initTime
+        tuples.forEach(tuple -> {
+            Collect collect = collectRepository.findById(tuple.get("id", Long.class)).orElseThrow(() -> new EntityNotFoundException("Collect not found"));
+            /*if (collect.getWasteCollector() != null && !Objects.equals(collect.getWasteCollector().getId(), wasteCollectorId)) {
+                throw new ValidException("Collect already reserved");
+            }*/
+            collect.setWasteCollector(wasteCollectorService.getWasteCollectorById(wasteCollectorId).orElseThrow(() -> new EntityNotFoundException("WasteCollector not found")));
+            collect.setInitTime(now);
+            collect.setStatus(CollectStatus.IN_PROGRESS);
+            collectRepository.save(collect);
+        });
+
         // Retono da lista de Tuple para a lista de CollectAddressAvaibleDTO
         return tuples.stream().map(tuple -> new CollectAddressAvaibleDTO(
                 tuple.get("id", Long.class),
@@ -117,12 +132,6 @@ public class CollectService {
                 tuple.get("longitude", Double.class),
                 tuple.get("latitude", Double.class),
                 tuple.get("location", String.class)
-        )).collect(Collectors.toList());
-        // TODO ao pegar as coletas , setar o wasteCollectorId para o wasteCollector que pegou a coleta, criar uma nova
-        //  coluna de inicio da coleta para se caso ocatador desista e não notificar desistencia uma trigger zerar o id
-        //  do wasteCollector e setar a coluna de inicio da coleta como null e status como pending
-
-//        TODO ao pegar as coletas, ja iterar sobre a lista e salvar elas com o id do catador e tempo de inicio, etc ?
-//        TODO service de finalizar coleta, desistir da coleta, etc...
+        )).toList();
     }
 }

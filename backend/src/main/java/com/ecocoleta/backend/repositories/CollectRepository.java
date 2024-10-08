@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 //import org.locationtech.jts.geom.Point;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -68,4 +69,10 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
             a.location
         LIMIT 10;
         * */
+
+    //    Pega todas as coletas pendentes que estão atrasadas
+    @Query("SELECT c FROM Collect c WHERE c.status = 'PENDING' AND c.initTime < :sixHoursAgo")
+    List<Collect> findOutdatedCollects(@Param("sixHoursAgo") LocalDateTime sixHoursAgo);
+
+
 }
