@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CollectRepository extends JpaRepository<Collect, Long> {
@@ -70,9 +71,14 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
         LIMIT 10;
         * */
 
+//    TODO fazer teste não sei se a query esta correta
     //    Pega todas as coletas pendentes que estão atrasadas
     @Query("SELECT c FROM Collect c WHERE c.status = 'PENDING' AND c.initTime < :sixHoursAgo")
     List<Collect> findOutdatedCollects(@Param("sixHoursAgo") LocalDateTime sixHoursAgo);
 
+    //Cancela todas as coletas em andamento para um catador
+    @Query("SELECT c FROM Collect c WHERE c.wasteCollector.id = :wasteCollectorId AND c.status == (:status)")
+    List<Collect> findAllOngoingCollectsByWasteCollectorId(@Param("wasteCollectorId") Long wasteCollectorId,
+                                                           @Param("status") String status);
 
 }

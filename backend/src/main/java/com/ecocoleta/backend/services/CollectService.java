@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors; // Import necessário
 
 import javax.transaction.Transactional;
@@ -134,4 +135,50 @@ public class CollectService {
                 tuple.get("location", String.class)
         )).toList();
     }
+
+    // Completar a coleta
+    @Transactional
+    public Boolean completedCollect(CollectDTO collectDTO) {
+
+        // Buscar a coleta pelo ID e verificar se pertence ao wasteCollectorId fornecido
+        Collect collect = collectRepository.findById(collectDTO.id()).orElseThrow(() -> new EntityNotFoundException("Collect not found"));
+        if (collect.getWasteCollector() == null || !Objects.equals(collect.getWasteCollector().getId(), collectDTO.idWasteCollector())) {
+            throw new ValidException("Collect not found or you are not authorized to finalize this collect");
+        }
+
+        // Verificar se a coleta já foi finalizada
+        if (CollectStatus.COMPLETED.equals(collect.getStatus())) {
+            throw new ValidException("This collect is already completed");
+        }
+
+        // Atualizar status e endTime
+        collect.setStatus(CollectStatus.COMPLETED);
+        collect.setEndTime(LocalDateTime.now());
+        collectRepository.save(collect);
+
+        return true;
+    }
+
+    // Reseta todas as coletas em andamento para um catador
+    @Transactional
+    public Boolean resetAllCollects(Long wasteCollectorId) {
+        // Buscar todas as coletas em andamento para o catador especificado
+        List<Collect> ongoingCollects = collectRepository.findAllOngoingCollectsByWasteCollectorId(wasteCollectorId, CollectStatus.IN_PROGRESS.name());
+        if (ongoingCollects.isEmpty()) {
+            return false;
+        }
+
+        for (Collect collect : ongoingCollects) {
+            // Atualizar status para pendente e remover o wasteCollectorId
+            collect.setStatus(CollectStatus.PENDING);
+            collect.setWasteCollector(null); // Se necessário, resetar o wasteCollectorId
+            collect.setInitTime(null); // Resetar o tempo de início, se necessário
+        }
+
+        // Salvar as mudanças no banco de dados
+        collectRepository.saveAll(ongoingCollects);
+
+        return true;
+    }
+
 }
