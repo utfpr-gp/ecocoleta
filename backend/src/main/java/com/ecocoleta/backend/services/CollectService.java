@@ -21,6 +21,7 @@ import com.ecocoleta.backend.repositories.ResidentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -218,7 +219,7 @@ public class CollectService {
      * @param collectStatus Status da coleta.
      * @return Lista de coletas que correspondem ao status fornecido.
      */
-    public List<CollectDTO> getCollectsByStatusAndUserId(Long userId, CollectStatus collectStatus) {
+    public List<CollectDTO> getCollectsByStatusAndUserId(Long userId, CollectStatus collectStatus, Pageable pageable) {
 
         // Obtém o usuário pelo ID
         Optional<User> user = userService.getUserById(userId);
@@ -228,9 +229,9 @@ public class CollectService {
             List<Collect> collects;
 
             if (user.get().getRole() == UserRole.RESIDENT) {
-                collects = collectRepository.findCollectsByStatusAndResidentId(collectStatus, userId);
+                collects = collectRepository.findCollectsByStatusAndResidentId(collectStatus, userId, pageable);
             } else if (user.get().getRole() == UserRole.WASTE_COLLECTOR) {
-                collects = collectRepository.findCollectsByStatusAndWasteCollectorId(collectStatus, userId);
+                collects = collectRepository.findCollectsByStatusAndWasteCollectorId(collectStatus, userId, pageable);
             } else {
                 return null;  // Caso o usuário não seja nem residente nem coletor
             }

@@ -3,7 +3,6 @@ package com.ecocoleta.backend.repositories;
 import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.collect.Collect;
 import com.ecocoleta.backend.domain.collect.CollectStatus;
-import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import jakarta.persistence.Tuple;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CollectRepository extends JpaRepository<Collect, Long> {
@@ -28,9 +26,9 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
 
     List<Collect> findAllByWasteCollectorId(Long wasteCollectorId);
 
-    List<Collect> findCollectsByStatusAndWasteCollectorId(CollectStatus status, Long wasteCollectorId);
+    List<Collect> findCollectsByStatusAndWasteCollectorId(CollectStatus status, Long wasteCollectorId, Pageable pageable);
 
-    List<Collect> findCollectsByStatusAndResidentId(CollectStatus status, Long residentId);
+    List<Collect> findCollectsByStatusAndResidentId(CollectStatus status, Long residentId, Pageable pageable);
 
     // metodo para buscar coletas disponiveis onde calcula a distancia entre o coletor e a coleta em um raio de 5000 metros limitando a 10 coletas e ordenando pela localizacao, usando tupla para retornar os dados nomeados
     @Query(value = "select c.id as id, c.is_intern as isIntern, c.schedule as schedule, c.picture as picture, c.amount as amount, " +
@@ -78,13 +76,13 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
         LIMIT 10;
         * */
 
-//    TODO fazer teste não sei se a query esta correta
+    //    TODO fazer teste não sei se a query esta correta
     //    Pega todas as coletas pendentes que estão atrasadas
     @Query("SELECT c FROM Collect c WHERE c.status = 'PENDING' AND c.initTime < :sixHoursAgo")
     List<Collect> findOutdatedCollects(@Param("sixHoursAgo") LocalDateTime sixHoursAgo);
 
     //Cancela todas as coletas em andamento para um catador
-    @Query("SELECT c FROM Collect c WHERE c.wasteCollector.id = :wasteCollectorId AND c.status == (:status)")
+    @Query("SELECT c FROM Collect c WHERE c.wasteCollector.id = :wasteCollectorId AND c.status = :status")
     List<Collect> findAllOngoingCollectsByWasteCollectorId(@Param("wasteCollectorId") Long wasteCollectorId,
                                                            @Param("status") String status);
 

@@ -11,6 +11,8 @@ import com.ecocoleta.backend.services.UserService;
 import com.ecocoleta.backend.services.WasteCollectorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -135,7 +137,7 @@ public class CollectController {
      * Recebe o ID do catador.
      * Retorna uma resposta indicando se as coletas foram resetadas com sucesso.
      */
-    @PostMapping("reset_collects")
+    @DeleteMapping("reset_collects")
     @Transactional
     public ResponseEntity resetCollects(@RequestBody @Valid Long wasteCollectorId) {
         try {
@@ -149,19 +151,14 @@ public class CollectController {
         }
     }
 
-    //TODO enpoints > para o usuario resident: pegar coletas por status como parametro e id de usuario, cancelar coleta por id coleta e user, etc...
-    // endpoint de get coletas por status e id de usuario residente
-    // fazer paginado
-    // recebe 2 parametros: status e id de usuario, verifcica qeu tipo de user e retornar as coletas
-
     /**
      * Endpoint para listar coletas por status e ID de usuário.
      * Recebe o ID do usuário e o status da coleta.
      * Retorna uma lista de coletas que correspondem ao status fornecido.
      */
-    @PostMapping("get_collects")
+    @GetMapping("get_collects")
     @Transactional
-    public ResponseEntity<List<CollectDTO>> getCollectsByStatus(@RequestParam @Valid Long userId, @RequestParam @Valid CollectStatus collectStatus) {
+    public ResponseEntity<List<CollectDTO>> getCollectsByStatus(@RequestParam @Valid Long userId, @RequestParam @Valid CollectStatus collectStatus, @PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
         try {
             // Busca o usuário por ID
             if (!userService.existsByid(userId)) {
@@ -173,13 +170,27 @@ public class CollectController {
                 throw new ValidException("Status inválido!");
             }
 
-            List<CollectDTO> collects = collectService.getCollectsByStatusAndUserId(userId, collectStatus);
+            List<CollectDTO> collects = collectService.getCollectsByStatusAndUserId(userId, collectStatus, pageable);
             return ResponseEntity.ok().body(collects);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
         }
     }
 
-    // endpoint de cancelar coleta por id de coleta
+//    // endpoint de cancelar coleta por id de coleta
+//    @PostMapping("cancel_collect")
+//    @Transactional
+//    public ResponseEntity cancelCollect(@RequestParam @Valid Long collectId) {
+//        //validar ususario logado se a collect pertence a ele
+//        try {
+//            if (collectService.cancelCollect(collectId)) {
+//                return ResponseEntity.ok().build();
+//            } else {
+//                return ResponseEntity.badRequest().body("Coleta não cancelada!");
+//            }
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        }
+//    }
 
 }
