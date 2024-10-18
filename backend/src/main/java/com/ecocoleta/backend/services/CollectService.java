@@ -3,14 +3,17 @@ package com.ecocoleta.backend.services;
 import com.ecocoleta.backend.Utils.DataUtils;
 import com.ecocoleta.backend.domain.collect.dto.CollectSearchAvaibleListDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
+import com.ecocoleta.backend.domain.collect.mapper.CollectMapper;
 import com.ecocoleta.backend.domain.collectMaterial.CollectMaterial;
 import com.ecocoleta.backend.domain.material.Material;
 import com.ecocoleta.backend.domain.material.MaterialIdDTO;
+import com.ecocoleta.backend.domain.user.User;
+import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.domain.collect.Collect;
 import com.ecocoleta.backend.domain.collect.CollectStatus;
 import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
-import com.ecocoleta.backend.domain.collect.dto.CollectResponseDTO;
+import com.ecocoleta.backend.domain.collect.dto.CollectNewResponseDTO;
 import com.ecocoleta.backend.repositories.AddressRepository;
 import com.ecocoleta.backend.repositories.CollectMaterialRepository;
 import com.ecocoleta.backend.repositories.CollectRepository;
@@ -22,12 +25,12 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors; // Import necessário
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CollectService {
@@ -56,8 +59,17 @@ public class CollectService {
     @Autowired
     private MaterialService materialService;
 
+    @Autowired
+    private UserService userService;
 
-    public CollectResponseDTO createCollect(CollectDTO collectDTO) {
+    /**
+     * Cria uma nova coleta.
+     *
+     * @param collectDTO Dados da coleta a ser criada.
+     * @return Dados da coleta criada.
+     * @throws ValidException Se o endereço ou residente não existirem.
+     */
+    public CollectNewResponseDTO createCollect(CollectDTO collectDTO) {
         System.out.println("ENTROU SERVICE CREATE COLLECT");
 
         if (!addressRepository.existsById(collectDTO.idAddress()) && !residentRepository.existsById(collectDTO.idResident())) {
@@ -81,17 +93,23 @@ public class CollectService {
         }
 
 
-        return new CollectResponseDTO(collect);
+        return new CollectNewResponseDTO(collect);
     }
 
 
     public void updateCollectStatus(Long collectId, CollectStatus status) {
-        Collect collect = collectRepository.findById(collectId).orElseThrow(() -> new EntityNotFoundException("Collect not found"));
+        Collect collect = collectRepository.findById(collectId).orElseThrow(() -> new EntityNotFoundException("Coleta não encontrada"));
         collect.setStatus(status);
         collect.setUpdateTime(LocalDateTime.now());
         collectRepository.save(collect);
     }
 
+    /**
+     * Obtém uma lista de coletas disponíveis com base nos critérios fornecidos.
+     *
+     * @param collectSearchAvaibleListDTO Dados de busca para coletas disponíveis.
+     * @return Lista de coletas disponíveis.
+     */
     @Transactional
     public List<CollectAddressAvaibleDTO> getCollectAvaibleList(CollectSearchAvaibleListDTO collectSearchAvaibleListDTO) {
         Double currentLatitude = collectSearchAvaibleListDTO.currentLatitude();
@@ -136,19 +154,26 @@ public class CollectService {
         )).toList();
     }
 
-    // Completar a coleta
+    /**
+     * Completa a coleta.
+     *
+     * @param collectDTO Dados da coleta a ser completada.
+     * @return true se a coleta foi completada com sucesso.
+     * @throws EntityNotFoundException Se a coleta não for encontrada.
+     * @throws ValidException          Se a coleta não pertencer ao usuário ou já estiver finalizada.
+     */
     @Transactional
     public Boolean completedCollect(CollectDTO collectDTO) {
 
         // Buscar a coleta pelo ID e verificar se pertence ao wasteCollectorId fornecido
-        Collect collect = collectRepository.findById(collectDTO.id()).orElseThrow(() -> new EntityNotFoundException("Collect not found"));
+        Collect collect = collectRepository.findById(collectDTO.id()).orElseThrow(() -> new EntityNotFoundException("coleta não encontrada"));
         if (collect.getWasteCollector() == null || !Objects.equals(collect.getWasteCollector().getId(), collectDTO.idWasteCollector())) {
-            throw new ValidException("Collect not found or you are not authorized to finalize this collect");
+            throw new ValidException("Coleta não encontrada ou não pertence ao usuario");
         }
 
         // Verificar se a coleta já foi finalizada
         if (CollectStatus.COMPLETED.equals(collect.getStatus())) {
-            throw new ValidException("This collect is already completed");
+            throw new ValidException("Essa coleta já foi finalizada");
         }
 
         // Atualizar status e endTime
@@ -159,7 +184,12 @@ public class CollectService {
         return true;
     }
 
-    // Reseta todas as coletas em andamento para um catador
+    /**
+     * Reseta todas as coletas em andamento para um catador.
+     *
+     * @param wasteCollectorId ID do catador de resíduos.
+     * @return true se houver coletas em andamento que foram resetadas, false caso contrário.
+     */
     @Transactional
     public Boolean resetAllCollects(Long wasteCollectorId) {
         // Buscar todas as coletas em andamento para o catador especificado
@@ -179,6 +209,39 @@ public class CollectService {
         collectRepository.saveAll(ongoingCollects);
 
         return true;
+    }
+
+    /**
+     * Obtém uma lista de coletas por status e ID de usuário.
+     *
+     * @param userId        ID do usuário.
+     * @param collectStatus Status da coleta.
+     * @return Lista de coletas que correspondem ao status fornecido.
+     */
+    public List<CollectDTO> getCollectsByStatusAndUserId(Long userId, CollectStatus collectStatus) {
+
+        // Obtém o usuário pelo ID
+        Optional<User> user = userService.getUserById(userId);
+
+        // Verifica o papel do usuário
+        if (user.isPresent()) {
+            List<Collect> collects;
+
+            if (user.get().getRole() == UserRole.RESIDENT) {
+                collects = collectRepository.findCollectsByStatusAndResidentId(collectStatus, userId);
+            } else if (user.get().getRole() == UserRole.WASTE_COLLECTOR) {
+                collects = collectRepository.findCollectsByStatusAndWasteCollectorId(collectStatus, userId);
+            } else {
+                return null;  // Caso o usuário não seja nem residente nem coletor
+            }
+
+            // Mapeia a lista de entidades `Collect` para `CollectDTO` usando o CollectMapper
+            return collects.stream()
+                    .map(CollectMapper::toDto)
+                    .collect(Collectors.toList());
+        }
+
+        return null;
     }
 
 }

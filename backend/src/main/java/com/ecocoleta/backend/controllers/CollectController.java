@@ -1,8 +1,9 @@
 package com.ecocoleta.backend.controllers;
 
+import com.ecocoleta.backend.domain.collect.CollectStatus;
+import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectSearchAvaibleListDTO;
-import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.repositories.WasteCollectorRespository;
 import com.ecocoleta.backend.services.CollectService;
@@ -34,17 +35,6 @@ public class CollectController {
     @Autowired
     private WasteCollectorRespository wasteCollectorRespository;
 
-    //Nova coleta
-    @PostMapping
-    @Transactional
-    public ResponseEntity createNewCollect(@RequestBody @Valid CollectDTO collectDTO) {
-
-        var dto = collectService.createCollect(collectDTO);
-
-        return ResponseEntity.ok().body(dto);
-    }
-
-    //    TODO endpoints de coletas
 
     /**
      * Usando a API Geolocation do HTML5, o dispositivo envia a localização em longitude e latitude,
@@ -83,10 +73,30 @@ public class CollectController {
      */
 
 
-    // Endpoint para buscar as coletas disponíveis
+    /**
+     * Cria uma nova coleta.
+     *
+     * @param collectDTO Dados da coleta a ser criada.
+     * @return ResponseEntity com os dados da coleta criada.
+     */
+    @PostMapping("create_new_collect")
+    @Transactional
+    public ResponseEntity createNewCollect(@RequestBody @Valid CollectDTO collectDTO) {
+
+        var dto = collectService.createCollect(collectDTO);
+
+        return ResponseEntity.ok().body(dto);
+    }
+
+    /**
+     * Endpoint para buscar as coletas disponíveis.
+     * Recebe um CollectSearchAvaibleListDTO com os parâmetros de busca.
+     * Retorna uma lista de CollectAddressAvaibleDTO com as coletas disponíveis.
+     */
     @PostMapping("get_avaible_collects")
     @Transactional
     public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollects(@RequestBody @Valid CollectSearchAvaibleListDTO collectSearchAvaibleListDTO) {
+
 
         // Busca o Catador por ID
         if (!wasteCollectorService.existsWasteCollectorById(collectSearchAvaibleListDTO.idWasteCollector())) {
@@ -98,13 +108,13 @@ public class CollectController {
         return ResponseEntity.ok().body(collectAddressAvaibleDTOS);
     }
 
-    //TODO enpoints > finalizar coleta, desistir da coleta, etc...
-
-    /*
-     * endpoint para finalizar coleta
-     * pode receber o id catador, id coleta
-     * retorna aviso qeu finalizou para o front
-     * obs. no front fazer aviso sonoro, pontuação etc */
+    /**
+     * Endpoint para finalizar coleta.
+     * <p>
+     * Pode receber o ID do catador e o ID da coleta.
+     * Retorna um aviso que a coleta foi finalizada para o front-end.
+     * Obs.: No front-end, fazer aviso sonoro, pontuação, etc.
+     */
     @PostMapping("finish_collect")
     @Transactional
     public ResponseEntity finishCollect(@RequestBody @Valid CollectDTO collectDTO) {
@@ -120,7 +130,11 @@ public class CollectController {
         }
     }
 
-    /*endpoint para resetar/cencelar todas as coletas atreladas a um catador */
+    /**
+     * Endpoint para resetar/cancelar todas as coletas atreladas a um catador.
+     * Recebe o ID do catador.
+     * Retorna uma resposta indicando se as coletas foram resetadas com sucesso.
+     */
     @PostMapping("reset_collects")
     @Transactional
     public ResponseEntity resetCollects(@RequestBody @Valid Long wasteCollectorId) {
@@ -134,4 +148,38 @@ public class CollectController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    //TODO enpoints > para o usuario resident: pegar coletas por status como parametro e id de usuario, cancelar coleta por id coleta e user, etc...
+    // endpoint de get coletas por status e id de usuario residente
+    // fazer paginado
+    // recebe 2 parametros: status e id de usuario, verifcica qeu tipo de user e retornar as coletas
+
+    /**
+     * Endpoint para listar coletas por status e ID de usuário.
+     * Recebe o ID do usuário e o status da coleta.
+     * Retorna uma lista de coletas que correspondem ao status fornecido.
+     */
+    @PostMapping("get_collects")
+    @Transactional
+    public ResponseEntity<List<CollectDTO>> getCollectsByStatus(@RequestParam @Valid Long userId, @RequestParam @Valid CollectStatus collectStatus) {
+        try {
+            // Busca o usuário por ID
+            if (!userService.existsByid(userId)) {
+                throw new ValidException("Usuário não encontrado!");
+            }
+
+            // verifica se o status é válido
+            if (!collectStatus.equals(CollectStatus.PENDING) && !collectStatus.equals(CollectStatus.IN_PROGRESS) && !collectStatus.equals(CollectStatus.COMPLETED) && !collectStatus.equals(CollectStatus.CANCELLED)) {
+                throw new ValidException("Status inválido!");
+            }
+
+            List<CollectDTO> collects = collectService.getCollectsByStatusAndUserId(userId, collectStatus);
+            return ResponseEntity.ok().body(collects);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    // endpoint de cancelar coleta por id de coleta
+
 }

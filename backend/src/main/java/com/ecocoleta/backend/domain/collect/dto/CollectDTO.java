@@ -1,5 +1,6 @@
 package com.ecocoleta.backend.domain.collect.dto;
 
+import com.ecocoleta.backend.domain.collect.CollectStatus;
 import com.ecocoleta.backend.domain.material.MaterialIdDTO;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.*;
@@ -16,9 +17,13 @@ public record CollectDTO(
 //        @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
         LocalDateTime schedule,
         String picture,
-//        @NotBlank
 //        @Pattern(regexp = "^([1-9]|[1-9][0-9])$", message = "O número deve ser entre 1 e 99")
         Integer amount,
+        CollectStatus status,
+        LocalDateTime initTime,
+        LocalDateTime endTime,
+        LocalDateTime createTime,
+        LocalDateTime updateTime,
         @NotNull
         Long idAddress,
         @NotNull
@@ -27,8 +32,6 @@ public record CollectDTO(
         List<MaterialIdDTO> materials // Lista de materiais
 ) {
 }
-
-
 //{
 //        "is_intern": true,
 //        "schedule": "2024-09-01T10:00:00",
@@ -48,4 +51,3 @@ public record CollectDTO(
 //        }
 //        ]
 //        }
-

@@ -70,4 +70,8 @@ public class UserService {
 //        return null;
     }
 
+    public boolean existsByid(Long id) {
+        return userRepository.existsById(id);
+    }
+
 }

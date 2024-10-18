@@ -20,6 +20,11 @@ public class CollectSchedulerService {
         this.collectRepository = collectRepository;
     }
 
+    /**
+     * Método agendado para verificar coletas pendentes a cada 1 hora.
+     * Este método busca coletas que não foram finalizadas nas últimas 6 horas
+     * e reseta seus atributos para permitir que sejam coletadas novamente.
+     */
     @Scheduled(fixedRate = 3600000)  // Rodar a cada 1 hora
     public void checkPendingCollects() {
         LocalDateTime sixHoursAgo = LocalDateTime.now().minusHours(6);  // Calcula o tempo de 6 horas atrás
@@ -34,6 +39,6 @@ public class CollectSchedulerService {
             collectRepository.save(collect);
         }
 
-        LOGGER.info(outdatedCollects.size() + " outdated collects processed");
+        LOGGER.info(outdatedCollects.size() + "Coletas atrazadas foram resetadas");
     }
 }

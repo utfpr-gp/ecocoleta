@@ -2,6 +2,7 @@ package com.ecocoleta.backend.repositories;
 
 import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.collect.Collect;
+import com.ecocoleta.backend.domain.collect.CollectStatus;
 import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import jakarta.persistence.Tuple;
 import org.springframework.data.domain.Page;
@@ -24,6 +25,12 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
     Page<Collect> getAllByOrderByAddress(Pageable pageable);
 
     List<Collect> getAllByOrderById();
+
+    List<Collect> findAllByWasteCollectorId(Long wasteCollectorId);
+
+    List<Collect> findCollectsByStatusAndWasteCollectorId(CollectStatus status, Long wasteCollectorId);
+
+    List<Collect> findCollectsByStatusAndResidentId(CollectStatus status, Long residentId);
 
     // metodo para buscar coletas disponiveis onde calcula a distancia entre o coletor e a coleta em um raio de 5000 metros limitando a 10 coletas e ordenando pela localizacao, usando tupla para retornar os dados nomeados
     @Query(value = "select c.id as id, c.is_intern as isIntern, c.schedule as schedule, c.picture as picture, c.amount as amount, " +
