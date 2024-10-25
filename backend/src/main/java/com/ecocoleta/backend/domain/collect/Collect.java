@@ -57,6 +57,12 @@ public class Collect {
         this.resident = resident;
     }
 
+    @PrePersist
+    public void prePersist() {
+        this.status = CollectStatus.PENDING;
+        this.createTime = LocalDateTime.now();
+    }
+
     @Override
     public String toString() {
         return "Collect{" +

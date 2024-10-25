@@ -100,11 +100,11 @@
             <optional>true</optional>
         </dependency>
         <!--JPA (Java Persistence API)-->
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>javax.persistence-api</artifactId>
-            <version>2.2</version> <!-- ou a versão mais recente disponível -->
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>javax.persistence</groupId>-->
+<!--            <artifactId>javax.persistence-api</artifactId>-->
+<!--            <version>2.2</version> &lt;!&ndash; ou a versão mais recente disponível &ndash;&gt;-->
+<!--        </dependency>-->
 
         <!--MAPPER DEPENDENCY-->
 
@@ -139,12 +139,20 @@
             <version>2.5.0</version> <!-- ou a versão mais recente disponível -->
         </dependency>
 
-        <!--DATABASES DEPENDENCIAS GEOESPACIAIS-->
+<!--        DATABASES DEPENDENCIAS GEOESPACIAIS-->
+<!--        <dependency>-->
+<!--            <groupId>org.hibernate</groupId>-->
+<!--            <artifactId>hibernate-spatial</artifactId>-->
+<!--            <version>5.4.30.Final</version>-->
+<!--        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-spatial -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-spatial</artifactId>
-            <version>5.4.30.Final</version>
+            <version>6.4.4.Final</version>
+            <type>pom</type>
         </dependency>
+
 
     </dependencies>
 

@@ -25,9 +25,12 @@ public record CollectDTO(
         LocalDateTime createTime,
         LocalDateTime updateTime,
         @NotNull
+        @JsonAlias({"id_address"})
         Long idAddress,
         @NotNull
+        @JsonAlias({"id_resident"})
         Long idResident,
+        @JsonAlias({"id_waste_collector"})
         Long idWasteCollector,
         List<MaterialIdDTO> materials // Lista de materiais
 ) {

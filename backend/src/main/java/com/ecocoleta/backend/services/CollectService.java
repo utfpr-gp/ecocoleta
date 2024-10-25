@@ -20,6 +20,7 @@ import com.ecocoleta.backend.repositories.CollectRepository;
 import com.ecocoleta.backend.repositories.ResidentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Tuple;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-import javax.transaction.Transactional;
+//import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -77,9 +78,11 @@ public class CollectService {
             throw new ValidException("Id Address ou Resident informado não existe");
         }
 
+//TODO corrigir erro de banco : org.hibernate.type.SerializationException: could not deserialize
         var address = addressRepository.findById(collectDTO.idAddress()).get();
         var resident = residentRepository.findById(collectDTO.idResident()).get();
 
+//        TODO collectMapper
         Collect collect = new Collect(collectDTO.is_intern(), collectDTO.picture(), collectDTO.amount(), CollectStatus.PENDING, address, resident);
 
         collectRepository.save(collect);

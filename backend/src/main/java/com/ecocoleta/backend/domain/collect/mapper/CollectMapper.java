@@ -5,7 +5,7 @@ import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
 import com.ecocoleta.backend.repositories.AddressRepository;
 import com.ecocoleta.backend.repositories.ResidentRepository;
 import com.ecocoleta.backend.repositories.WasteCollectorRespository;
-
+//TODO mudar o mapper para o modelMapper
 public class CollectMapper {
 
     private final AddressRepository addressRepository;
