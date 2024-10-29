@@ -3,7 +3,9 @@
 services:
   # CONTAINER POSTGRES
   db:
-    image: postgis/postgis:latest
+    # image: postgis/postgis:17-3.5
+    # image: postgis/postgis:latest
+    image: postgis/postgis:17-3.5-alpine
     container_name: ecocoleta-database
     restart: always
     env_file:
