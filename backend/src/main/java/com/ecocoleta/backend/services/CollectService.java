@@ -87,14 +87,14 @@ public class CollectService {
 
         collectRepository.save(collect);
 
-        /*criação de relação entre coleta e materiais*/
-        if (!collectDTO.materials().isEmpty()) {
-            for (MaterialIdDTO materialId : collectDTO.materials()) {
-                Material material = materialService.getMaterialById(materialId.id()).orElseThrow(() -> new ValidException("Material not found"));
-                CollectMaterial collectMaterial = new CollectMaterial(collect, material);
-                collectMaterialRepository.save(collectMaterial);
-            }
-        }
+//        /*criação de relação entre coleta e materiais*/
+//        if (!collectDTO.materials().isEmpty()) {
+//            for (MaterialIdDTO materialId : collectDTO.materials()) {
+//                Material material = materialService.getMaterialById(materialId.id()).orElseThrow(() -> new ValidException("Material not found"));
+//                CollectMaterial collectMaterial = new CollectMaterial(collect, material);
+//                collectMaterialRepository.save(collectMaterial);
+//            }
+//        }
 
 
         return new CollectNewResponseDTO(collect);

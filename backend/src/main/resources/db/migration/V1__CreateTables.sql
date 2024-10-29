@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS postgis;
+
 -- Tabela principal para todos os usuários
 CREATE TABLE IF NOT EXISTS users
 (
