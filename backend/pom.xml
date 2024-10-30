@@ -99,12 +99,6 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--JPA (Java Persistence API)-->
-<!--        <dependency>-->
-<!--            <groupId>javax.persistence</groupId>-->
-<!--            <artifactId>javax.persistence-api</artifactId>-->
-<!--            <version>2.2</version> &lt;!&ndash; ou a versão mais recente disponível &ndash;&gt;-->
-<!--        </dependency>-->
 
         <!--MAPPER DEPENDENCY-->
 
@@ -127,34 +121,6 @@
             <artifactId>jakarta.validation-api</artifactId>
             <version>3.0.2</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.postgresql</groupId>-->
-<!--            <artifactId>postgresql</artifactId>-->
-<!--            <version>42.6.0</version>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>net.postgis</groupId>-->
-<!--            <artifactId>postgis-jdbc</artifactId>-->
-<!--            <version>2.5.0</version> &lt;!&ndash; ou a versão mais recente disponível &ndash;&gt;-->
-<!--        </dependency>-->
-
-<!--        DATABASES DEPENDENCIAS GEOESPACIAIS-->
-<!--        <dependency>-->
-<!--            <groupId>org.hibernate</groupId>-->
-<!--            <artifactId>hibernate-spatial</artifactId>-->
-<!--            <version>5.4.30.Final</version>-->
-<!--        </dependency>-->
-        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-spatial -->
-<!--        <dependency>-->
-<!--            <groupId>org.hibernate</groupId>-->
-<!--            <artifactId>hibernate-spatial</artifactId>-->
-<!--            <version>6.4.4.Final</version>-->
-<!--            <type>pom</type>-->
-<!--        </dependency>-->
-
-
-<!--        teste ok-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -165,7 +131,6 @@
             <artifactId>hibernate-spatial</artifactId>
             <version>6.5.2.Final</version>
         </dependency>
-
 
     </dependencies>
 
