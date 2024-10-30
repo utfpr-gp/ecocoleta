@@ -26,6 +26,7 @@ public class CollectSchedulerService {
      * e reseta seus atributos para permitir que sejam coletadas novamente.
      */
     @Scheduled(fixedRate = 3600000)  // Rodar a cada 1 hora
+    //TODO não esta funcionando corretamente o scheduler
     public void checkPendingCollects() {
         LocalDateTime sixHoursAgo = LocalDateTime.now().minusHours(6);  // Calcula o tempo de 6 horas atrás
 

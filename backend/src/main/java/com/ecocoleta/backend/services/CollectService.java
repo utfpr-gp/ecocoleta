@@ -64,6 +64,9 @@ public class CollectService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CollectMapper collectMapper;
+
     /**
      * Cria uma nova coleta.
      *
@@ -71,19 +74,21 @@ public class CollectService {
      * @return Dados da coleta criada.
      * @throws ValidException Se o endereço ou residente não existirem.
      */
-    public CollectNewResponseDTO createCollect(CollectDTO collectDTO) {
+    public CollectDTO createCollect(CollectDTO collectDTO) {
         System.out.println("ENTROU SERVICE CREATE COLLECT");
 
-        if (!addressRepository.existsById(collectDTO.idAddress()) && !residentRepository.existsById(collectDTO.idResident())) {
+        if (!addressRepository.existsById(collectDTO.address()) && !residentRepository.existsById(collectDTO.resident())) {
             throw new ValidException("Id Address ou Resident informado não existe");
         }
 
 //TODO corrigir erro de banco : org.hibernate.type.SerializationException: could not deserialize
-        var address = addressRepository.findById(collectDTO.idAddress()).get();
-        var resident = residentRepository.findById(collectDTO.idResident()).get();
+//        var address = addressRepository.findById(collectDTO.address()).get();
+//        var resident = residentRepository.findById(collectDTO.resident()).get();
 
 //        TODO collectMapper
-        Collect collect = new Collect(collectDTO.is_intern(), collectDTO.picture(), collectDTO.amount(), CollectStatus.PENDING, address, resident);
+//        Collect collect = new Collect(collectDTO.is_intern(), collectDTO.picture(), collectDTO.amount(), CollectStatus.PENDING, address, resident);
+//        Collect collect = new Collect(collectDTO.is_intern(), collectDTO.picture(), collectDTO.amount(), address, resident);
+        Collect collect = collectMapper.toEntity(collectDTO);
 
         collectRepository.save(collect);
 
@@ -97,7 +102,10 @@ public class CollectService {
 //        }
 
 
-        return new CollectNewResponseDTO(collect);
+//        return new CollectNewResponseDTO(collect);
+
+        //TODO collectMapper de retorno para DTO
+        return collectMapper.toDto(collect);
     }
 
 
@@ -171,7 +179,7 @@ public class CollectService {
 
         // Buscar a coleta pelo ID e verificar se pertence ao wasteCollectorId fornecido
         Collect collect = collectRepository.findById(collectDTO.id()).orElseThrow(() -> new EntityNotFoundException("coleta não encontrada"));
-        if (collect.getWasteCollector() == null || !Objects.equals(collect.getWasteCollector().getId(), collectDTO.idWasteCollector())) {
+        if (collect.getWasteCollector() == null || !Objects.equals(collect.getWasteCollector().getId(), collectDTO.wasteCollector())) {
             throw new ValidException("Coleta não encontrada ou não pertence ao usuario");
         }
 
@@ -241,7 +249,7 @@ public class CollectService {
 
             // Mapeia a lista de entidades `Collect` para `CollectDTO` usando o CollectMapper
             return collects.stream()
-                    .map(CollectMapper::toDto)
+                    .map(collectMapper::toDto)
                     .collect(Collectors.toList());
         }
 

@@ -47,12 +47,10 @@ public class Collect {
 
 //    TODO fazer atributo 'lista de materias', assim não tendo relação direta nxn para entidade materials, salva uma lista de ids de materiais e ai retronar e salvar fica mais facil ?
 
-    public Collect(boolean isIntern, String picture, Integer amount, CollectStatus status, Address address, Resident resident) {
+    public Collect(boolean isIntern, String picture, Integer amount, Address address, Resident resident) {
         this.isIntern = isIntern;
         this.picture = picture;
         this.amount = amount;
-        this.status = status;
-        this.createTime = LocalDateTime.now();
         this.address = address;
         this.resident = resident;
     }

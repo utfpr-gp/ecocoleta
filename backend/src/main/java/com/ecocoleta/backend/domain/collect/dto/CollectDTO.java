@@ -11,8 +11,8 @@ import java.util.List;
 public record CollectDTO(
         long id,
         @NotNull
-        @JsonAlias({"intern", "interno"})
-        boolean is_intern,
+        @JsonAlias({"intern", "interno", "is_intern"})
+        boolean isIntern,
         @Future
 //        @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
         LocalDateTime schedule,
@@ -26,13 +26,13 @@ public record CollectDTO(
         LocalDateTime updateTime,
         @NotNull
         @JsonAlias({"id_address"})
-        Long idAddress,
+        Long address,
         @NotNull
         @JsonAlias({"id_resident"})
-        Long idResident,
+        Long resident,
         @JsonAlias({"id_waste_collector"})
-        Long idWasteCollector,
-        List<MaterialIdDTO> materials // Lista de materiais
+        Long wasteCollector
+//        List<MaterialIdDTO> materials // Lista de materiais
 ) {
 }
 //{
