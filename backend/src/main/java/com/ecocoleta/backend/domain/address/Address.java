@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @Table(name = "address")
 @Entity(name = "Address")
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
