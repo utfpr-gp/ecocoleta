@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-//import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,7 +29,7 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
 
     List<Collect> findCollectsByStatusAndResidentId(CollectStatus status, Long residentId, Pageable pageable);
 
-    // metodo para buscar coletas disponiveis onde calcula a distancia entre o coletor e a coleta em um raio de 5000 metros limitando a 10 coletas e ordenando pela localizacao, usando tupla para retornar os dados nomeados
+    // Buscar coletas disponiveis onde calcula a distancia entre o coletor e a coleta em um raio de 5000 metros limitando a 10 coletas e ordenando pela localizacao, usando tupla para retornar os dados nomeados
     @Query(value = "select c.id as id, c.is_intern as isIntern, c.schedule as schedule, c.picture as picture, c.amount as amount, " +
             "c.status as status, c.init_time as initTime, c.end_time as endTime, c.create_time as createTime, c.update_time as updateTime, " +
             "c.address_id as addressId, c.resident_id as residentId, c.waste_collector_id as wasteCollectorId, " +
@@ -44,41 +43,9 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
             "limit 10",
             nativeQuery = true)
     List<Tuple> findAvailableCollects(@Param("longitude") Double longitude, @Param("latitude") Double latitude, @Param("wasteCollectorId") Long wasteCollectorId);
-    /*
-    * Query nativa para buscar coletas disponiveis
-    * SELECT
-            c.id as id,
-            c.is_intern as isIntern,
-            c.schedule as schedule,
-            c.picture as picture,
-            c.amount as amount,
-            c.status as status,
-            c.create_time as createTime,
-            c.update_time as updateTime,
-            c.address_id as addressId,
-            c.resident_id as residentId,
-            c.waste_collector_id as wasteCollectorId,
-            a.longitude as longitude,
-            a.latitude as latitude,
-            ST_AsText(a.location) as location -- Ou use ST_AsText(a.location)
-        FROM
-            collects c
-        LEFT JOIN
-            address a ON c.address_id = a.id
-        AND
-            ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, 5000)
-        WHERE
-            c.status = 'PENDING'
-        AND
-            (c.waste_collector_id IS NULL OR c.waste_collector_id = :wasteCollectorId)
-        ORDER BY
-            a.location
-        LIMIT 10;
-        * */
 
-    //    TODO fazer teste não sei se a query esta correta
-    //    Pega todas as coletas pendentes que estão atrasadas
-    @Query("SELECT c FROM Collect c WHERE c.status = 'PENDING' AND c.initTime < :sixHoursAgo")
+    // Pega todas as coletas pendentes que estão atrasadas
+    @Query("SELECT c FROM Collect c WHERE (c.status = 'PENDING' or c.status = 'IN_PROGRESS') AND c.initTime < :sixHoursAgo")
     List<Collect> findOutdatedCollects(@Param("sixHoursAgo") LocalDateTime sixHoursAgo);
 
     //Cancela todas as coletas em andamento para um catador

@@ -26,9 +26,9 @@ public class CollectSchedulerService {
      * e reseta seus atributos para permitir que sejam coletadas novamente.
      */
     @Scheduled(fixedRate = 3600000)  // Rodar a cada 1 hora
-    //TODO não esta funcionando corretamente o scheduler, hora esta < 6 horas
     public void checkPendingCollects() {
         LocalDateTime sixHoursAgo = LocalDateTime.now().minusHours(6);  // Calcula o tempo de 6 horas atrás
+        LOGGER.info("Verificando coletas pendentes às " + LocalDateTime.now());
 
         List<Collect> outdatedCollects = collectRepository.findOutdatedCollects(sixHoursAgo);
 
@@ -39,7 +39,6 @@ public class CollectSchedulerService {
             collect.setStatus(CollectStatus.PENDING);  // Atualizar status para 'PENDING'
             collectRepository.save(collect);
         }
-
-        LOGGER.info(outdatedCollects.size() + "Coletas atrazadas foram resetadas");
+        LOGGER.info("Número de coletas resetadas: " + outdatedCollects.size());
     }
 }
