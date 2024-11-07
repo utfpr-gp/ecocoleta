@@ -18,7 +18,7 @@ A documentação das funcionalidades da aplicação pode ser acessada neste link
 
 ## 📄 Monografia
 
-A monografia da aplicação pode ser acessada neste link: <a href="https://www.overleaf.com/read/wxcpphrptgfw#2d441f">Overleaf</a>
+A monografia da aplicação pode ser acessada neste link: <a href="https://www.overleaf.com/read/szdqjbyjrnnn#024b44">Overleaf</a>
 
 ---
 
