@@ -91,67 +91,6 @@ public class CollectController {
     }
 
     /**
-     * Endpoint para buscar as coletas disponíveis.
-     * Recebe um CollectSearchAvaibleListDTO com os parâmetros de busca.
-     * Retorna uma lista de CollectAddressAvaibleDTO com as coletas disponíveis.
-     */
-    @PostMapping("get_avaible_collects")
-    @Transactional
-    public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollects(@RequestBody @Valid CollectSearchAvaibleListDTO collectSearchAvaibleListDTO) {
-
-
-        // Busca o Catador por ID
-        if (!wasteCollectorService.existsWasteCollectorById(collectSearchAvaibleListDTO.idWasteCollector())) {
-            throw new ValidException("Catador não encontrado!");
-        }
-
-        List<CollectAddressAvaibleDTO> collectAddressAvaibleDTOS = collectService.getCollectAvaibleList(collectSearchAvaibleListDTO);
-
-        return ResponseEntity.ok().body(collectAddressAvaibleDTOS);
-    }
-
-    /**
-     * Endpoint para finalizar coleta.
-     * <p>
-     * Pode receber o ID do catador e o ID da coleta.
-     * Retorna um aviso que a coleta foi finalizada para o front-end.
-     * Obs.: No front-end, fazer aviso sonoro, pontuação, etc.
-     */
-    @PostMapping("finish_collect")
-    @Transactional
-    public ResponseEntity finishCollect(@RequestBody @Valid CollectDTO collectDTO) {
-        try {
-            if (collectService.completedCollect(collectDTO)) {
-                return ResponseEntity.ok().build();
-            } else {
-                return ResponseEntity.badRequest().body("Coleta não finalizada!");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-//            throw new ValidException("WasteCollector not found");
-        }
-    }
-
-    /**
-     * Endpoint para resetar/cancelar todas as coletas atreladas a um catador.
-     * Recebe o ID do catador.
-     * Retorna uma resposta indicando se as coletas foram resetadas com sucesso.
-     */
-    @DeleteMapping("reset_collects")
-    @Transactional
-    public ResponseEntity resetCollects(@RequestBody @Valid Long wasteCollectorId) {
-        try {
-            if (collectService.resetAllCollects(wasteCollectorId)) {
-                return ResponseEntity.ok().build();
-            } else {
-                return ResponseEntity.badRequest().body("Coletas não resetadas!");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    /**
      * Endpoint para listar coletas por status e ID de usuário.
      * Recebe o ID do usuário e o status da coleta.
      * Retorna uma lista de coletas que correspondem ao status fornecido.
@@ -177,7 +116,70 @@ public class CollectController {
         }
     }
 
-//    // endpoint de cancelar coleta por id de coleta
+    /**
+     * Endpoint para buscar as coletas disponíveis.
+     * Recebe um CollectSearchAvaibleListDTO com os parâmetros de busca.
+     * Retorna uma lista de CollectAddressAvaibleDTO com as coletas disponíveis.
+     */
+    @PostMapping("get_avaible_collects")
+    @Transactional
+    public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollects(@RequestBody @Valid CollectSearchAvaibleListDTO collectSearchAvaibleListDTO) {
+
+
+        // Busca o Catador por ID
+        if (!wasteCollectorService.existsWasteCollectorById(collectSearchAvaibleListDTO.idWasteCollector())) {
+            throw new ValidException("Catador não encontrado!");
+        }
+
+        List<CollectAddressAvaibleDTO> collectAddressAvaibleDTOS = collectService.getCollectAvaibleList(collectSearchAvaibleListDTO);
+
+        return ResponseEntity.ok().body(collectAddressAvaibleDTOS);
+    }
+
+    /**
+     * Endpoint para finalizar coleta completa.
+     * <p>
+     * Pode receber o ID do catador e o ID da coleta.
+     * Retorna um aviso que a coleta foi finalizada para o front-end.
+     * Obs.: No front-end, fazer aviso sonoro, pontuação, etc.
+     */
+    @PostMapping("finish_collect")
+    @Transactional
+    public ResponseEntity finishCollect(@RequestBody @Valid CollectDTO collectDTO) {
+        try {
+            if (collectService.completedCollect(collectDTO)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.badRequest().body("Coleta não finalizada!");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+//            throw new ValidException("WasteCollector not found");
+        }
+    }
+
+    /**
+     * Endpoint para desistir/resetar todas as coletas atreladas a um catador.
+     * Recebe o ID do catador.
+     * Retorna uma resposta indicando se as coletas foram resetadas com sucesso.
+     */
+    @DeleteMapping("reset_collects")
+    @Transactional
+    public ResponseEntity resetCollects(@RequestBody @Valid Long wasteCollectorId) {
+        //TODo fazer para desistir de todas ou de uma coleta especifica recendno o id da coleta'
+        try {
+            if (collectService.resetAllCollects(wasteCollectorId)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.badRequest().body("Coletas não resetadas!");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+//    // endpoint de deletar coleta por id de coleta
 //    @PostMapping("cancel_collect")
 //    @Transactional
 //    public ResponseEntity cancelCollect(@RequestParam @Valid Long collectId) {
@@ -192,5 +194,7 @@ public class CollectController {
 //            return ResponseEntity.badRequest().body(e.getMessage());
 //        }
 //    }
+
+    //TODO endpint para tornar disponivel a coleta ou indisponivel, assim deixando de lado a opção de agendar coleta, o usuario modifica o status qeu esta disponivel, ...
 
 }

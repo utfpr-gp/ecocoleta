@@ -80,18 +80,11 @@ public class CollectService {
         if (!addressRepository.existsById(collectDTO.getAddress()) && !residentRepository.existsById(collectDTO.getResident())) {
             throw new ValidException("Id Address ou Resident informado não existe");
         }
-
-//TODO corrigir erro de banco : org.hibernate.type.SerializationException: could not deserialize
-//        var address = addressRepository.findById(collectDTO.address()).get();
-//        var resident = residentRepository.findById(collectDTO.resident()).get();
-
-//        TODO collectMapper
-//        Collect collect = new Collect(collectDTO.is_intern(), collectDTO.picture(), collectDTO.amount(), CollectStatus.PENDING, address, resident);
-//        Collect collect = new Collect(collectDTO.is_intern(), collectDTO.picture(), collectDTO.amount(), address, resident);
         Collect collect = collectMapper.toEntity(collectDTO);
 
         collectRepository.save(collect);
 
+//        TODO mudar para embbeded o materials em vez de relação nxn, assim fica uma lista dentro de collect e não precisa de relação direta com materials
 //        /*criação de relação entre coleta e materiais*/
 //        if (!collectDTO.materials().isEmpty()) {
 //            for (MaterialIdDTO materialId : collectDTO.materials()) {
