@@ -1,75 +1,40 @@
 package com.ecocoleta.backend.domain.collect.dto;
 
 import com.ecocoleta.backend.domain.collect.CollectStatus;
-import com.ecocoleta.backend.domain.material.MaterialIdDTO;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
-import java.util.List;
 
-//public record CollectDTO(
-//        long id,
-//        @NotNull
-//        @JsonAlias({"intern", "interno", "is_intern"})
-//        boolean isIntern,
-//        @Future
-////        @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-//        LocalDateTime schedule,
-//        String picture,
-////        @Pattern(regexp = "^([1-9]|[1-9][0-9])$", message = "O número deve ser entre 1 e 99")
-//        Integer amount,
-//        CollectStatus status,
-//        LocalDateTime initTime,
-//        LocalDateTime endTime,
-//        LocalDateTime createTime,
-//        LocalDateTime updateTime,
-//        @NotNull
-//        @JsonAlias({"id_address"})
-//        Long address,
-//        @NotNull
-//        @JsonAlias({"id_resident"})
-//        Long resident,
-//        @JsonAlias({"id_waste_collector"})
-//        Long wasteCollector
-////        List<MaterialIdDTO> materials // Lista de materiais
-//) {
-//}
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class CollectDTO{
-        Long id;
+public record CollectDTO(
+        long id,
         @NotNull
         @JsonAlias({"intern", "interno", "is_intern"})
-        boolean isIntern;
+        boolean isIntern,
         @Future
 //        @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-        LocalDateTime schedule;
-        String picture;
+        LocalDateTime schedule,
+        String picture,
 //        @Pattern(regexp = "^([1-9]|[1-9][0-9])$", message = "O número deve ser entre 1 e 99")
-        Integer amount;
-        CollectStatus status;
-        LocalDateTime initTime;
-        LocalDateTime endTime;
-        LocalDateTime createTime;
-        LocalDateTime updateTime;
+        Integer amount,
+        CollectStatus status,
+        LocalDateTime initTime,
+        LocalDateTime endTime,
+        LocalDateTime createTime,
+        LocalDateTime updateTime,
         @NotNull
         @JsonAlias({"id_address"})
-        Long address;
+        Long address,
         @NotNull
         @JsonAlias({"id_resident"})
-        Long resident;
+        Long resident,
         @JsonAlias({"id_waste_collector"})
-        Long wasteCollector;
+        Long wasteCollector
+//        List<MaterialIdDTO> materials // Lista de materiais
+) {
 }
 
-
-
-
-
+//Exemplo json
 //{
 //        "is_intern": true,
 //        "schedule": "2024-09-01T10:00:00",

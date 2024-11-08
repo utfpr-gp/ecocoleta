@@ -75,9 +75,8 @@ public class CollectService {
      * @throws ValidException Se o endereço ou residente não existirem.
      */
     public CollectDTO createCollect(CollectDTO collectDTO) {
-        System.out.println("ENTROU SERVICE CREATE COLLECT");
 
-        if (!addressRepository.existsById(collectDTO.getAddress()) && !residentRepository.existsById(collectDTO.getResident())) {
+        if (!addressRepository.existsById(collectDTO.address()) && !residentRepository.existsById(collectDTO.resident())) {
             throw new ValidException("Id Address ou Resident informado não existe");
         }
         Collect collect = collectMapper.toEntity(collectDTO);
@@ -171,8 +170,8 @@ public class CollectService {
     public Boolean completedCollect(CollectDTO collectDTO) {
 
         // Buscar a coleta pelo ID e verificar se pertence ao wasteCollectorId fornecido
-        Collect collect = collectRepository.findById(collectDTO.getId()).orElseThrow(() -> new EntityNotFoundException("coleta não encontrada"));
-        if (collect.getWasteCollector() == null || !Objects.equals(collect.getWasteCollector().getId(), collectDTO.getWasteCollector())) {
+        Collect collect = collectRepository.findById(collectDTO.id()).orElseThrow(() -> new EntityNotFoundException("coleta não encontrada"));
+        if (collect.getWasteCollector() == null || !Objects.equals(collect.getWasteCollector().getId(), collectDTO.wasteCollector())) {
             throw new ValidException("Coleta não encontrada ou não pertence ao usuario");
         }
 

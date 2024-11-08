@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
-//TODO mudar o mapper para o modelMapper
 @Component
 @RequiredArgsConstructor
 public class CollectMapper {
@@ -21,43 +20,34 @@ public class CollectMapper {
     @Autowired
     private ResidentRepository residentRepository;
 
-//    @Autowired
     private final ModelMapper modelMapper;
 
 
     public CollectDTO toDto(Collect collect) {
-        CollectDTO dto = new CollectDTO();
-        dto.setId(collect.getId());
-        dto.setIntern(collect.isIntern());
-        dto.setSchedule(collect.getSchedule());
-        dto.setPicture(collect.getPicture());
-        dto.setAmount(collect.getAmount());
-        dto.setStatus(collect.getStatus());
-        dto.setInitTime(collect.getInitTime());
-        dto.setEndTime(collect.getEndTime());
-        dto.setCreateTime(collect.getCreateTime());
-        dto.setUpdateTime(collect.getUpdateTime());
-        dto.setAddress(collect.getAddress().getId());
-        dto.setResident(collect.getResident().getId());
-//        dto.setWasteCollector(collect.getWasteCollector().getId());
-        return dto;
-//        return modelMapper.map(collect, CollectDTO.class);
+        return new CollectDTO(
+                collect.getId(),
+                collect.isIntern(),
+                collect.getSchedule(),
+                collect.getPicture(),
+                collect.getAmount(),
+                collect.getStatus(),
+                collect.getInitTime(),
+                collect.getEndTime(),
+                collect.getCreateTime(),
+                collect.getUpdateTime(),
+                collect.getAddress().getId(),
+                collect.getResident().getId(),
+                collect.getWasteCollector() != null ? collect.getWasteCollector().getId() : null
+        );
     }
-    
+
     public Collect toEntity(CollectDTO dto) {
-        Collect collect = new Collect();
-//        collect.setId(dto.getId());
-        collect.setIntern(dto.isIntern());
-        collect.setSchedule(dto.getSchedule());
-        collect.setPicture(dto.getPicture());
-        collect.setAmount(dto.getAmount());
-        collect.setStatus(dto.getStatus());
-        collect.setInitTime(dto.getInitTime());
-        collect.setEndTime(dto.getEndTime());
-        collect.setCreateTime(dto.getCreateTime());
-        collect.setUpdateTime(dto.getUpdateTime());
-        collect.setAddress(addressRepository.findById(dto.getAddress()).get());
-        collect.setResident(residentRepository.findById(dto.getResident()).get());
-        return collect;
+        return new Collect(
+                dto.isIntern(),
+                dto.picture(),
+                dto.amount(),
+                addressRepository.findById(dto.address()).get(),
+                residentRepository.findById(dto.resident()).get()
+        );
     }
 }
