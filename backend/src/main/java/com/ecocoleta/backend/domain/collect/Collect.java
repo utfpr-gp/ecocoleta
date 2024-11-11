@@ -61,6 +61,12 @@ public class Collect {
         this.createTime = LocalDateTime.now();
     }
 
+//    /TODO atualizar o tempo de update
+    /*@PostPersist
+    public void postPersist() {
+        this.updateTime = LocalDateTime.now();
+    }*/
+
     @Override
     public String toString() {
         return "Collect{" +

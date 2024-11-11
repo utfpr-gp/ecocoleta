@@ -21,6 +21,7 @@ import com.ecocoleta.backend.repositories.ResidentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -248,4 +249,28 @@ public class CollectService {
         return null;
     }
 
+    /**
+     * Cancela uma coleta.
+     *
+     * @param collectId ID da coleta a ser cancelada.
+     * @param user      Usuário que está cancelando a coleta.
+     * @return true se a coleta foi cancelada com sucesso.
+     * @throws ValidException Se o usuário não tiver permissão para cancelar a coleta.
+     */
+    public boolean cancelCollect(@Valid Long collectId, User user) {
+
+        if (user.getRole().equals(UserRole.WASTE_COLLECTOR)) {
+            throw new ValidException("Catador não pode cancelar coletas");
+        }
+
+        Collect collect = collectRepository.findById(collectId).get();
+
+        if ((collect.getResident().equals(user)) || (user.getRole().equals(UserRole.ADMIN))) {
+            collect.setStatus(CollectStatus.CANCELLED);
+            collectRepository.save(collect);
+            return true;
+        }else {
+            throw new ValidException("Usuário não tem permissão para cancelar essa coleta");
+        }
+    }
 }

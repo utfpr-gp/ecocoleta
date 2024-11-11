@@ -4,8 +4,10 @@ import com.ecocoleta.backend.domain.collect.CollectStatus;
 import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectSearchAvaibleListDTO;
+import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.repositories.WasteCollectorRespository;
+import com.ecocoleta.backend.services.AutorizationService;
 import com.ecocoleta.backend.services.CollectService;
 import com.ecocoleta.backend.services.UserService;
 import com.ecocoleta.backend.services.WasteCollectorService;
@@ -14,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +40,8 @@ public class CollectController {
 
     @Autowired
     private WasteCollectorRespository wasteCollectorRespository;
+    @Autowired
+    private AutorizationService autorizationService;
 
 
     /**
@@ -165,7 +171,7 @@ public class CollectController {
      */
     @DeleteMapping("reset_collects")
     @Transactional
-    public ResponseEntity resetCollects(@RequestBody @Valid Long wasteCollectorId) {
+    public ResponseEntity resetCollects(@RequestParam @Valid Long wasteCollectorId) {
         //TODo fazer para desistir de todas ou de uma coleta especifica recendno o id da coleta'
         try {
             if (collectService.resetAllCollects(wasteCollectorId)) {
@@ -178,22 +184,26 @@ public class CollectController {
         }
     }
 
+    /**
+     * Endpoint para cancelar/deletar uma coleta.
+     * Recebe o ID da coleta.
+     * Retorna uma resposta indicando se a coleta foi deletada com sucesso.
+     */
+    @DeleteMapping("cancel_collect")
+    @Transactional
+    public ResponseEntity cancelCollect(@AuthenticationPrincipal UserDetails userDetails, @RequestParam @Valid Long collectId) {
+        try {
+            User user = userService.getUserByUserEmail(userDetails.getUsername());
 
-//    // endpoint de deletar coleta por id de coleta
-//    @PostMapping("cancel_collect")
-//    @Transactional
-//    public ResponseEntity cancelCollect(@RequestParam @Valid Long collectId) {
-//        //validar ususario logado se a collect pertence a ele
-//        try {
-//            if (collectService.cancelCollect(collectId)) {
-//                return ResponseEntity.ok().build();
-//            } else {
-//                return ResponseEntity.badRequest().body("Coleta não cancelada!");
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
+            if (collectService.cancelCollect(collectId, user)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.badRequest().body("Coleta não cancelada!");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     //TODO endpint para tornar disponivel a coleta ou indisponivel, assim deixando de lado a opção de agendar coleta, o usuario modifica o status qeu esta disponivel, ...
 
