@@ -207,4 +207,22 @@ public class CollectController {
 
     //TODO endpint para tornar disponivel a coleta ou indisponivel, assim deixando de lado a opção de agendar coleta, o usuario modifica o status qeu esta disponivel, ...
 
+    /**
+     * Endpoint para puasar ou ativar uma coleta tornando indisponivel naquele momento.
+     * Recebe o ID da coleta.
+     * Retorna uma resposta contendo o DTO da coleta indicando se a coleta foi pausada ou ativada com sucesso.
+     */
+    @PostMapping("paused_collect")
+    @Transactional
+    public ResponseEntity pausedCollect(@AuthenticationPrincipal UserDetails userDetails, @RequestParam @Valid Long collectId) {
+        try {
+            User user = userService.getUserByUserEmail(userDetails.getUsername());
+
+            CollectDTO collectDTO = collectService.pausedCollect(collectId, user);
+
+            return ResponseEntity.ok().body(collectDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
