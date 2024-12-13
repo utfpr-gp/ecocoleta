@@ -1,4 +1,4 @@
-@if(!userLogged || userLogged.role === 'ADMIN' || userLogged.role ===
+@if(!userLogged || userLogged?.role === 'ADMIN' || userLogged?.role ===
 'COMPANY'){
 <nav class="navbar navbar-expand-lg">
   <div class="container-fluid">
@@ -23,12 +23,12 @@
         </li>
         @if(userLogged){
         <li class="nav-item">
-          <a class="nav-link active" [routerLink]="['/user/', userLogged.id]"
+          <a class="nav-link active" [routerLink]="['/user/', userLogged?.id]"
             >Meu perfil</a
           >
         </li>
 
-        @if(userLogged.role === 'ADMIN' || userLogged.role === 'COMPANY') {
+        @if(userLogged?.role === 'ADMIN' || userLogged?.role === 'COMPANY') {
         <li class="nav-item">
           <a class="nav-link" [routerLink]="['#']">Listar usuários</a>
         </li>

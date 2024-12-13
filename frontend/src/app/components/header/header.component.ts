@@ -2,8 +2,6 @@ import { Component, input, Input, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/types/user.type';
-import { Token } from '../../core/types/token.type';
-import { UserRole } from '../../core/types/user-role.type';
 
 @Component({
   selector: 'app-header',
@@ -17,14 +15,12 @@ export class HeaderComponent implements OnInit {
   @Input() title: string = 'EcoColeta';
   @Input() subTitle!: string;
   hasNotification: boolean = true;
-  // userLoggedRole!: UserRole;
 
   constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
     this.userService.returnUser().subscribe((user) => {
       this.userLogged = user;
-      // this.userLoggedRole = user?.role as UserRole;
     });
   }
 

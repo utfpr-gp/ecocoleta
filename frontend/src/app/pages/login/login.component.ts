@@ -12,6 +12,7 @@ import { ButtonLargerSecondaryComponent } from '../../components/button-larger-s
 import { Router, RouterLink } from '@angular/router';
 import { LoginService } from '../../core/services/login.service';
 import { ToastrService } from 'ngx-toastr';
+import { UserService } from '../../core/services/user.service';
 
 interface LoginForm {
   email: FormControl;
@@ -51,6 +52,7 @@ export class LoginComponent {
   constructor(
     private router: Router,
     private loginService: LoginService,
+    private userService: UserService,
     private toastService: ToastrService
   ) {
     this.loginForm = new FormGroup({
@@ -78,8 +80,10 @@ export class LoginComponent {
       this.loginService
         .login(this.loginForm.value.email, this.loginForm.value.password)
         .subscribe({
-          next: () => {
+          next: (response) => {
             this.toastService.success('Login feito com sucesso!');
+            // Atualiza o estado do usuário no UserService
+            this.userService.setUserToken(response.token);
             this.router.navigate(['/user']);
             this.loginForm.reset();
           },
@@ -90,7 +94,6 @@ export class LoginComponent {
     }
   }
 
-  // Método para exibir o toast alert com as mensagens de erro personalizadas
   showErrorMessage(field: string) {
     const formField = this.loginForm.get(field);
     if (formField?.errors) {
