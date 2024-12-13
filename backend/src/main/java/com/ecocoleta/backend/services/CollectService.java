@@ -269,8 +269,40 @@ public class CollectService {
             collect.setStatus(CollectStatus.CANCELLED);
             collectRepository.save(collect);
             return true;
-        }else {
+        } else {
             throw new ValidException("Usuário não tem permissão para cancelar essa coleta");
+        }
+    }
+
+    /**
+     * Pausa e continua uma coleta.
+     *
+     * @param collectId ID da coleta a ser cancelada.
+     * @param user      Usuário que está cancelando a coleta.
+     * @return DTO da coleta atualizados.
+     * @throws ValidException Se o usuário não tiver permissão para cancelar a coleta.
+     */
+    public CollectDTO pausedCollect(@Valid Long collectId, User user) {
+
+        if (user.getRole().equals(UserRole.WASTE_COLLECTOR)) {
+            throw new ValidException("Catador não pode cancelar coletas");
+        }
+
+        Collect collect = collectRepository.findById(collectId).get();
+
+        if ((collect.getResident().equals(user)) || (user.getRole().equals(UserRole.ADMIN))) {
+
+            if ((collect.getStatus() != CollectStatus.PAUSED) && (collect.getStatus() != CollectStatus.CANCELLED)) {
+                collect.setStatus(CollectStatus.PAUSED);
+                collectRepository.save(collect);
+            } else if (collect.getStatus().equals(CollectStatus.PAUSED)) {
+                collect.setStatus(CollectStatus.IN_PROGRESS);
+                collectRepository.save(collect);
+            }
+
+            return collectMapper.toDto(collect);
+        } else {
+            throw new ValidException("Usuário não tem permissão para essa coleta");
         }
     }
 }
