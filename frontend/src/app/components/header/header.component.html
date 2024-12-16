@@ -1,77 +1,80 @@
-@if(!userLogged || userLogged?.role === 'ADMIN' || userLogged?.role ===
-'COMPANY'){
-<nav class="navbar navbar-expand-lg">
-  <div class="container-fluid">
-    <a class="navbar-brand" routerLink="/">{{ title }}</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" routerLink="/about"
-            >Sobre</a
-          >
-        </li>
-        @if(userLogged){
-        <li class="nav-item">
-          <a class="nav-link active" [routerLink]="['/user/', userLogged?.id]"
-            >Meu perfil</a
-          >
-        </li>
-
-        @if(userLogged?.role === 'ADMIN' || userLogged?.role === 'COMPANY') {
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['#']">Listar usuários</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['#']">Cadastrar novo usuário</a>
-        </li>
-        } }
-      </ul>
-
-      @if(userLogged) {
-      <a
-        class="btn btn-outline-primary"
-        routerLink="/login"
-        role="button"
-        (click)="logout()"
-        >sair</a
+@if (!userLogged || userLogged.role === 'ADMIN' || userLogged.role === 'COMPANY') {
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" routerLink="/">{{ title }}</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
       >
-      }@else {
-      <a class="btn btn-outline-primary" routerLink="/login" role="button"
-        >Login</a
-      >}
-    </div>
-  </div>
-</nav>
-} @if (userLogged?.role === 'RESIDENT' || userLogged?.role ===
-'WASTE_COLLECTOR') {
-<nav class="navbar navbar-expand-lg">
-  <div class="container-fluid flex-column">
-    <div class="row w-100">
-      <div class="col-6 d-flex align-items-center">
-        <span class="navbar-brand">EcoColeta</span>
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" routerLink="/about"
+            >Sobre</a
+            >
+          </li>
+          @if (userLogged) {
+            <li class="nav-item">
+              <a class="nav-link active" [routerLink]="['/user/', userLogged.id]"
+              >Meu perfil</a
+              >
+            </li>
+
+            @if (userLogged.role === 'ADMIN' || userLogged.role === 'COMPANY') {
+              <li class="nav-item">
+                <a class="nav-link" [routerLink]="['#']">Listar usuários</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" [routerLink]="['#']">Cadastrar novo usuário</a>
+              </li>
+            }
+          }
+        </ul>
+
+        @if (userLogged) {
+          <a
+            class="btn btn-outline-primary"
+            routerLink="/login"
+            role="button"
+            (click)="logout()"
+          >sair</a
+          >
+        } @else {
+          <a class="btn btn-outline-primary" routerLink="/login" role="button"
+          >Login</a
+          >
+        }
       </div>
-      <div class="col-6 d-flex justify-content-end align-items-center">
-        @if (hasNotification) {<i class="bi bi-bell"></i>}
+    </div>
+  </nav>
+}
+@if ((userLogged && userLogged.role === 'RESIDENT') || (userLogged && userLogged.role === 'WASTE_COLLECTOR')) {
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid flex-column">
+      <div class="row w-100">
+        <div class="col-6 d-flex align-items-center">
+          <span class="navbar-brand">EcoColeta</span>
+        </div>
+        <div class="col-6 d-flex justify-content-end align-items-center">
+          @if (hasNotification) {
+            <i class="bi bi-bell"></i>
+          }
+        </div>
+      </div>
+      <div class="row w-100">
+        <div class="col-12 d-flex justify-content-center">
+          <span class="navbar-subtitle"> {{ subTitle }}</span>
+        </div>
       </div>
     </div>
-    <div class="row w-100">
-      <div class="col-12 d-flex justify-content-center">
-        <span class="navbar-subtitle"> {{ subTitle }}</span>
-      </div>
-    </div>
-  </div>
-</nav>
+  </nav>
 }
 
 <!-- //TODO continuar verifacando tipos de usuario no header -->
