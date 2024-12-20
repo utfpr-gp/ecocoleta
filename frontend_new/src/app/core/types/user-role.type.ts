@@ -1,0 +1,6 @@
+export enum UserRole {
+  WASTE_COLLECTOR = 'WASTE_COLLECTOR',
+  RESIDENT = 'RESIDENT',
+  COMPANY = 'COMPANY',
+  ADMIN = 'ADMIN',
+}
