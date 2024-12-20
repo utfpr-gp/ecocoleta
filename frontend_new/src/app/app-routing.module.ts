@@ -30,19 +30,20 @@ import {AppLayoutComponent} from "./layout/app.layout.component";
             //     loadChildren: () => import('./domains/landing/landing.module').then(m => m.LandingModule)
             // },
 
+            { path: '', redirectTo: 'landing', pathMatch: 'full' },
             {
-                path: '',
+                path: 'landing',
+                loadChildren: () =>
+                    import('./domains/landing/landing.module').then(m => m.LandingModule),
+            },
+            {
+                path: 'home',
                 canActivate: [AuthGuard],  // O guard está sendo aplicado aqui
                 component: AppLayoutComponent, // Rota protegida
                 // children: [
                 //     { path: 'uikit', loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UIkitModule) },
                 //     // Outras rotas...
                 // ]
-            },
-            {
-                path: 'landing',
-                loadChildren: () =>
-                    import('./domains/landing/landing.module').then(m => m.LandingModule),
             },
             {path: 'auth', loadChildren: () => import('./domains/auth/auth.module').then(m => m.AuthModule)},
             {path: 'notfound', component: NotfoundComponent},
