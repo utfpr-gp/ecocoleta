@@ -1,11 +1,59 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthRoutingModule } from './auth-routing.module';
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {ButtonModule} from "primeng/button";
+import {CheckboxModule} from "primeng/checkbox";
+import {InputTextModule} from "primeng/inputtext";
+import {PasswordModule} from "primeng/password";
+import {JwtHelperService, JwtModule} from "@auth0/angular-jwt";
+import {RippleModule} from "primeng/ripple";
+import {DialogModule} from "primeng/dialog";
+import {DividerModule} from "primeng/divider";
+import {ToastModule} from "primeng/toast";
+import {InputMaskModule} from "primeng/inputmask";
+import {HTTP_INTERCEPTORS} from "@angular/common/http";
+import {AuthenticationInterceptor} from "../../core/interceptors/authentication.interceptor";
+import {AuthGuard} from "../../core/guards/auth.guard";
+import {LoginComponent} from "./login/login.component";
+
+export function tokenGetter(): string {
+    return localStorage.getItem('token')!;
+}
 
 @NgModule({
+    declarations: [LoginComponent],
     imports: [
         CommonModule,
-        AuthRoutingModule
+        FormsModule,
+        AuthRoutingModule,
+        ButtonModule,
+        CheckboxModule,
+        InputTextModule,
+        PasswordModule,
+        JwtModule.forRoot(
+            {
+                config: {
+                    tokenGetter,
+                    // allowedDomains: [environment.domain],
+                }
+            }),
+        RippleModule,
+        DialogModule,
+        ReactiveFormsModule,
+        DividerModule,
+        ToastModule,
+        // SharedModule,
+        InputMaskModule
+    ],
+    providers: [
+        JwtHelperService,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthenticationInterceptor,
+            multi: true
+        },
+        AuthGuard
     ]
 })
 export class AuthModule { }

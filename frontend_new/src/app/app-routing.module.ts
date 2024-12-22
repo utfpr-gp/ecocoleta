@@ -38,7 +38,7 @@ import {AppLayoutComponent} from "./layout/app.layout.component";
             },
             {
                 path: 'home',
-                // canActivate: [AuthGuard],  // O guard está sendo aplicado aqui
+                canActivate: [AuthGuard],  // O guard está sendo aplicado aqui
                 component: AppLayoutComponent, // Rota protegida
                 // children: [
                 //     { path: 'uikit', loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UIkitModule) },

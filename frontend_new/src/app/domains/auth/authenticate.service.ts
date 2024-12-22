@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import {JwtHelperService} from '@auth0/angular-jwt';
 import {environment} from "../../../environments/environment";
 import {Router} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
 import {Observable, tap} from "rxjs";
 import {LoginResponse} from "../../core/types/login-response.type";
+import {JwtHelperService} from "@auth0/angular-jwt";
 
 @Injectable({
   providedIn: 'root'
@@ -73,5 +73,14 @@ export class AuthenticateService {
     limparAccessToken() {
         localStorage.removeItem('token');
         this.jwtPayload = null;
+    }
+
+    getToken() {
+        return localStorage.getItem('token') ?? '';
+    }
+
+    existsToken() {
+        return !!this.getToken();
+        //Se o valor for null, undefined, 0, NaN, "" (string vazia) ou false, o resultado será false. Caso contrário, o resultado será true.
     }
 }
