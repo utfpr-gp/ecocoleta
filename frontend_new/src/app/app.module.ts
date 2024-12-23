@@ -18,9 +18,14 @@ import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {AuthModule} from "./domains/auth/auth.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from "@angular/platform-browser";
+import {JwtModule} from "@auth0/angular-jwt";
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
     return new TranslateHttpLoader(httpClient);
+}
+
+export function tokenGetter(): string {
+    return localStorage.getItem('token')!;
 }
 
 @NgModule({
@@ -32,6 +37,13 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         BrowserAnimationsModule,
         HttpClientModule,
         AuthModule,
+        JwtModule.forRoot(
+            {
+                config: {
+                    tokenGetter,
+                    // allowedDomains: [environment.domain],
+                }
+            }),
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -46,8 +58,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
             multi: true
         },
         {provide: LocationStrategy, useClass: PathLocationStrategy},
-        // CountryService, CustomerService, EventService, IconService, NodeService,
-        // PhotoService, ProductService
+        CountryService, CustomerService, EventService, IconService, NodeService,
+        PhotoService, ProductService
     ],
     bootstrap: [AppComponent],
 })
