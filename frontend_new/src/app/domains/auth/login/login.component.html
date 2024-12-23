@@ -1,32 +1,44 @@
 <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
     <p-toast></p-toast>
     <div class="flex flex-column align-items-center justify-content-center">
-<!--TODO arrumar logo tela login-->
-        <img src="assets/layout/images/{{layoutService.config().colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0">
-        <div style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
+        <!--TODO arrumar logo tela login-->
+        <img
+            src="assets/layout/images/{{layoutService.config().colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg"
+            alt="Sakai logo" class="mb-5 w-6rem flex-shrink-0">
+        <div
+            style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
             <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius:53px">
-<!--                <div class="text-center mb-5">-->
-<!--                    <img src="../../../assets/demo/images/login/avatar.png" alt="Image" height="50" class="mb-3">-->
-<!--                    <div class="text-900 text-3xl font-medium mb-3">Welcome, Isabel!</div>-->
-<!--                    <span class="text-600 font-medium">Sign in to continue</span>-->
-<!--                </div>-->
-                <div>
+                <!--                <div class="text-center mb-5">-->
+                <!--                    <img src="../../../assets/demo/images/login/avatar.png" alt="Image" height="50" class="mb-3">-->
+                <!--                    <div class="text-900 text-3xl font-medium mb-3">Welcome, Isabel!</div>-->
+                <!--                    <span class="text-600 font-medium">Sign in to continue</span>-->
+                <!--                </div>-->
+                <div [formGroup]="loginForm">
                     <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
-                    <input id="email1" type="text" placeholder="E-mail" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem">
+                    <input (keydown.enter)="login()" formControlName="email" id="email1" type="text"
+                           placeholder="E-mail" pInputText
+                           class="w-full md:w-30rem mb-5" style="padding:1rem">
 
                     <label for="password1" class="block text-900 font-medium text-xl mb-2">Senha</label>
-                    <p-password [feedback]="false" id="password1" [(ngModel)]="password" placeholder="Senha" [toggleMask]="true" styleClass="mb-5" inputStyleClass="w-full p-3 md:w-30rem"></p-password>
+                    <p-password (keydown.enter)="login()" [feedback]="false" formControlName="password"
+                                id="password1" placeholder="Senha" [toggleMask]="true" styleClass="mb-5"
+                                inputStyleClass="w-full p-3 md:w-30rem"></p-password>
 
                     <div class="flex align-items-center justify-content-between mb-5 gap-5">
                         <div class="flex align-items-center">
-                            <p-checkbox id="rememberme1" [binary]="true" styleClass="mr-2"></p-checkbox>
+                            <p-checkbox id="rememberme1" formControlName="salvarSenha" [binary]="true"
+                                        styleClass="mr-2"></p-checkbox>
                             <label for="rememberme1">Lembrar</label>
                         </div>
-                        <a class="font-medium no-underline ml-2 text-right cursor-pointer" style="color: var(--primary-color)">Esqueceu a senha?</a>
+                        <a class="font-medium no-underline ml-2 text-right cursor-pointer"
+                           style="color: var(--primary-color)">Esqueceu a senha?</a>
                     </div>
                     <div class="flex flex-column align-items-center gap-4">
-                        <button pButton pRipple label="Entrar" class="w-full p-3 text-xl p-button-rounded" [routerLink]="['/']"></button>
-                        <button pButton pRipple label="Cadastrar" class="w-full p-3 text-xl p-button-rounded p-button-outlined" [routerLink]="['/']"></button>
+                        <button pButton pRipple label="Entrar" class="w-full p-3 text-xl p-button-rounded"
+                                (click)="login()"></button>
+                        <button pButton pRipple label="Cadastrar"
+                                class="w-full p-3 text-xl p-button-rounded p-button-outlined"
+                                [routerLink]="['/']"></button>
                     </div>
                 </div>
             </div>

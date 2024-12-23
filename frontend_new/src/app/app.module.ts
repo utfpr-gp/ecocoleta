@@ -50,7 +50,8 @@ export function tokenGetter(): string {
                 useFactory: HttpLoaderFactory,
                 deps: [HttpClient]
             }
-        })],
+        })
+    ],
     providers: [
         {
             provide: HTTP_INTERCEPTORS,
