@@ -44,33 +44,32 @@ export class AuthenticateService {
             );
     }
 
-    // login(email: string, password: string): Promise<LoginResponse> {
-    //     // const headers = new HttpHeaders()
-    //     //     .append('Content-Type', 'application/json')
-    //     //     .append('accept', 'application/json');
-    //     return firstValueFrom(this.http.post<any>(this.apiUrl + '/login', {email, password}))
-    //         .then((response: any) => {
-    //             //setando token no sessionStorage
-    //             this.armazenarToken(response.token);
-    //             // TODO verificar  a role do user para redirecionar correto ?
-    //             const redirectUrl = localStorage.getItem('redirectUrl') || '/home';
-    //             localStorage.removeItem('redirectUrl');
-    //             this.router.navigate([redirectUrl]);
-    //             // return value;
-    //             // this.armazenarToken(response['token']);
-    //             // if (this.jwtPayload?.precisaAtualizarCpf) {
-    //             //     return;
-    //             // }
-    //             // // Redireciona apenas se o CPF estiver atualizado
-    //             // const redirectUrl = localStorage.getItem('redirectUrl') || '/';
-    //             // localStorage.removeItem('redirectUrl');
-    //             // this.router.navigate([redirectUrl]);
-    //             return response;
-    //         })
-    //         .catch((error) => {
-    //             // Lida com erros de autenticação
-    //             throw new Error(error.error?.detail || 'Erro ao realizar login.');
-    //         });
+    // async login(email: string, password: string): Promise<LoginResponse> {
+    //     console.log('iniciando req login : email', email, 'password', password);
+    //     console.log('API URL:', this.apiUrl + '/login'); // Check the URL
+    //     try {
+    //         console.log('iniciando try');
+    //         // const response = await firstValueFrom(this.http.post<any>(`${this.apiUrl}/login`, {
+    //         //     email: email,
+    //         //     password: password
+    //         // }));
+    //         const response = await this.http.post<any>(`${this.apiUrl}/login`, {
+    //             email: email,
+    //             password: password
+    //         }).toPromise();
+    //
+    //         console.log('response', response);
+    //         this.armazenarToken(response['token']);
+    //         // Redireciona apenas se o CPF estiver atualizado
+    //         const redirectUrl = localStorage.getItem('redirectUrl') || '/';
+    //         localStorage.removeItem('redirectUrl');
+    //         this.router.navigate([redirectUrl]);
+    //         return response;
+    //     } catch (error) {
+    //         console.error('Erro no login:', error);
+    //         // Lida com erros de autenticação
+    //         throw new Error(error || 'Erro ao realizar login.');
+    //     }
     // }
 
     logout(url) {

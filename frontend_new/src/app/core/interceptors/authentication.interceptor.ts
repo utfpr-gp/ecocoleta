@@ -20,44 +20,34 @@ export class AuthenticationInterceptor implements HttpInterceptor {
     ) {
     }
 
-    intercept(
-        request: HttpRequest<any>,
-        next: HttpHandler
-    ): Observable<HttpEvent<any>> {
-        if (localStorage.getItem('token')! && this.auth.isAccessTokenInvalido()) {
-            this.router.navigate(['/auth/login']);
-        }
+    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const token = this.auth.getToken();
 
-        request = request.clone({
-            setHeaders: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        if (token) {
+            request = request.clone({
+                setHeaders: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        }
 
+        if (this.auth.isAccessTokenInvalido()) {
+            this.router.navigate(['/auth/login']);
+        }
 
         return next.handle(request).pipe(
             catchError((err: any) => {
                 if (err instanceof HttpErrorResponse) {
-                    // Handle HTTP errors
                     if (err.status === 401) {
-                        // Specific handling for unauthorized errors
-                        //   TODO verificar uso de msgService
-                        // this.toastrservice.error(`Erro: ${err.message}`);
-                        console.log(`Erro 401: ${err}`); //TODO - remove this line
-                        // You might trigger a re-authentication flow or redirect the user here
+                        console.log(`Erro 401: ${err.message}`);
+                        this.router.navigate(['/auth/login']);
                     } else {
-                        // Handle other HTTP error codes
-                        // this.toastrservice.error(`HTTP erro: ${err.message}`);
-                        console.log(`Erro http: ${err}`); //TODO - remove this line
+                        console.log(`Erro HTTP (${err.status}): ${err.message}`);
                     }
                 } else {
-                    // Handle non-HTTP errors
-                    // this.toastrservice.error(`Erro: ${err.message}`);
-                    console.log(`Erro non-http: ${err}`); //TODO - remove this line
+                    console.log(`Erro não HTTP: ${err.message}`);
                 }
 
-                // Re-throw the error to propagate it further
                 return throwError(() => err);
             })
         );

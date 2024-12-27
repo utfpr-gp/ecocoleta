@@ -19,6 +19,7 @@ import {AuthModule} from "./domains/auth/auth.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from "@angular/platform-browser";
 import {JwtModule} from "@auth0/angular-jwt";
+import {MessageService} from "primeng/api";
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
     return new TranslateHttpLoader(httpClient);
@@ -60,7 +61,7 @@ export function tokenGetter(): string {
         },
         {provide: LocationStrategy, useClass: PathLocationStrategy},
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService
+        PhotoService, ProductService, MessageService
     ],
     bootstrap: [AppComponent],
 })
