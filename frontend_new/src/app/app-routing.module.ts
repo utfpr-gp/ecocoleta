@@ -45,6 +45,8 @@ import {AppLayoutComponent} from "./layout/app.layout.component";
                 //     // Outras rotas...
                 // ]
             },
+            // TODO rota cadasatrar user
+            {path: 'user', loadChildren: () => import('./domains/user/user.module').then(m => m.UserModule)},
             {path: 'auth', loadChildren: () => import('./domains/auth/auth.module').then(m => m.AuthModule)},
             {path: 'notfound', component: NotfoundComponent},
             {path: '**', redirectTo: '/notfound'},

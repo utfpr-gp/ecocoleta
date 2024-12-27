@@ -28,8 +28,6 @@ export class LoginComponent {
 
     valCheck: string[] = ['remember'];
     loginForm!: FormGroup<LoginForm>;
-    // password!: string;
-    // salvarSenha!: boolean;
 
     constructor(public layoutService: LayoutService, private messageService: MessageService, public auth: AuthenticateService, private cookieService: CookieService) {
         this.loginForm = new FormGroup({
@@ -71,29 +69,4 @@ export class LoginComponent {
             this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: 'Preencha todos os campos', life: 3000})
         }
     }
-
-    // login() {
-    //     console.log(this.loginForm.value);
-    //     console.log("logando...");
-    //     if (this.loginForm.value.salvarSenha) {
-    //         this.cookieService.set('salvarSenha', 'true');
-    //         this.cookieService.set('usuarioSalvo', this.loginForm.value.email);
-    //         this.cookieService.set('senhaSalva', this.loginForm.value.password);
-    //     } else {
-    //         this.cookieService.delete('salvarSenha');
-    //         this.cookieService.delete('usuarioSalvo');
-    //         this.cookieService.delete('senhaSalva');
-    //     }
-    //
-    //     if (this.loginForm.valid) {
-    //         console.log("logando... form válido");
-    //
-    //         this.auth.login(this.loginForm.value.email, this.loginForm.value.password)
-    //             .catch((erro: any) => {
-    //                 this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: erro?.error?.detail, life: 3000})
-    //             });
-    //     } else {
-    //         this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: 'Preencha todos os campos', life: 3000})
-    //     }
-    // }
 }

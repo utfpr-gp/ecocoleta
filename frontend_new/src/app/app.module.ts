@@ -12,7 +12,7 @@ import {IconService} from './demo_apagar/service/icon.service';
 import {NodeService} from './demo_apagar/service/node.service';
 import {PhotoService} from './demo_apagar/service/photo.service';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from "@angular/common/http";
-import {AuthenticationInterceptor} from "./core/interceptors/authentication.interceptor";
+import {TokenInterceptor} from "./core/interceptors/token.interceptor";
 import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {AuthModule} from "./domains/auth/auth.module";
@@ -56,7 +56,7 @@ export function tokenGetter(): string {
     providers: [
         {
             provide: HTTP_INTERCEPTORS,
-            useClass: AuthenticationInterceptor,
+            useClass: TokenInterceptor,
             multi: true
         },
         {provide: LocationStrategy, useClass: PathLocationStrategy},

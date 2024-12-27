@@ -12,7 +12,7 @@ import {AuthenticateService} from "../../domains/auth/authenticate.service";
 import {Router} from "@angular/router";
 
 @Injectable()
-export class AuthenticationInterceptor implements HttpInterceptor {
+export class TokenInterceptor implements HttpInterceptor {
     constructor(
         private auth: AuthenticateService,
         private messageService: MessageService,
