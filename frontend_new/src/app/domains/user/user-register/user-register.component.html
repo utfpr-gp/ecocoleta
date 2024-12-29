@@ -1,0 +1,15 @@
+<div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+    <div class="col-12">
+<!--        TODO carrega so o form de usuario ...-->
+        <app-user-form [formModeUpdate]="false" [userRole]="userType" ></app-user-form>
+    </div>
+</div>
+
+
+<p-dialog [(visible)]="showModal" header="Selecione o tipo de usuário" [modal]="true" [closable]="false">
+    <p>Escolha o tipo de usuário para o cadastro:</p>
+    <div class="flex justify-content-around">
+        <button pButton label="Residente" (click)="selectUserType(UserRole.RESIDENT)" class="p-button-primary"></button>
+        <button pButton label="Catador" (click)="selectUserType(UserRole.WASTE_COLLECTOR)" class="p-button-secondary"></button>
+    </div>
+</p-dialog>
