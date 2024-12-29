@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {Observable} from 'rxjs';
 import {AuthenticateService} from '../../domains/auth/authenticate.service';
+import {UserService} from "../../domains/user/user.service";
 
 @Injectable({
     providedIn: 'root'
@@ -9,6 +10,7 @@ import {AuthenticateService} from '../../domains/auth/authenticate.service';
 export class AuthGuard implements CanActivate {
     constructor(
         private auth: AuthenticateService,
+        private userService: UserService,
         private router: Router
     ) {
     }
@@ -18,7 +20,7 @@ export class AuthGuard implements CanActivate {
             localStorage.setItem('redirectUrl', state.url); // Salva a URL original
             this.router.navigate(['/auth/login']);
             return false;
-        } else if (next.data['roles'] && !this.auth.temQualquerPermissao(next.data['roles'])) {
+        } else if (next.data['role'] && !this.userService.getUserRole()) {
             // TODO verificar esse else se esta ok com o retorno do back para permisoes?
             this.router.navigate(['/auth/access']);
             return false;

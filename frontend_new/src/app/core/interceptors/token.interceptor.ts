@@ -32,7 +32,7 @@ export class TokenInterceptor implements HttpInterceptor {
         }
 
         if (this.auth.isAccessTokenInvalido()) {
-            this.auth.limparAccessToken();
+            this.auth.limparToken();
             this.router.navigate(['/auth/login']);
         }
 

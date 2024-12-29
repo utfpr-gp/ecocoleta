@@ -3,8 +3,11 @@ import {environment} from "../../../environments/environment";
 import {Router} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
 import {catchError, firstValueFrom, Observable, tap} from "rxjs";
-import {LoginResponse} from "../../core/types/login-response.type";
 import {JwtHelperService} from "@auth0/angular-jwt";
+
+export type LoginResponse = {
+    token: string;
+};
 
 @Injectable({
     providedIn: 'root'
@@ -13,8 +16,6 @@ export class AuthenticateService {
 
     apiUrl: string = `${environment.API}/auth`;
     jwtPayload: any;
-
-    // TOKEN_KEY: string = 'token';
 
     constructor(private router: Router, private http: HttpClient, private jwtHelper: JwtHelperService) {
         this.carregarToken();
@@ -44,37 +45,9 @@ export class AuthenticateService {
             );
     }
 
-    // async login(email: string, password: string): Promise<LoginResponse> {
-    //     console.log('iniciando req login : email', email, 'password', password);
-    //     console.log('API URL:', this.apiUrl + '/login'); // Check the URL
-    //     try {
-    //         console.log('iniciando try');
-    //         // const response = await firstValueFrom(this.http.post<any>(`${this.apiUrl}/login`, {
-    //         //     email: email,
-    //         //     password: password
-    //         // }));
-    //         const response = await this.http.post<any>(`${this.apiUrl}/login`, {
-    //             email: email,
-    //             password: password
-    //         }).toPromise();
-    //
-    //         console.log('response', response);
-    //         this.armazenarToken(response['token']);
-    //         // Redireciona apenas se o CPF estiver atualizado
-    //         const redirectUrl = localStorage.getItem('redirectUrl') || '/';
-    //         localStorage.removeItem('redirectUrl');
-    //         this.router.navigate([redirectUrl]);
-    //         return response;
-    //     } catch (error) {
-    //         console.error('Erro no login:', error);
-    //         // Lida com erros de autenticação
-    //         throw new Error(error || 'Erro ao realizar login.');
-    //     }
-    // }
-
-    logout(url) {
-        this.limparAccessToken();
-        this.router.navigate([url]);
+    logout() {
+        this.limparToken();
+        this.router.navigate(['/']);
     }
 
     isAccessTokenInvalido() {
@@ -82,20 +55,29 @@ export class AuthenticateService {
         return !token || this.jwtHelper.isTokenExpired(token);
     }
 
-    temPermissao(permissao: string) {
-        // TODO verificar esse método de permissão
-        return this.jwtPayload && (this.jwtPayload.authorities.includes(permissao) || this.jwtPayload.authorities.includes("administrador"));
+    isTokenValido(): boolean {
+        const token = this.getToken();
+        return token && !this.jwtHelper.isTokenExpired(token);
     }
 
-    temQualquerPermissao(roles: any) {
-        // TODO verificar esse método de permissão
-        for (const role of roles) {
-            if (this.temPermissao(role)) {
-                return true;
-            }
-        }
-        return false;
+    getJwtPayload(): any {
+        return this.jwtPayload;
     }
+
+    // temPermissao(permissao: string) {
+    //     // TODO verificar esse método de permissão
+    //     return this.jwtPayload && (this.jwtPayload.authorities.includes(permissao) || this.jwtPayload.authorities.includes("administrador"));
+    // }
+
+    // temQualquerPermissao(roles: any) {
+    //     // TODO verificar esse método de permissão
+    //     for (const role of roles) {
+    //         if (this.temPermissao(role)) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 
     public armazenarToken(token: string) {
         this.jwtPayload = this.jwtHelper.decodeToken(token);
@@ -110,7 +92,7 @@ export class AuthenticateService {
         }
     }
 
-    limparAccessToken() {
+    limparToken() {
         localStorage.removeItem('token');
         this.jwtPayload = null;
     }
@@ -119,8 +101,8 @@ export class AuthenticateService {
         return localStorage.getItem('token') ?? '';
     }
 
-    existsToken() {
-        return !!this.getToken();
-        //Se o valor for null, undefined, 0, NaN, "" (string vazia) ou false, o resultado será false. Caso contrário, o resultado será true.
-    }
+    // existsToken() {
+    //     return !!this.getToken();
+    //     //Se o valor for null, undefined, 0, NaN, "" (string vazia) ou false, o resultado será false. Caso contrário, o resultado será true.
+    // }
 }
