@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {AbstractControl, FormControl} from '@angular/forms';
+import {CommonModule} from '@angular/common'; // Importar o CommonModule
 
 @Component({
     selector: 'app-message',
@@ -10,6 +11,7 @@ import {AbstractControl, FormControl} from '@angular/forms';
         </div>
     `,
     standalone: true,
+    imports: [CommonModule], // Adicionar CommonModule aos imports
     styles: [`
         .ng-dirty {
             margin: 2px;

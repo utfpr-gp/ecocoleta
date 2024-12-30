@@ -30,7 +30,6 @@ import {RippleModule} from "primeng/ripple";
         PasswordModule,
         RippleModule,
     ],
-    // providers: [LoginService],
     templateUrl: './user-form.component.html',
     styleUrl: './user-form.component.scss',
 })
@@ -153,6 +152,7 @@ export class UserFormComponent implements OnInit {
                     error: (err) => alert(`Erro ao atualizar usuário: ${err.message}`),
                 });
             } else {
+                console.log('User form:', user);
                 // Criar novo usuário
                 // TODO validar se rota esta ok e generica
                 // this.userService.createUser(user).subscribe({
