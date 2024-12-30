@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {
     FormBuilder,
     FormControl,
@@ -16,6 +16,7 @@ import {PanelModule} from "primeng/panel";
 import {PasswordModule} from "primeng/password";
 import {User, UserRole, UserService} from "../../domains/user/user.service";
 import {RippleModule} from "primeng/ripple";
+import {MessageService} from "primeng/api";
 
 @Component({
     selector: 'app-user-form',
@@ -37,14 +38,16 @@ export class UserFormComponent implements OnInit {
     formUser!: FormGroup;
     @Input() formModeUpdate: boolean = false; //se editar ou cadastrar
     @Input() userRole: string = null;
-    // Variável para armazenar a URL local da imagem para exibição
-    imagePreview: string | ArrayBuffer | null = null;
+    @Output() formSubmitted = new EventEmitter<{ user: User, action: 'create' | 'update' }>();
+    imagePreview: string | ArrayBuffer | null = null; // Variável para armazenar a URL local da imagem para exibição
+
 
     constructor(
         private formBuilder: FormBuilder,
         private userService: UserService,
         private route: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private messageService: MessageService
     ) {
     }
 
@@ -137,31 +140,43 @@ export class UserFormComponent implements OnInit {
     //     this.formUser.get('picture')?.updateValueAndValidity();
     // }
 
+    // onSubmit() {
+    //     if (this.formUser.valid) {
+    //         const user = this.formUser.value as User;
+    //
+    //         if (this.formModeUpdate) {
+    //             // Atualizar usuário
+    //             // TODO validar se rota esta ok e generica
+    //             this.userService.updateUser(user).subscribe({
+    //                 next: () => {
+    //                     alert('Usuário atualizado com sucesso!');
+    //                     this.router.navigate(['/users']);
+    //                 },
+    //                 error: (err) => alert(`Erro ao atualizar usuário: ${err.message}`),
+    //             });
+    //         } else {
+    //             console.log('User form:', user);
+    //             // Criar novo usuário
+    //             // TODO validar se rota esta ok e generica
+    //             // this.userService.createUser(user).subscribe({
+    //             //     next: () => {
+    //             //         alert('Usuário cadastrado com sucesso!');
+    //             //         this.router.navigate(['/users']);
+    //             //     },
+    //             //     error: (err) => alert(`Erro ao cadastrar usuário: ${err.message}`),
+    //             // });
+    //         }
+    //     }
+    // }
+
     onSubmit() {
         if (this.formUser.valid) {
             const user = this.formUser.value as User;
 
             if (this.formModeUpdate) {
-                // Atualizar usuário
-                // TODO validar se rota esta ok e generica
-                this.userService.updateUser(user).subscribe({
-                    next: () => {
-                        alert('Usuário atualizado com sucesso!');
-                        this.router.navigate(['/users']);
-                    },
-                    error: (err) => alert(`Erro ao atualizar usuário: ${err.message}`),
-                });
+                this.formSubmitted.emit({ user, action: 'update' });
             } else {
-                console.log('User form:', user);
-                // Criar novo usuário
-                // TODO validar se rota esta ok e generica
-                // this.userService.createUser(user).subscribe({
-                //     next: () => {
-                //         alert('Usuário cadastrado com sucesso!');
-                //         this.router.navigate(['/users']);
-                //     },
-                //     error: (err) => alert(`Erro ao cadastrar usuário: ${err.message}`),
-                // });
+                this.formSubmitted.emit({ user, action: 'create' });
             }
         }
     }

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {environment} from "../../../environments/environment";
 import {Router} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
-import {catchError, firstValueFrom, Observable, tap} from "rxjs";
+import {catchError, firstValueFrom, Observable, tap, throwError} from "rxjs";
 import {JwtHelperService} from "@auth0/angular-jwt";
 
 export type LoginResponse = {
@@ -39,8 +39,8 @@ export class AuthenticateService {
                     }
                 }),
                 catchError((error) => {
-                    // Lida com erros de autenticação
-                    throw new Error(error.error?.detail || 'Erro ao realizar login.');
+                    // Retorna um erro apropriado para o fluxo do observable
+                    return throwError(() => new Error(error.error?.detail || 'Erro ao realizar login.'));
                 })
             );
     }
@@ -53,6 +53,7 @@ export class AuthenticateService {
     isAccessTokenInvalido() {
         const token = localStorage.getItem('token');
         return !token || this.jwtHelper.isTokenExpired(token);
+        this.limparToken();
     }
 
     isTokenValido(): boolean {
