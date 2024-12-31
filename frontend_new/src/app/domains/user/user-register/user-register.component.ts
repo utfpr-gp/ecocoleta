@@ -41,7 +41,7 @@ export class UserRegisterComponent {
         }
 
         this.userService.createUser(user, this.userType).subscribe({
-            next: () => alert('Usuário criado com sucesso!'),
+            next: () => this.messageService.add({severity: 'success', summary: 'Usuário criado com sucesso!', life: 3000}),
             error: (err) => this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: err?.message, life: 3000}),
         });
     }

@@ -2,7 +2,8 @@
 <!--todo FAZER  O INPUT DO TIPO USER-->
 <!--TODO CAMPO SENHA BUGADO-->
 <!--TODO OS APP MESSAGE-->
-<form [formGroup]="formUser" (ngSubmit)="onSubmit()" style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+<form [formGroup]="formUser" (ngSubmit)="onSubmit()"
+      style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
     <p-panel class="col-12" header="{{ formModeUpdate ? 'Editar Usuário' : 'Cadastrar Usuário' }}">
         <div class="p-grid p-justify-center">
             <!--            TODO centralizar-->
@@ -12,7 +13,8 @@
                     <input formControlName="name" id="name" required maxlength="255" pInputText type="text"
                            placeholder="Nome completo">
                 </div>
-                <app-message [control]="formUser.get('name')" error="required" text="É necessário preencher o Nome."></app-message>
+                <app-message [control]="formUser.get('name')" error="required"
+                             text="É necessário preencher o Nome."></app-message>
             </div>
 
             <div class="field col-12 md:col-6">
@@ -21,7 +23,8 @@
                     <input formControlName="phone" id="phone" required maxlength="15" pInputText type="tel"
                            placeholder="(XX) XXXXX-XXXX">
                 </div>
-                <app-message [control]="formUser.get('phone')" error="required" text="É necessário preencher o número."></app-message>
+                <app-message [control]="formUser.get('phone')" error="required"
+                             text="É necessário preencher o número."></app-message>
             </div>
 
             <div class="field col-12 md:col-6">
@@ -30,7 +33,8 @@
                     <input formControlName="email" id="email" required maxlength="255" pInputText type="email"
                            placeholder="email@exemplo.com">
                 </div>
-                <app-message [control]="formUser.get('email')" error="required" text="É necessário preencher o e-mail."></app-message>
+                <app-message [control]="formUser.get('email')" error="required"
+                             text="É necessário preencher o e-mail."></app-message>
             </div>
 
             <div class="field col-12 md:col-6" *ngIf="!formModeUpdate">
@@ -39,7 +43,8 @@
                     <input formControlName="emailCheck" id="emailCheck" required maxlength="255" pInputText type="email"
                            placeholder="Confirme o e-mail">
                 </div>
-                <app-message [control]="formUser.get('emailCheck')" error="required" text="É necessário preencher o e-mail."></app-message>
+                <app-message [control]="formUser.get('emailCheck')" error="required"
+                             text="É necessário preencher o e-mail."></app-message>
             </div>
 
             <div class="field col-12 md:col-6">
@@ -58,7 +63,8 @@
                         strongLabel="Forte">
                     </p-password>
                 </div>
-                <app-message [control]="formUser.get('password')" error="required" text="É necessário preencher a senha."></app-message>
+                <app-message [control]="formUser.get('password')" error="required"
+                             text="É necessário preencher a senha."></app-message>
             </div>
 
             <div class="field col-12 md:col-6" *ngIf="!formModeUpdate">
@@ -76,7 +82,8 @@
                         strongLabel="Forte">
                     </p-password>
                 </div>
-                <app-message [control]="formUser.get('passwordCheck')" error="required" text="É necessário preencher a senha."></app-message>
+                <app-message [control]="formUser.get('passwordCheck')" error="required"
+                             text="É necessário preencher a senha."></app-message>
             </div>
 
             <div class="field col-12 md:col-6" *ngIf="userRole === 'WASTE_COLLECTOR'">
@@ -85,7 +92,8 @@
                     <input formControlName="cpf" id="cpf" required pInputText type="text" maxlength="11"
                            placeholder="Somente números">
                 </div>
-                <app-message [control]="formUser.get('cpf')" error="required" text="É necessário preencher o cpf."></app-message>
+                <app-message [control]="formUser.get('cpf')" error="required"
+                             text="É necessário preencher o cpf."></app-message>
             </div>
 
             <div class="field col-12 md:col-6" *ngIf="userRole === 'COMPANY'">
@@ -94,16 +102,42 @@
                     <input formControlName="cnpj" id="cnpj" required pInputText type="text" maxlength="14"
                            placeholder="Somente números">
                 </div>
-                <app-message [control]="formUser.get('cnpj')" error="required" text="É necessário preencher o cnpj."></app-message>
+                <app-message [control]="formUser.get('cnpj')" error="required"
+                             text="É necessário preencher o cnpj."></app-message>
             </div>
 
             <div class="field col-12 md:col-6" *ngIf="userRole === 'WASTE_COLLECTOR' && !formModeUpdate">
                 <label for="picture">Foto</label><b class="ml-1" style="color: crimson;">*</b>
                 <div class="p-inputgroup">
-                    <input type="file" id="picture" accept="image/*" (change)="onFileChange($event)"/>
+                    <p-fileUpload
+                        mode="basic"
+                        id="picture"
+                        name="picture"
+                        chooseLabel="Escolher Foto"
+                        chooseIcon="pi pi-upload"
+                        accept="image/*"
+                        maxFileSize="1000000"
+                        customUpload="true"
+                        (onSelect)="onSelectImg($event)"/>
                 </div>
-                <app-message [control]="formUser.get('picture')" error="required" text="É necessário carregar a foto."></app-message>
+                <!-- Miniatura de imagem -->
+                <div class="field col-12 md:col-6" *ngIf="previewImg">
+                    <div class="image-preview">
+                        <p-avatar
+                            [image]="previewImg"
+                            styleClass="mr-2"
+                            size="xlarge"
+                            shape="circle">
+                        </p-avatar>
+                        <!--                        <p-image [src]="previewImg" alt="Pré-visualização" class="responsive-img"></p-image>-->
+                    </div>
+                </div>
+                <!-- Mensagem de validação -->
+                <app-message [control]="formUser.get('picture')" error="required"
+                             text="É necessário carregar a foto."></app-message>
             </div>
+
+            <!--            TODO em modo de update e wateCollector trazer a img ???-->
         </div>
 
         <div class="w-full flex flex-column md:flex-row align-items-center justify-content-center gap-2 mt-4">

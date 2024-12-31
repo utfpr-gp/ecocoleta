@@ -17,6 +17,9 @@ import {PasswordModule} from "primeng/password";
 import {User, UserRole, UserService} from "../../domains/user/user.service";
 import {RippleModule} from "primeng/ripple";
 import {MessageService} from "primeng/api";
+import {FileUploadModule} from "primeng/fileupload";
+import {ImageModule} from "primeng/image";
+import {AvatarModule} from "primeng/avatar";
 
 @Component({
     selector: 'app-user-form',
@@ -30,6 +33,9 @@ import {MessageService} from "primeng/api";
         PanelModule,
         PasswordModule,
         RippleModule,
+        FileUploadModule,
+        ImageModule,
+        AvatarModule,
     ],
     templateUrl: './user-form.component.html',
     styleUrl: './user-form.component.scss',
@@ -39,7 +45,9 @@ export class UserFormComponent implements OnInit {
     @Input() formModeUpdate: boolean = false; //se editar ou cadastrar
     @Input() userRole: string = null;
     @Output() formSubmitted = new EventEmitter<{ user: User, action: 'create' | 'update' }>();
-    imagePreview: string | ArrayBuffer | null = null; // Variável para armazenar a URL local da imagem para exibição
+    previewImg: string | ArrayBuffer | null = null; // Para armazenar a URL da imagem
+    imgBytes: Uint8Array | null = null; // Para armazenar os bytes da imagem
+    // imagePreview: string | ArrayBuffer | null = null; // Variável para armazenar a URL local da imagem para exibição
 
 
     constructor(
@@ -127,56 +135,49 @@ export class UserFormComponent implements OnInit {
         });
     }
 
-    // updateValidations() {
-    //     if (this.userRole === 'WASTE_COLLECTOR') {
-    //         this.formUser.get('cpf')?.setValidators([Validators.required, Validators.minLength(11)]);
-    //         this.formUser.get('picture')?.setValidators([Validators.required]);
-    //     } else {
-    //         this.formUser.get('cpf')?.clearValidators();
-    //         this.formUser.get('picture')?.clearValidators();
-    //     }
-    //
-    //     this.formUser.get('cpf')?.updateValueAndValidity();
-    //     this.formUser.get('picture')?.updateValueAndValidity();
-    // }
+    onSelectImg(event: any) {
+        const file: File = event.files[0];
 
-    // onSubmit() {
-    //     if (this.formUser.valid) {
-    //         const user = this.formUser.value as User;
-    //
-    //         if (this.formModeUpdate) {
-    //             // Atualizar usuário
-    //             // TODO validar se rota esta ok e generica
-    //             this.userService.updateUser(user).subscribe({
-    //                 next: () => {
-    //                     alert('Usuário atualizado com sucesso!');
-    //                     this.router.navigate(['/users']);
-    //                 },
-    //                 error: (err) => alert(`Erro ao atualizar usuário: ${err.message}`),
-    //             });
-    //         } else {
-    //             console.log('User form:', user);
-    //             // Criar novo usuário
-    //             // TODO validar se rota esta ok e generica
-    //             // this.userService.createUser(user).subscribe({
-    //             //     next: () => {
-    //             //         alert('Usuário cadastrado com sucesso!');
-    //             //         this.router.navigate(['/users']);
-    //             //     },
-    //             //     error: (err) => alert(`Erro ao cadastrar usuário: ${err.message}`),
-    //             // });
-    //         }
-    //     }
-    // }
+        if (file) {
+            // Validação do tamanho
+            if (file.size > 5000000) { // 1MB
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: 'A imagem deve ter no máximo 5MB.',
+                });
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.previewImg = reader.result; // Para a miniatura
+                this.imgBytes = new Uint8Array(reader.result as ArrayBuffer); // Para os bytes
+
+                // Atualizar o controle do formulário
+                this.formUser.get('picture')?.setValue(this.imgBytes);
+            };
+
+            reader.onerror = () => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: 'Erro ao carregar a imagem. Tente novamente.',
+                });
+            };
+
+            reader.readAsDataURL(file); // Converte o arquivo para uma URL base64
+        }
+    }
 
     onSubmit() {
         if (this.formUser.valid) {
             const user = this.formUser.value as User;
 
             if (this.formModeUpdate) {
-                this.formSubmitted.emit({ user, action: 'update' });
+                this.formSubmitted.emit({user, action: 'update'});
             } else {
-                this.formSubmitted.emit({ user, action: 'create' });
+                this.formSubmitted.emit({user, action: 'create'});
             }
         }
     }
@@ -185,16 +186,5 @@ export class UserFormComponent implements OnInit {
         // Lógica para voltar ou cancelar ação
         console.log('Cancel action');
         this.router.navigate(['/landing']);
-    }
-
-    onFileChange(event: any): void {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                this.imagePreview = reader.result as string;
-            };
-            reader.readAsDataURL(file);
-        }
     }
 }
