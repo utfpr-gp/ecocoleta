@@ -45,9 +45,14 @@ export class UserFormComponent implements OnInit {
     @Input() formModeUpdate: boolean = false; //se editar ou cadastrar
     @Input() userRole: string = null;
     @Output() formSubmitted = new EventEmitter<{ user: User, action: 'create' | 'update' }>();
+
     previewImg: string | ArrayBuffer | null = null; // Para armazenar a URL da imagem
     imgBytes: Uint8Array | null = null; // Para armazenar os bytes da imagem
-    // imagePreview: string | ArrayBuffer | null = null; // Variável para armazenar a URL local da imagem para exibição
+
+
+    // previewImg: any;
+    // selectedFile: File | null = null;
+    // selectedFilePath: string | null = null;
 
 
     constructor(
@@ -155,7 +160,12 @@ export class UserFormComponent implements OnInit {
                 this.imgBytes = new Uint8Array(reader.result as ArrayBuffer); // Para os bytes
 
                 // Atualizar o controle do formulário
-                this.formUser.get('picture')?.setValue(this.imgBytes);
+                // this.formUser.get('picture')?.setValue(this.imgBytes);
+
+                // Armazena o arquivo no formulário, mas ainda não faz o upload
+                this.formUser.patchValue({
+                    picture: file, // Aqui estamos passando o arquivo diretamente, não a URL
+                });
             };
 
             reader.onerror = () => {

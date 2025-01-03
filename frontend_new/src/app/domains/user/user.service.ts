@@ -5,6 +5,7 @@ import {environment} from '../../../environments/environment';
 import {AuthenticateService} from "../auth/authenticate.service";
 import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
+import {CloudinaryUploadImgService} from "../../core/services/cloudinary-upload-img.service";
 
 export type User = {
     id: string;
@@ -39,6 +40,7 @@ export class UserService {
         private http: HttpClient,
         private router: Router,
         private authService: AuthenticateService,
+        private cloudinaryUploadImgService: CloudinaryUploadImgService,
         private messageService: MessageService
     ) {
         this.loadUserFromToken();
@@ -94,6 +96,41 @@ export class UserService {
 
         user.role = role;
 
+        // TODO fazer if se role waste faz upload pega urlcloudnary e salva no user.picture novamente e persiste no banco interno
+
+        if (role === 'WASTE_COLLECTOR' && user.picture) {
+            const file: File = user.picture as File;
+            // this.cloudinaryUploadImgService.uploadImage(file)
+            //     .then((imageUrl) => {
+            //         console.log('Image uploaded:', imageUrl);
+            //         user.picture = String(imageUrl);
+            //         // Use the imageUrl for further processing (e.g., display or store)
+            //     })
+            //     .catch((error) => {
+            //         console.error('Error uploading image:', error);
+            //         // Handle upload errors
+            //     });
+
+            // const file: File = user.picture as File;
+            // this.cloudinaryUploadImgService.uploadImage(file)
+            //     .then(
+            //         (urlimg) => {
+            //             console.log('urlimg', urlimg); //TODO remover apos teste
+            //             user.picture = String(urlimg);
+            //             // }                user.picture = String(urlimg);
+            //         }
+            //     )
+            //     .catch((error) => {
+            //         console.error('Erro ao fazer upload da imagem:', error); //TODO remover apos teste
+            //         this.messageService.add({
+            //             severity: 'error',
+            //             summary: 'Erro',
+            //             detail: 'Falha ao fazer upload da imagem erro: ' + error,
+            //         });
+            //     });
+
+        }
+
         const endpoint = this.getUserCreationUrl(role);
 
         return this.http.post<User>(endpoint, user).pipe(
@@ -105,73 +142,6 @@ export class UserService {
         );
     }
 
-    // TODO finalizar método com upload da img
-    // createUser(user: User, role: UserRole): Observable<User> {
-    //     console.log('user service log> createUser', user, role);
-    //
-    //     user.role = role;
-    //
-    //     // Verifica se o usuário é um Waste Collector
-    //     if (role === 'WASTE_COLLECTOR' && user.picture) {
-    //         return this.uploadToCloudinary(user.picture).pipe(
-    //             switchMap((url) => {
-    //                 user.picture = url; // Atualiza a URL da imagem no usuário
-    //                 const endpoint = this.getUserCreationUrl(role);
-    //                 return this.http.post<User>(endpoint, user);
-    //             }),
-    //             tap((value) => {
-    //                 if (value.token) {
-    //                     this.handleLoginRedirection(value.token);
-    //                 }
-    //             }),
-    //             catchError((error) => {
-    //                 this.messageService.add({
-    //                     severity: 'error',
-    //                     summary: 'Erro ao criar usuário',
-    //                     detail: this.getErrorMessage(error),
-    //                     life: 5000,
-    //                 });
-    //                 throw error;
-    //             })
-    //         );
-    //     } else {
-    //         const endpoint = this.getUserCreationUrl(role);
-    //         return this.http.post<User>(endpoint, user).pipe(
-    //             tap((value) => {
-    //                 if (value.token) {
-    //                     this.handleLoginRedirection(value.token);
-    //                 }
-    //             }),
-    //             catchError((error) => {
-    //                 this.messageService.add({
-    //                     severity: 'error',
-    //                     summary: 'Erro ao criar usuário',
-    //                     detail: this.getErrorMessage(error),
-    //                     life: 5000,
-    //                 });
-    //                 throw error;
-    //             })
-    //         );
-    //     }
-    // }
-
-    // TODO melhorar co mnova api de upload
-    // private uploadToCloudinary(picture: Uint8Array): Observable<string> {
-    //     const formData = new FormData();
-    //     formData.append('file', new Blob([picture]), 'user-image');
-    //     formData.append('upload_preset', '<your_upload_preset>'); // Configure no Cloudinary
-    //
-    //     const cloudinaryEndpoint = `https://api.cloudinary.com/v1_1/<your_cloud_name>/image/upload`;
-    //
-    //     return this.http.post<any>(cloudinaryEndpoint, formData).pipe(
-    //         tap((response) => console.log('Upload Cloudinary:', response)),
-    //         switchMap((response) => of(response.secure_url)), // Retorna a URL segura
-    //         catchError((error) => {
-    //             console.error('Erro ao fazer upload para o Cloudinary:', error);
-    //             throw error;
-    //         })
-    //     );
-    // }
 
     private getErrorMessage(error: any): string {
         if (!navigator.onLine) {
