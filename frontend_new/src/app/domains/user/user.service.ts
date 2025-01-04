@@ -46,7 +46,7 @@ export class UserService {
         this.loadUserFromToken();
     }
 
-    private loadUserFromToken() {
+    public loadUserFromToken() {
         const jwtPayload = this.authService.getJwtPayload();
         if (jwtPayload) {
             const user: User = {
@@ -56,7 +56,15 @@ export class UserService {
                 role: jwtPayload.role,
             };
             this.userSubject.next(user);
+        } else {
+            this.userSubject.next(null); // Caso o token não seja válido ou não exista
         }
+    }
+
+    // Métood de logout aqui para zerar o userSubject
+    logout(): void {
+        this.authService.logout();
+        this.userSubject.next(null); // Notifica que não há usuário logado
     }
 
     private handleLoginRedirection(token: string): void {

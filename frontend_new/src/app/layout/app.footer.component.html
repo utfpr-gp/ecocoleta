@@ -2,4 +2,10 @@
     <img src="assets/layout/images/{{layoutService.config().colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="Logo" height="20" class="mr-2"/>
     by
     <span class="font-medium ml-2">PrimeNG</span>
+
+    <div *ngIf="user">
+        <button *ngIf="user.role === 'ADMIN'" class="footer-btn">Admin Button</button>
+        <button *ngIf="user.role === 'WASTE_COLLECTOR'" class="footer-btn">Collector Button</button>
+        <button *ngIf="user.role === 'RESIDENT'" class="footer-btn">Resident Button</button>
+    </div>
 </div>

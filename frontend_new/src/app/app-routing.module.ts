@@ -18,17 +18,6 @@ import {AppLayoutComponent} from "./layout/app.layout.component";
             //     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) }
             // ]
             // },
-            // { path: '', redirectTo: 'landing', pathMatch: 'full'},
-
-            // {
-            //     path: '',
-            //     canActivate: [AuthGuard],
-            //     loadChildren: () => import('./layout/app.layout.module').then(m => m.AppLayoutModule)
-            // },
-            // {
-            //     path: 'landing',
-            //     loadChildren: () => import('./domains/landing/landing.module').then(m => m.LandingModule)
-            // },
 
             { path: '', redirectTo: 'landing', pathMatch: 'full' },
             {
@@ -45,7 +34,6 @@ import {AppLayoutComponent} from "./layout/app.layout.component";
                 //     // Outras rotas...
                 // ]
             },
-            // TODO rota cadasatrar user
             {path: 'user', loadChildren: () => import('./domains/user/user.module').then(m => m.UserModule)},
             {path: 'auth', loadChildren: () => import('./domains/auth/auth.module').then(m => m.AuthModule)},
             {path: 'notfound', component: NotfoundComponent},

@@ -41,8 +41,9 @@ export class LoginComponent {
     }
 
     login() {
-        console.log(this.loginForm.value);
-        console.log("logando...");
+
+        console.log(this.loginForm.value); //TODO Remove this line of code
+
         if (this.loginForm.value.salvarSenha) {
             this.cookieService.set('salvarSenha', 'true');
             this.cookieService.set('usuarioSalvo', this.loginForm.value.email);
@@ -54,7 +55,6 @@ export class LoginComponent {
         }
 
         if (this.loginForm.valid) {
-            console.log("logando... form válido");
             this.auth.login(this.loginForm.value.email, this.loginForm.value.password)
                 .subscribe({
                     next: () => {

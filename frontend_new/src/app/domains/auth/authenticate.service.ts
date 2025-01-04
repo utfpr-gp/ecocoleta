@@ -17,13 +17,13 @@ export class AuthenticateService {
     apiUrl: string = `${environment.API}/auth`;
     jwtPayload: any;
 
-    constructor(private router: Router, private http: HttpClient, private jwtHelper: JwtHelperService) {
+    constructor(private router: Router,
+                private http: HttpClient,
+                private jwtHelper: JwtHelperService) {
         this.carregarToken();
     }
 
     login(email: string, password: string): Observable<LoginResponse> {
-        console.log('iniciando req login : email', email);
-        console.log('API URL:', this.apiUrl + '/login'); // Check the URL
         return this.http
             .post<LoginResponse>(this.apiUrl + '/login', {email, password})
             .pipe(
