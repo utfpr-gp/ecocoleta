@@ -1,11 +1,61 @@
-<div class="layout-footer">
-    <img src="assets/layout/images/{{layoutService.config().colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="Logo" height="20" class="mr-2"/>
+<!-- Rodapé para Desktop -->
+<div class="layout-footer desktop-footer text-black-alpha-70">
+    <img src="assets/layout/images/{{layoutService.config().colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg"
+         alt="Logo" height="20" class="mr-2"/>
     by
     <span class="font-medium ml-2">PrimeNG</span>
+</div>
 
-    <div *ngIf="user">
-        <button *ngIf="user.role === 'ADMIN'" class="footer-btn">Admin Button</button>
-        <button *ngIf="user.role === 'WASTE_COLLECTOR'" class="footer-btn">Collector Button</button>
-        <button *ngIf="user.role === 'RESIDENT'" class="footer-btn">Resident Button</button>
+<!-- Rodapé para Mobile -->
+<div class="layout-footer mobile-footer p-3 flex justify-between text-black-alpha-70">
+    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;">
+        <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+            <i class="pi pi-home text-2xl"></i>
+        </button>
+        <span class="mt-2 w-full text-center">Home</span>
+    </div>
+    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;">
+        <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+            <i class="pi pi-table text-2xl"></i>
+        </button>
+        <span class="mt-2 w-full text-center">Coletas</span>
+    </div>
+
+    <!--    TODO caso for catador-->
+    @if (user.role === 'WASTE_COLLECTOR') {
+        <div
+            class="flex flex-column align-items-center justify-content-center flex-1 bg-primary text-white border-round-3xl p-2"
+            style="text-align: center;">
+            <button
+                class="p-link layout-footer-button flex justify-content-center align-items-center text-white border-none">
+                <i class="pi pi-play text-2xl"></i>
+            </button>
+            <span class="mt-2 w-full text-2xl text-center">Iniciar coleta</span>
+        </div>
+
+        <!--TODO colocar if se iniciado play senão pause, criar var flag-->
+        <div
+            class="flex flex-column align-items-center justify-content-center flex-1 bg-yellow-400 text-white border-round-3xl p-2"
+            style="text-align: center;">
+            <button
+                class="p-link layout-footer-button flex justify-content-center align-items-center text-white border-none">
+                <i class="pi pi-stop text-2xl"></i>
+            </button>
+            <span class="mt-2 w-full text-2xl text-center">Parar coleta</span>
+        </div>
+    }
+
+
+    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;">
+        <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+            <i class="pi pi-history text-2xl"></i>
+        </button>
+        <span class="mt-2 w-full text-center">Histórico</span>
+    </div>
+    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;">
+        <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+            <i class="pi pi-user text-2xl"></i>
+        </button>
+        <span class="mt-2 w-full text-center">Perfil</span>
     </div>
 </div>
