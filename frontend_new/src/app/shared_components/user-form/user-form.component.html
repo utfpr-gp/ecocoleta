@@ -1,12 +1,7 @@
-<!--                <app-message [control]="formUser.get('name')" error="required" text="É necessário preencher o Nome."></app-message>-->
-<!--todo FAZER  O INPUT DO TIPO USER-->
-<!--TODO CAMPO SENHA BUGADO-->
-<!--TODO OS APP MESSAGE-->
 <form [formGroup]="formUser" (ngSubmit)="onSubmit()"
       style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
     <p-panel class="col-12" header="{{ formModeUpdate ? 'Editar Usuário' : 'Cadastrar Usuário' }}">
         <div class="p-grid p-justify-center">
-            <!--            TODO centralizar-->
             <div class="field col-12 md:col-6">
                 <label for="name">Nome</label><b class="ml-1" style="color: crimson;">*</b>
                 <div class="p-inputgroup">
@@ -136,7 +131,6 @@
                 <app-message [control]="formUser.get('picture')" error="required"
                              text="É necessário carregar a foto."></app-message>
             </div>
-
             <!--            TODO em modo de update e wateCollector trazer a img ???-->
         </div>
 

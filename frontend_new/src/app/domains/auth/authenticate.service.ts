@@ -65,21 +65,6 @@ export class AuthenticateService {
         return this.jwtPayload;
     }
 
-    // temPermissao(permissao: string) {
-    //     // TODO verificar esse método de permissão
-    //     return this.jwtPayload && (this.jwtPayload.authorities.includes(permissao) || this.jwtPayload.authorities.includes("administrador"));
-    // }
-
-    // temQualquerPermissao(roles: any) {
-    //     // TODO verificar esse método de permissão
-    //     for (const role of roles) {
-    //         if (this.temPermissao(role)) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
-
     public armazenarToken(token: string) {
         this.jwtPayload = this.jwtHelper.decodeToken(token);
 

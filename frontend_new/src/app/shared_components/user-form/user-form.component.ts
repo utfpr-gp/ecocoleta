@@ -49,12 +49,6 @@ export class UserFormComponent implements OnInit {
     previewImg: string | ArrayBuffer | null = null; // Para armazenar a URL da imagem
     imgBytes: Uint8Array | null = null; // Para armazenar os bytes da imagem
 
-
-    // previewImg: any;
-    // selectedFile: File | null = null;
-    // selectedFilePath: string | null = null;
-
-
     constructor(
         private formBuilder: FormBuilder,
         private userService: UserService,
@@ -158,9 +152,6 @@ export class UserFormComponent implements OnInit {
             reader.onload = () => {
                 this.previewImg = reader.result; // Para a miniatura
                 this.imgBytes = new Uint8Array(reader.result as ArrayBuffer); // Para os bytes
-
-                // Atualizar o controle do formulário
-                // this.formUser.get('picture')?.setValue(this.imgBytes);
 
                 // Armazena o arquivo no formulário, mas ainda não faz o upload
                 this.formUser.patchValue({

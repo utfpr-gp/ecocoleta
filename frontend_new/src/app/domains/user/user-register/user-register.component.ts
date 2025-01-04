@@ -22,6 +22,7 @@ export class UserRegisterComponent {
         console.log("tipo de user :: " + type) //todo remover
     }
 
+    // TODO implementar update de usuário
     handleFormSubmission(event: { user: User, action: 'create' | 'update' }) {
         const {user, action} = event;
 
@@ -40,10 +41,27 @@ export class UserRegisterComponent {
             return;
         }
 
-        this.userService.createUser(user, this.userType).subscribe({
-            next: () => this.messageService.add({severity: 'success', summary: 'Usuário criado com sucesso!', life: 3000}),
-            error: (err) => this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: err?.message, life: 3000}),
-        });
+        // this.userService.createUser(user, this.userType).subscribe({
+        //     next: () => this.messageService.add({severity: 'success', summary: 'Usuário criado com sucesso!', life: 3000}),
+        //     error: (err) => this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: err?.message, life: 3000}),
+        // });
+        this.userService.createUser(user, this.userType)
+            .then(() => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Usuário criado com sucesso!',
+                    life: 3000,
+                });
+            })
+            .catch((err) => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erro ao criar usuário',
+                    detail: err?.message,
+                    life: 3000,
+                });
+            });
+
     }
 
     // Atualiza um usuário existente

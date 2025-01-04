@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, catchError, Observable, switchMap, tap} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {AuthenticateService} from "../auth/authenticate.service";
 import {Router} from "@angular/router";
@@ -90,58 +90,37 @@ export class UserService {
     }
 
     //MÉTODOS DE CRUD
-    createUser(user: User, role: UserRole): Observable<User> {
+    async createUser(user: User, role: UserRole): Promise<void> {
+        try {
+            // Atualiza o role do usuário
+            user.role = role;
 
-        console.log('user service log> createUser', user, role); //TODO apagar apos teste
+            if (role === 'WASTE_COLLECTOR' && user.picture) {
+                const file: File = user.picture as File;
 
-        user.role = role;
+                // Aguarda o upload da imagem e atualiza o user.picture
+                const imageUrl = await this.cloudinaryUploadImgService.uploadImage(file);
+                user.picture = imageUrl;
+            }
 
-        // TODO fazer if se role waste faz upload pega urlcloudnary e salva no user.picture novamente e persiste no banco interno
+            const endpoint = this.getUserCreationUrl(role);
 
-        if (role === 'WASTE_COLLECTOR' && user.picture) {
-            const file: File = user.picture as File;
-            // this.cloudinaryUploadImgService.uploadImage(file)
-            //     .then((imageUrl) => {
-            //         console.log('Image uploaded:', imageUrl);
-            //         user.picture = String(imageUrl);
-            //         // Use the imageUrl for further processing (e.g., display or store)
-            //     })
-            //     .catch((error) => {
-            //         console.error('Error uploading image:', error);
-            //         // Handle upload errors
-            //     });
+            // Envia o usuário atualizado para o servidor
+            const savedUser = await this.http.post<User>(endpoint, user).toPromise();
 
-            // const file: File = user.picture as File;
-            // this.cloudinaryUploadImgService.uploadImage(file)
-            //     .then(
-            //         (urlimg) => {
-            //             console.log('urlimg', urlimg); //TODO remover apos teste
-            //             user.picture = String(urlimg);
-            //             // }                user.picture = String(urlimg);
-            //         }
-            //     )
-            //     .catch((error) => {
-            //         console.error('Erro ao fazer upload da imagem:', error); //TODO remover apos teste
-            //         this.messageService.add({
-            //             severity: 'error',
-            //             summary: 'Erro',
-            //             detail: 'Falha ao fazer upload da imagem erro: ' + error,
-            //         });
-            //     });
-
+            // Verifica o token e faz a redireção, se necessário
+            if (savedUser.token) {
+                this.handleLoginRedirection(savedUser.token);
+            }
+        } catch (error) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erro ao criar usuário',
+                detail: this.getErrorMessage(error),
+                life: 3000,
+            });
         }
-
-        const endpoint = this.getUserCreationUrl(role);
-
-        return this.http.post<User>(endpoint, user).pipe(
-            tap((value) => {
-                if (value.token) {
-                    this.handleLoginRedirection(value.token);
-                }
-            })
-        );
     }
-
 
     private getErrorMessage(error: any): string {
         if (!navigator.onLine) {
