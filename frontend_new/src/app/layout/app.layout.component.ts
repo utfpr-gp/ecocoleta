@@ -59,7 +59,7 @@ export class AppLayoutComponent implements OnDestroy, OnInit {
     }
 
     ngOnInit(): void {
-        this.userService.loadUserFromToken(); // Carrega o usuário ao inicializar o layout
+        // this.userService.loadUserFromToken(); // Carrega o usuário ao inicializar o layout
     }
 
     hideMenu() {

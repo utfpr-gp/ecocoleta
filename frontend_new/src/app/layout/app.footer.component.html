@@ -8,7 +8,7 @@
 
 <!-- Rodapé para Mobile -->
 <div class="layout-footer mobile-footer p-3 flex justify-between text-black-alpha-70">
-    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;">
+    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;" [routerLink]="'/home'">
         <button class="p-link layout-footer-button flex justify-content-center align-items-center">
             <i class="pi pi-home text-2xl"></i>
         </button>
@@ -20,32 +20,30 @@
         </button>
         <span class="mt-2 w-full text-center">Coletas</span>
     </div>
-
-    <!--    TODO caso for catador-->
     @if (user.role === 'WASTE_COLLECTOR') {
-        <div
-            class="flex flex-column align-items-center justify-content-center flex-1 bg-primary text-white border-round-3xl p-2"
-            style="text-align: center;">
-            <button
-                class="p-link layout-footer-button flex justify-content-center align-items-center text-white border-none">
-                <i class="pi pi-play text-2xl"></i>
-            </button>
-            <span class="mt-2 w-full text-2xl text-center">Iniciar coleta</span>
-        </div>
-
-        <!--TODO colocar if se iniciado play senão pause, criar var flag-->
-        <div
-            class="flex flex-column align-items-center justify-content-center flex-1 bg-yellow-400 text-white border-round-3xl p-2"
-            style="text-align: center;">
-            <button
-                class="p-link layout-footer-button flex justify-content-center align-items-center text-white border-none">
-                <i class="pi pi-stop text-2xl"></i>
-            </button>
-            <span class="mt-2 w-full text-2xl text-center">Parar coleta</span>
-        </div>
+        @if (!startColetaFlag) {
+            <div
+                class="flex flex-column align-items-center justify-content-center flex-1 bg-primary text-white border-round-3xl p-2"
+                style="text-align: center;">
+                <button
+                    class="p-link layout-footer-button flex justify-content-center align-items-center text-white border-none">
+                    <i class="pi pi-play text-2xl"></i>
+                </button>
+                <span class="mt-2 w-full text-2xl text-center">Iniciar coleta</span>
+            </div>
+        } @else {
+            <!--TODO colocar if se iniciado play senão pause, criar var flag-->
+            <div
+                class="flex flex-column align-items-center justify-content-center flex-1 bg-yellow-400 text-white border-round-3xl p-2"
+                style="text-align: center;">
+                <button
+                    class="p-link layout-footer-button flex justify-content-center align-items-center text-white border-none">
+                    <i class="pi pi-stop text-2xl"></i>
+                </button>
+                <span class="mt-2 w-full text-2xl text-center">Parar coleta</span>
+            </div>
+        }
     }
-
-
     <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;">
         <button class="p-link layout-footer-button flex justify-content-center align-items-center">
             <i class="pi pi-history text-2xl"></i>

@@ -2,7 +2,7 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
-import {AuthenticateService} from "../auth/authenticate.service";
+import {AuthenticateTokenService} from "../auth/authenticate-token.service";
 import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {CloudinaryUploadImgService} from "../../core/services/cloudinary-upload-img.service";
@@ -34,12 +34,13 @@ export enum UserRole {
 })
 export class UserService {
     apiUrlUser: string = `${environment.API}/user`;
-    public userSubject = new BehaviorSubject<User | null>(null);
+    private userSubject = new BehaviorSubject<User | null>(null);
+    user$ = this.userSubject.asObservable(); // Observable para componentes assinarem
 
     constructor(
         private http: HttpClient,
         private router: Router,
-        private authService: AuthenticateService,
+        private authService: AuthenticateTokenService,
         private cloudinaryUploadImgService: CloudinaryUploadImgService,
         private messageService: MessageService
     ) {
@@ -85,6 +86,18 @@ export class UserService {
         }
     }
 
+    // Retorna o estado atual do usuário
+    getCurrentUser(): User | null {
+        return this.userSubject.value;
+    }
+    // Atualiza manualmente o estado do usuário
+    updateUser(user: User): void {
+        this.userSubject.next(user);
+    }
+    // Limpa o estado do usuário (logout, por exemplo)
+    clearUser(): void {
+        this.userSubject.next(null);
+    }
     getUserLogged(): Observable<User | null> {
         return this.userSubject.asObservable();
     }

@@ -8,13 +8,13 @@ import {
 } from '@angular/common/http';
 import {catchError, Observable, throwError} from 'rxjs';
 import {MessageService} from "primeng/api";
-import {AuthenticateService} from "../../domains/auth/authenticate.service";
+import {AuthenticateTokenService} from "../../domains/auth/authenticate-token.service";
 import {Router} from "@angular/router";
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
     constructor(
-        private auth: AuthenticateService,
+        private auth: AuthenticateTokenService,
         private messageService: MessageService,
         private router: Router
     ) {

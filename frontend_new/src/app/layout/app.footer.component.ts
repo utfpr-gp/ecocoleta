@@ -9,6 +9,7 @@ import {User, UserService} from "../domains/user/user.service";
 })
 export class AppFooterComponent implements OnInit {
     user: User | null = null;
+    startColetaFlag: boolean = false;
 
     constructor(public layoutService: LayoutService,
                 private userService: UserService
@@ -16,7 +17,10 @@ export class AppFooterComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.userService.userSubject.subscribe((user) => {
+        // this.userService.userSubject.subscribe((user) => {
+        //     this.user = user;
+        // });
+        this.userService.user$.subscribe(user => {
             this.user = user;
         });
 

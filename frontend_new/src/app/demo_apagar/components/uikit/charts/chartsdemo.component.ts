@@ -45,7 +45,7 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
         const textColor = documentStyle.getPropertyValue('--text-color');
         const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
         const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-        
+
         this.barData = {
             labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
             datasets: [
@@ -266,5 +266,5 @@ export class ChartsDemoComponent implements OnInit, OnDestroy {
             this.subscription.unsubscribe();
         }
     }
-    
+
 }

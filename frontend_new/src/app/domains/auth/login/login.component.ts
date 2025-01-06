@@ -1,9 +1,14 @@
 import {Component} from '@angular/core';
 import {LayoutService} from 'src/app/layout/service/app.layout.service';
 import {MessageService} from "primeng/api";
-import {AuthenticateService} from "../authenticate.service";
+import {AuthenticateTokenService, LoginResponse} from "../authenticate-token.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {CookieService} from "ngx-cookie-service";
+import {catchError, Observable, tap, throwError} from "rxjs";
+import {HttpClient} from "@angular/common/http";
+import {environment} from "../../../../environments/environment";
+import {UserService} from "../../user/user.service";
+import {Router} from "@angular/router";
 
 interface LoginForm {
     email: FormControl;
@@ -26,10 +31,17 @@ interface LoginForm {
 })
 export class LoginComponent {
 
+    apiUrl: string = `${environment.API}/auth`;
     valCheck: string[] = ['remember'];
     loginForm!: FormGroup<LoginForm>;
 
-    constructor(public layoutService: LayoutService, private messageService: MessageService, public auth: AuthenticateService, private cookieService: CookieService) {
+    constructor(public layoutService: LayoutService,
+                private messageService: MessageService,
+                public auth: AuthenticateTokenService,
+                private cookieService: CookieService,
+                private http: HttpClient,
+                private userService: UserService,
+                private router: Router) {
         this.loginForm = new FormGroup({
             email: new FormControl('', [Validators.required, Validators.email]),
             password: new FormControl('', [
@@ -55,18 +67,73 @@ export class LoginComponent {
         }
 
         if (this.loginForm.valid) {
-            this.auth.login(this.loginForm.value.email, this.loginForm.value.password)
+            // Chama o método login diretamente dentro do componente
+            this.loginApi(this.loginForm.value.email, this.loginForm.value.password)
                 .subscribe({
-                    next: () => {
-                        this.messageService.add({severity: 'success', summary: 'Login realizado com sucesso', life: 3000})
+                    next: (response) => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Login realizado com sucesso',
+                            life: 3000
+                        });
+
+                        // Redireciona para a URL de destino ou para a página inicial
+                        const redirectUrl = localStorage.getItem('redirectUrl') || '/home';
+                        localStorage.removeItem('redirectUrl');
+                        this.router.navigate([redirectUrl]);
+
                         this.loginForm.reset();
                     },
                     error: (erro: any) => {
-                        this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: erro?.error?.detail, life: 3000})
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erro ao realizar login',
+                            detail: erro?.error?.detail,
+                            life: 3000
+                        });
                     }
                 });
         } else {
-            this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: 'Preencha todos os campos', life: 3000})
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Erro ao realizar login',
+                detail: 'Preencha todos os campos',
+                life: 3000
+            });
         }
+        // this.auth.login(this.loginForm.value.email, this.loginForm.value.password)
+        //     .subscribe({
+        //         next: () => {
+        //             this.messageService.add({severity: 'success', summary: 'Login realizado com sucesso', life: 3000})
+        //             this.loginForm.reset();
+        //         },
+        //         error: (erro: any) => {
+        //             this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: erro?.error?.detail, life: 3000})
+        //         }
+        //     });
+        // } else {
+        //     this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: 'Preencha todos os campos', life: 3000})
+        // }
+    }
+
+    // Método para chamar a API de login
+    private loginApi(email: string, password: string): Observable<any> {
+        return this.http
+            .post<any>(this.apiUrl + '/login', {email, password})
+            .pipe(
+                tap((value) => {
+                    if (value.token) {
+                        //setando token no sessionStorage
+                        this.auth.armazenarToken(value.token);
+
+                        // Você pode chamar um método para atualizar o estado do usuário aqui, se necessário
+                        this.userService.loadUserFromToken();
+                    }
+                }),
+                catchError((error) => {
+                    // Retorna um erro apropriado para o fluxo do observable
+                    return throwError(() => new Error(error.error?.detail || 'Erro ao realizar login.'));
+                })
+            );
     }
 }

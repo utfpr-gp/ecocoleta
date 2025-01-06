@@ -18,6 +18,14 @@
          [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
 <!--        TODO colocar ola, user...-->
         <button class="p-link layout-topbar-button">
+            <span>Olá, {{user.name}}</span>
+        </button>
+        <button class="p-link layout-topbar-button" [routerLink]="'/home'">
+            <i class="pi pi-map"></i>
+            <span>Home</span>
+            <!--            TODO iserir routerlink page-->
+        </button>
+        <button class="p-link layout-topbar-button">
             <i class="pi pi-table"></i>
             <span>Coletas</span>
             <!--            TODO iserir routerlink page-->
@@ -27,10 +35,9 @@
             <span>Histórico de coletas</span>
             <!--            TODO iserir routerlink page-->
         </button>
-        <button class="p-link layout-topbar-button">
+        <button class="p-link layout-topbar-button" [routerLink]="'/home/user/perfil'">
             <i class="pi pi-user"></i>
             <span>Perfil</span>
-            <!--            TODO iserir routerlink page perfil-->
         </button>
         <button class="p-link layout-topbar-button" [routerLink]="'/documentation'">
             <i class="pi pi-bell"></i>

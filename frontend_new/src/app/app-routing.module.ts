@@ -3,44 +3,99 @@ import {NgModule} from '@angular/core';
 import {AuthGuard} from './core/guards/auth.guard';
 import {NotfoundComponent} from './shared_components/notfound/notfound.component';
 import {AppLayoutComponent} from "./layout/app.layout.component";
+import {PerfilComponent} from "./domains/user/perfil/perfil.component";
+import {ResidentComponent} from "./domains/resident/resident.component";
+import {WasteCollectorComponent} from "./domains/waste-collector/waste-collector.component";
 
+// @NgModule({
+//     imports: [
+//         RouterModule.forRoot([
+//             { path: '', redirectTo: 'landing', pathMatch: 'full' },
+//             {
+//                 path: 'landing',
+//                 loadChildren: () =>
+//                     import('./domains/landing/landing.module').then(m => m.LandingModule),
+//             },
+//             {
+//                 path: 'home',
+//                 canActivate: [AuthGuard],  // O guard está sendo aplicado aqui
+//                 component: AppLayoutComponent, // Rota protegida
+//                 //TODO verificar tipo de user e direcionar para pagians especificas
+//                 // caso seja resident: mapa com catadores em atividade
+//                 // caso seja catador: mapa com pontos de coleta ativos
+//
+//                 // TODO rota perfil do user
+//
+//                 children: [
+//                     //modulos
+//                     // { path: 'userperfil', loadChildren: () => import('./domains/user/perfil/perfil.component').then(c => c.PerfilComponent) },
+//                     //components1
+//                     { path: 'userperfil', component: PerfilComponent },
+//                     // Outras rotas...
+//                 ]
+//             },
+//             {path: 'user', loadChildren: () => import('./domains/user/user.module').then(m => m.UserModule)},
+//             {path: 'auth', loadChildren: () => import('./domains/auth/auth.module').then(m => m.AuthModule)},
+//             {path: 'notfound', component: NotfoundComponent},
+//             {path: '**', redirectTo: '/notfound'},
+//         ], {scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload'})
+//     ],
+//     exports: [RouterModule]
+// })
+// export class AppRoutingModule {
+// }
 @NgModule({
     imports: [
         RouterModule.forRoot([
-            // {
-            // path: '', component: AppLayoutComponent,
-            // children: [
-            //     { path: '', loadChildren: () => import('./demo/components/dashboard/dashboard.module').then(m => m.DashboardModule) },
-            //     { path: 'uikit', loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UIkitModule) },
-            //     { path: 'utilities', loadChildren: () => import('./demo/components/utilities/utilities.module').then(m => m.UtilitiesModule) },
-            //     { path: 'documentation', loadChildren: () => import('./demo/components/documentation/documentation.module').then(m => m.DocumentationModule) },
-            //     { path: 'blocks', loadChildren: () => import('./demo/components/primeblocks/primeblocks.module').then(m => m.PrimeBlocksModule) },
-            //     { path: 'pages', loadChildren: () => import('./demo/components/pages/pages.module').then(m => m.PagesModule) }
-            // ]
-            // },
-
-            { path: '', redirectTo: 'landing', pathMatch: 'full' },
+            {
+                path: '',
+                redirectTo: 'landing',
+                pathMatch: 'full', // Redireciona para /landing se não autenticado
+            },
             {
                 path: 'landing',
-                loadChildren: () =>
-                    import('./domains/landing/landing.module').then(m => m.LandingModule),
+                loadChildren: () => import('./domains/landing/landing.module').then(m => m.LandingModule),
             },
             {
-                path: 'home',
-                canActivate: [AuthGuard],  // O guard está sendo aplicado aqui
-                component: AppLayoutComponent, // Rota protegida
-                // children: [
-                //     { path: 'uikit', loadChildren: () => import('./demo/components/uikit/uikit.module').then(m => m.UIkitModule) },
-                //     // Outras rotas...
-                // ]
+                path: 'home', // Rotas protegidas
+                canActivate: [AuthGuard],
+                component: AppLayoutComponent,
+                children: [
+                    {
+                        path: 'user',
+                        children: [
+                            {
+                                path: 'perfil',
+                                component: PerfilComponent,
+                            },
+                        ],
+                    },
+                    {
+                        path: 'resident',
+                        component: ResidentComponent,
+                    },
+                    {
+                        path: 'waste',
+                        component: WasteCollectorComponent,
+                    },
+                ],
             },
-            {path: 'user', loadChildren: () => import('./domains/user/user.module').then(m => m.UserModule)},
-            {path: 'auth', loadChildren: () => import('./domains/auth/auth.module').then(m => m.AuthModule)},
-            {path: 'notfound', component: NotfoundComponent},
-            {path: '**', redirectTo: '/notfound'},
-        ], {scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled', onSameUrlNavigation: 'reload'})
+            {
+                path: 'auth',
+                loadChildren: () => import('./domains/auth/auth.module').then(m => m.AuthModule),
+            },
+            {
+                path: 'user',
+                loadChildren: () => import('./domains/user/user.module').then(m => m.UserModule),
+            },
+            { path: 'notfound', component: NotfoundComponent },
+            { path: '**', redirectTo: '/notfound' },
+        ], {
+            scrollPositionRestoration: 'enabled',
+            anchorScrolling: 'enabled',
+            onSameUrlNavigation: 'reload',
+        }),
     ],
-    exports: [RouterModule]
+    exports: [RouterModule],
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}
