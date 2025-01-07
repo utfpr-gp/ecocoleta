@@ -62,6 +62,25 @@ import {AdminHomeComponent} from "./domains/home/admin-home/admin-home.component
                 canActivate: [AuthGuard],
                 component: AppLayoutComponent,
                 children: [
+                    {path: '', redirectTo: 'resident', pathMatch: 'full'}, // Redireciona padrão
+                    {
+                        path: 'resident',
+                        component: ResidentComponent,
+                        canActivate: [AuthGuard],
+                        data: {role: 'RESIDENT'}
+                    },
+                    {
+                        path: 'waste',
+                        component: WasteCollectorComponent,
+                        canActivate: [AuthGuard],
+                        data: {role: 'WASTE_COLLECTOR'}
+                    },
+                    {
+                        path: 'admin',
+                        component: AdminHomeComponent,
+                        canActivate: [AuthGuard],
+                        data: {role: 'ADMIN'}
+                    },
                     {
                         path: 'user',
                         children: [
@@ -70,18 +89,6 @@ import {AdminHomeComponent} from "./domains/home/admin-home/admin-home.component
                                 component: PerfilComponent,
                             },
                         ],
-                    },
-                    {
-                        path: 'resident',
-                        component: ResidentComponent,
-                    },
-                    {
-                        path: 'waste',
-                        component: WasteCollectorComponent,
-                    },
-                    {
-                        path: 'admin',
-                        component: AdminHomeComponent,
                     },
                 ],
             },
@@ -93,8 +100,8 @@ import {AdminHomeComponent} from "./domains/home/admin-home/admin-home.component
                 path: 'user',
                 loadChildren: () => import('./domains/user/user.module').then(m => m.UserModule),
             },
-            { path: 'notfound', component: NotfoundComponent },
-            { path: '**', redirectTo: '/notfound' },
+            {path: 'notfound', component: NotfoundComponent},
+            {path: '**', redirectTo: '/notfound'},
         ], {
             scrollPositionRestoration: 'enabled',
             anchorScrolling: 'enabled',
@@ -103,4 +110,5 @@ import {AdminHomeComponent} from "./domains/home/admin-home/admin-home.component
     ],
     exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule {
+}
