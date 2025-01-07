@@ -1,8 +1,8 @@
-import {Injectable, OnInit} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {Observable, of, take} from 'rxjs';
 import {AuthenticateTokenService} from '../../domains/auth/authenticate-token.service';
-import {User, UserRole, UserService} from "../../domains/user/user.service";
+import {UserService} from "../../domains/user/user.service";
 import {map} from "rxjs/operators";
 
 @Injectable({
