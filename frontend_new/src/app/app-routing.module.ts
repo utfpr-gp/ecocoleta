@@ -7,6 +7,9 @@ import {PerfilComponent} from "./domains/user/perfil/perfil.component";
 import {ResidentComponent} from "./domains/home/resident/resident.component";
 import {WasteCollectorComponent} from "./domains/home/waste-collector/waste-collector.component";
 import {AdminHomeComponent} from "./domains/home/admin-home/admin-home.component";
+import {NotificacoesComponent} from "./domains/user/notificacoes/notificacoes.component";
+import {ColetasComponent} from "./domains/home/coletas/coletas.component";
+import {ColetasHistoricoComponent} from "./domains/home/coletas-historico/coletas-historico.component";
 
 // @NgModule({
 //     imports: [
@@ -82,11 +85,27 @@ import {AdminHomeComponent} from "./domains/home/admin-home/admin-home.component
                         data: {role: 'ADMIN'}
                     },
                     {
+                        path: 'coletas',
+                        component: ColetasComponent,
+                        canActivate: [AuthGuard],
+                    },
+                    {
+                        path: 'coletas-historico',
+                        component: ColetasHistoricoComponent,
+                        canActivate: [AuthGuard],
+                    },
+                    {
                         path: 'user',
                         children: [
                             {
                                 path: 'perfil',
                                 component: PerfilComponent,
+                                canActivate: [AuthGuard],
+                            },
+                            {
+                                path: 'notificacoes',
+                                component: NotificacoesComponent,
+                                canActivate: [AuthGuard],
                             },
                         ],
                     },

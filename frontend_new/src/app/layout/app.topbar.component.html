@@ -16,33 +16,28 @@
 
     <div #topbarmenu class="layout-topbar-menu"
          [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-<!--        TODO colocar ola, user...-->
         <button class="p-link layout-topbar-button">
             <span>Olá, {{user.name}}</span>
         </button>
         <button class="p-link layout-topbar-button" [routerLink]="'/home'">
             <i class="pi pi-map"></i>
             <span>Home</span>
-            <!--            TODO iserir routerlink page-->
         </button>
-        <button class="p-link layout-topbar-button">
+        <button class="p-link layout-topbar-button" [routerLink]="'/home/coletas'">
             <i class="pi pi-table"></i>
             <span>Coletas</span>
-            <!--            TODO iserir routerlink page-->
         </button>
-        <button class="p-link layout-topbar-button">
+        <button class="p-link layout-topbar-button" [routerLink]="'/home/coletas-historico'">
             <i class="pi pi-history"></i>
             <span>Histórico de coletas</span>
-            <!--            TODO iserir routerlink page-->
         </button>
         <button class="p-link layout-topbar-button" [routerLink]="'/home/user/perfil'">
             <i class="pi pi-user"></i>
             <span>Perfil</span>
         </button>
-        <button class="p-link layout-topbar-button" [routerLink]="'/documentation'">
+        <button class="p-link layout-topbar-button" [routerLink]="'/home/user/notificacoes'">
             <i class="pi pi-bell"></i>
             <span>Notificações</span>
-            <!--            TODO iserir routerlink page notificações ou modal dialog?-->
         </button>
         <button class="p-link layout-topbar-button" (click)="logout()">
             <i class="pi pi-sign-out"></i>
