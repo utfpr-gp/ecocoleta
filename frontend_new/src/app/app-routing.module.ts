@@ -4,8 +4,9 @@ import {AuthGuard} from './core/guards/auth.guard';
 import {NotfoundComponent} from './shared_components/notfound/notfound.component';
 import {AppLayoutComponent} from "./layout/app.layout.component";
 import {PerfilComponent} from "./domains/user/perfil/perfil.component";
-import {ResidentComponent} from "./domains/resident/resident.component";
-import {WasteCollectorComponent} from "./domains/waste-collector/waste-collector.component";
+import {ResidentComponent} from "./domains/home/resident/resident.component";
+import {WasteCollectorComponent} from "./domains/home/waste-collector/waste-collector.component";
+import {AdminHomeComponent} from "./domains/home/admin-home/admin-home.component";
 
 // @NgModule({
 //     imports: [
@@ -77,6 +78,10 @@ import {WasteCollectorComponent} from "./domains/waste-collector/waste-collector
                     {
                         path: 'waste',
                         component: WasteCollectorComponent,
+                    },
+                    {
+                        path: 'admin',
+                        component: AdminHomeComponent,
                     },
                 ],
             },

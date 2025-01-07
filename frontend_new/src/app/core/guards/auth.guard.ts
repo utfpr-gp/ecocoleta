@@ -1,54 +1,57 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
-import {Observable} from 'rxjs';
+import {Observable, of, take} from 'rxjs';
 import {AuthenticateTokenService} from '../../domains/auth/authenticate-token.service';
-import {UserService} from "../../domains/user/user.service";
+import {User, UserRole, UserService} from "../../domains/user/user.service";
+import {map} from "rxjs/operators";
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
+
     constructor(
         private auth: AuthenticateTokenService,
         private userService: UserService,
         private router: Router
-    ) {
-    }
+    ) {}
 
-    canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
+        // Verifica se o token é inválido
         if (localStorage.getItem('token') === 'undefined' || this.auth.isAccessTokenInvalido()) {
             localStorage.setItem('redirectUrl', state.url); // Salva a URL original
             this.router.navigate(['/auth/login']);
-            return false;
-        }
-        // TODO fazer um service state de user para verificar se o user esta logado...
-        // Verificar role do usuário
-        const userRole = this.userService.getUserRole(); // Obtém a role do usuário
-
-        if (state.url === '/home') {
-            if (userRole === 'RESIDENT') {
-                this.router.navigate(['/home/resident']);
-            } else if (userRole === 'WASTE_COLLECTOR') {
-                this.router.navigate(['/home/waste']);
-            } else {
-                this.router.navigate(['/auth/access']); // Redireciona se a role for inválida
-            }
-            return false; // Bloqueia a navegação direta para `/home`
+            return of(false);
         }
 
-        // Verificar permissões se a rota exigir um role específico
-        // if (next.data['role'] && next.data['role'] !== userRole) {
-        //     this.router.navigate(['/auth/access']); // Redireciona para uma página de acesso negado
-        //     return false;
-        // }
-        //
-        // return true;
+        // Valida o usuário e redireciona conforme a role
+        return this.userService.user$.pipe(
+            take(1),
+            map(user => {
+                if (!user) {
+                    this.router.navigate(['/auth/login']);
+                    return false;
+                }
 
-        else if (next.data['role'] && !this.userService.getUserRole()) {
-            // TODO verificar esse else se esta ok com o retorno do back para permisoes?
-            this.router.navigate(['/auth/access']);
-            return false;
-        }
-        return true;
+                if (state.url === '/home') {
+                    const roleRedirectMap = {
+                        RESIDENT: '/home/resident',
+                        WASTE_COLLECTOR: '/home/waste',
+                        ADMIN: '/home/admin',
+                    };
+
+                    const redirectUrl = roleRedirectMap[user.role] || '/auth/access';
+                    this.router.navigate([redirectUrl]);
+                    return false;
+                }
+
+                if (next.data['role'] && next.data['role'] !== user.role) {
+                    this.router.navigate(['/auth/access']);
+                    return false;
+                }
+
+                return true;
+            })
+        );
     }
 }
