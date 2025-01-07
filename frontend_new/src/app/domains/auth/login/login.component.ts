@@ -101,19 +101,6 @@ export class LoginComponent {
                 life: 3000
             });
         }
-        // this.auth.login(this.loginForm.value.email, this.loginForm.value.password)
-        //     .subscribe({
-        //         next: () => {
-        //             this.messageService.add({severity: 'success', summary: 'Login realizado com sucesso', life: 3000})
-        //             this.loginForm.reset();
-        //         },
-        //         error: (erro: any) => {
-        //             this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: erro?.error?.detail, life: 3000})
-        //         }
-        //     });
-        // } else {
-        //     this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: 'Preencha todos os campos', life: 3000})
-        // }
     }
 
     // Método para chamar a API de login
