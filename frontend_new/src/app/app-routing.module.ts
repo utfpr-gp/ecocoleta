@@ -98,12 +98,12 @@ import {ColetasHistoricoComponent} from "./domains/home/coletas-historico/coleta
                         path: 'user',
                         children: [
                             {
-                                path: 'perfil',
+                                path: 'perfil/:user_id',
                                 component: PerfilComponent,
                                 canActivate: [AuthGuard],
                             },
                             {
-                                path: 'notificacoes',
+                                path: 'notificacoes/:user_id',
                                 component: NotificacoesComponent,
                                 canActivate: [AuthGuard],
                             },

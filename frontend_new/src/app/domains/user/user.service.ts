@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, tap} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {AuthenticateTokenService} from "../auth/authenticate-token.service";
 import {Router} from "@angular/router";
@@ -106,8 +106,11 @@ export class UserService {
         return this.userSubject.value?.role || null;
     }
 
-    getUserById(userId: number): Observable<User> {
-        return this.http.get<User>(`${this.apiUrlUser}/${userId}`);
+    getUserById(userId: string): Observable<User> {
+        return this.http.get<User>(`${this.apiUrlUser}/${userId}`)
+            .pipe( // TODO apagar apos teste
+            tap((user) => console.log('User fetched:', user))
+        );
     }
 
     //MÉTODOS DE CRUD
