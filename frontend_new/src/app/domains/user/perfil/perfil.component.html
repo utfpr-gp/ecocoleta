@@ -1,7 +1,7 @@
 <app-user-form [formModeUpdate]="true" [userRole]="userType" [formData]="user" (formSubmitted)="handleFormSubmission($event)"></app-user-form>
 <!-- Painel de Endereços -->
 <p-panel class="col-12" header="Endereços">
-    <p-scrollPanel [style]="{ width: '100%', height: '250px' }">
+    <p-scrollPanel [style]="{ width: '100%', height: '150px' }">
         <p-table [value]="addresses" [rows]="5">
             <ng-template pTemplate="header">
                 <tr>
@@ -29,7 +29,7 @@
     </p-scrollPanel>
 
     <!-- Botão de Adicionar Endereço -->
-    <div class="field col-12 text-right">
+    <div class="field col-12 text-center">
         <button type="button" pButton icon="pi pi-plus" label="Adicionar Endereço" class="p-button-text" (click)="openAddAddressModal()"></button>
     </div>
 </p-panel>

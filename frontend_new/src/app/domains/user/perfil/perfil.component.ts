@@ -10,6 +10,8 @@ import {TableModule} from "primeng/table";
 import {AddressService} from "../../../core/services/address.service";
 import {Address} from "../../../core/types/address.type";
 import {DialogModule} from "primeng/dialog";
+import {ButtonModule} from "primeng/button";
+
 
 @Component({
     selector: 'app-perfil',
@@ -17,6 +19,7 @@ import {DialogModule} from "primeng/dialog";
     imports: [
         UserFormComponent,
         PanelModule,
+        ButtonModule,
         ScrollPanelModule,
         TableModule,
         DialogModule
@@ -98,16 +101,16 @@ export class PerfilComponent implements OnInit {
     //ENDEREÇOS
     // Método para carregar os endereços do usuário
     loadUserAddresses() {
-        if (this.userId) {
-            this.addressService.getAllAddressByUserId(this.user.id).subscribe(
-                (addresses) => {
-                    this.addresses = addresses;
-                },
-                (error) => {
-                    this.messageService.add({severity: 'error', summary: 'Erro', detail: 'Não foi possível carregar os endereços.'});
-                }
-            );
-        }
+        // if (this.userId) {
+        //     this.addressService.getAllAddressByUserId(this.user.id).subscribe(
+        //         (addresses) => {
+        //             this.addresses = addresses;
+        //         },
+        //         (error) => {
+        //             this.messageService.add({severity: 'error', summary: 'Erro', detail: 'Não foi possível carregar os endereços.'});
+        //         }
+        //     );
+        // }
     }
 
     // Método para abrir a modal de adicionar endereço

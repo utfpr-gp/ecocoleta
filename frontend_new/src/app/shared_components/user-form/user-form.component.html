@@ -1,6 +1,5 @@
-<form [formGroup]="formUser" (ngSubmit)="onSubmit()"
-      style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
-    <p-panel class="col-12" header="{{ formModeUpdate ? 'Editar Usuário' : 'Cadastrar Usuário' }}">
+<p-panel class="col-12" header="{{ formModeUpdate ? 'Editar Usuário' : 'Cadastrar Usuário' }}">
+    <form [formGroup]="formUser" (ngSubmit)="onSubmit()">
         <div class="p-grid p-justify-center">
             <div class="field col-12 md:col-6">
                 <label for="name">Nome</label><b class="ml-1" style="color: crimson;">*</b>
@@ -156,5 +155,5 @@
                 </button>
             </div>
         </div>
-    </p-panel>
-</form>
+    </form>
+</p-panel>

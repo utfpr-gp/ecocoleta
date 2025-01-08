@@ -11,6 +11,7 @@ import {DialogModule} from "primeng/dialog";
 import {PanelModule} from "primeng/panel";
 import {MessageComponent} from "../../../shared_components/message.component";
 import {UserFormComponent} from "../../../shared_components/user-form/user-form.component";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
     imports: [
@@ -23,7 +24,8 @@ import {UserFormComponent} from "../../../shared_components/user-form/user-form.
         DialogModule,
         PanelModule,
         MessageComponent,
-        UserFormComponent
+        UserFormComponent,
+        ReactiveFormsModule
     ],
     declarations: [UserRegisterComponent]
 })
