@@ -184,19 +184,26 @@ public class UserController {
     //TODO update de senha...
 
     //update
-    @PutMapping
+    @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity update(@RequestBody @Valid UserUpdateDTO userUpdateDTO) {
-        //TODO melhorar esse metodo para todos tipos de usuario, fazer um body dto generico para todas roles, etc
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
         System.out.println("ENTROU UPDATE...");
-        System.out.println("tostring: " + userUpdateDTO.toString());
+        System.out.println("UserUpdateDTO: " + userUpdateDTO.toString());
 
-        var user = userService.getUserById(userUpdateDTO.id());
+        // Busca o usuário pelo ID
+        var user = userService.getUserById(id);
+
+        if (user.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Atualiza os dados do usuário
         user.get().update(userUpdateDTO);
 
+        // Retorna a resposta com os dados atualizados
         return ResponseEntity.ok(new UserGetDTO(user));
-//        return ResponseEntity.ok().build();
     }
+
 
     //delete*disableUser com parametro dinamico
     //TODO refazer com authenticação somente para user tipo admin

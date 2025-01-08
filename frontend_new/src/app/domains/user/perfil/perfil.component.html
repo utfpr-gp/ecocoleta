@@ -1,9 +1,49 @@
-<p>perfil works!</p>
+<app-user-form [formModeUpdate]="true" [userRole]="userType" [formData]="user" (formSubmitted)="handleFormSubmission($event)"></app-user-form>
+<!-- Painel de Endereços -->
+<p-panel class="col-12" header="Endereços">
+    <p-scrollPanel [style]="{ width: '100%', height: '250px' }">
+        <p-table [value]="addresses" [rows]="5">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Endereço</th>
+                    <th>Detalhes</th>
+                    <th class="text-right">Ações</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-address let-i="rowIndex">
+                <tr>
+                    <td>{{ address.street }}</td>
+                    <td>{{ address.city }}, {{ address.state }}</td>
+                    <td class="text-right">
+                        <button type="button" pButton icon="pi pi-pencil" class="p-button-warning p-button-rounded" (click)="openEditAddressModal(address)"></button>
+                        <button type="button" pButton icon="pi pi-trash" class="p-button-danger p-button-rounded" (click)="removeAddress(address.id)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="3" class="text-center">Nenhum endereço encontrado.</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-scrollPanel>
+
+    <!-- Botão de Adicionar Endereço -->
+    <div class="field col-12 text-right">
+        <button type="button" pButton icon="pi pi-plus" label="Adicionar Endereço" class="p-button-text" (click)="openAddAddressModal()"></button>
+    </div>
+</p-panel>
 
 <!--TODO > tela de perfil usar 2 panels{
 * panel 1 dados do user
 * panel 2 listagem de endereços (botão excluir - editar exclui e cadastra denovo sem tempo)
 }
 * tembem dialog de edição dos dados de user
-* dialog de add endereço
+* dialog de add endereço (uso no painel de criar coleta e  no perfil )
 -->
+
+<!--TODO add dialog address-->
+<!-- Modal para Adicionar Endereço -->
+<!--<p-dialog header="Adicionar Endereço" [(visible)]="displayAddAddressModal" [modal]="true" [closable]="false" [responsive]="true" [style]="{ width: '50vw' }">-->
+<!--    <app-address-form (formSubmitted)="addAddress($event)"></app-address-form>-->
+<!--</p-dialog>-->

@@ -6,6 +6,7 @@ import {AuthenticateTokenService} from "../auth/authenticate-token.service";
 import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {CloudinaryUploadImgService} from "../../core/services/cloudinary-upload-img.service";
+import {el} from "@fullcalendar/core/internal-common";
 
 export type User = {
     id: string;
@@ -16,7 +17,7 @@ export type User = {
     cpf?: number;
     cnpj?: number;
     picture?: string | File;
-    role?: string;
+    role?: UserRole | string;
     token?: string;
     createdAt?: string;
     updatedAt?: string;
@@ -75,7 +76,7 @@ export class UserService {
         this.router.navigate([redirectUrl]);
     }
 
-    private getUserCreationUrl(role: UserRole): string {
+    private getUserCreationUrl(role: UserRole | string): string {
         switch (role) {
             case UserRole.WASTE_COLLECTOR:
                 return `${this.apiUrlUser}/waste-collector`;
@@ -90,14 +91,17 @@ export class UserService {
     getCurrentUser(): User | null {
         return this.userSubject.value;
     }
+
     // Atualiza manualmente o estado do usuário
-    updateUser(user: User): void {
+    updateUserSubject(user: User): void {
         this.userSubject.next(user);
     }
+
     // Limpa o estado do usuário (logout, por exemplo)
     clearUser(): void {
         this.userSubject.next(null);
     }
+
     getUserLogged(): Observable<User | null> {
         return this.userSubject.asObservable();
     }
@@ -109,40 +113,57 @@ export class UserService {
     getUserById(userId: string): Observable<User> {
         return this.http.get<User>(`${this.apiUrlUser}/${userId}`)
             .pipe( // TODO apagar apos teste
-            tap((user) => console.log('User fetched:', user))
-        );
+                tap((user) => console.log('User fetched:', user))
+            );
     }
 
     //MÉTODOS DE CRUD
-    async createUser(user: User, role: UserRole): Promise<void> {
+    async createAndUpdateUser(user: User): Promise<void> {
         try {
-            // Atualiza o role do usuário
-            user.role = role;
+            if (user.id) {
+                // Atualizando o usuário existente
+                console.log('Atualizando usuário ::', user.id); // TODO: Remover após teste
 
-            if (role === 'WASTE_COLLECTOR' && user.picture) {
-                const file: File = user.picture as File;
+                const updatedUser = await this.http
+                    .put<User>(`${this.apiUrlUser}/${user.id}`, user)
+                    .toPromise();
 
-                // Aguarda o upload da imagem e atualiza o user.picture
-                const imageUrl = await this.cloudinaryUploadImgService.uploadImage(file);
-                user.picture = imageUrl;
-            }
+                console.log('Usuário atualizado com sucesso:', updatedUser); // TODO: Remover após teste
+            } else {
+                // Criando um novo usuário
+                console.log('Criando novo usuário ::', user); // TODO: Remover após teste
 
-            const endpoint = this.getUserCreationUrl(role);
+                if (user.role === 'WASTE_COLLECTOR' && user.picture) {
+                    const file: File = user.picture as File;
 
-            // Envia o usuário atualizado para o servidor
-            const savedUser = await this.http.post<User>(endpoint, user).toPromise();
+                    // Faz o upload da imagem e atualiza o campo `picture` do usuário
+                    const imageUrl = await this.cloudinaryUploadImgService.uploadImage(file);
+                    user.picture = imageUrl;
+                }
 
-            // Verifica o token e faz a redireção, se necessário
-            if (savedUser.token) {
-                this.handleLoginRedirection(savedUser.token);
+                const endpoint = this.getUserCreationUrl(user.role);
+
+                const newUser = await this.http.post<User>(endpoint, user).toPromise();
+
+                console.log('Novo usuário criado com sucesso:', newUser); // TODO: Remover após teste
+
+                if (newUser.token) {
+                    this.handleLoginRedirection(newUser.token);
+                }
             }
         } catch (error) {
+            console.error('Erro ao criar/atualizar usuário:', error); // TODO: Remover após teste
+
+            // Exibe mensagem de erro detalhada
             this.messageService.add({
                 severity: 'error',
-                summary: 'Erro ao criar usuário',
+                summary: 'Erro ao criar/atualizar usuário',
                 detail: this.getErrorMessage(error),
                 life: 3000,
             });
+
+            // Lança o erro para ser tratado no componente
+            throw error;
         }
     }
 

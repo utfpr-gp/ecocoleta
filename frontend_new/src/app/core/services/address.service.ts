@@ -31,7 +31,7 @@ export class AddressService {
   }
 
   //GET METHODS
-  getAllAddressByUserId(userID: number): Observable<Address[]> {
+  getAllAddressByUserId(userID: string): Observable<Address[]> {
     console.log('address service log> getAddressById', userID); //TODO apagar apos teste
 
     return this.httpClient.get<Address[]>(

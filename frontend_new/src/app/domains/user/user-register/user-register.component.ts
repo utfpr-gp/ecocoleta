@@ -41,11 +41,10 @@ export class UserRegisterComponent {
             return;
         }
 
-        // this.userService.createUser(user, this.userType).subscribe({
-        //     next: () => this.messageService.add({severity: 'success', summary: 'Usuário criado com sucesso!', life: 3000}),
-        //     error: (err) => this.messageService.add({severity: 'error', summary: 'Erro ao realizar login', detail: err?.message, life: 3000}),
-        // });
-        this.userService.createUser(user, this.userType)
+        // Adiciona o tipo de usuário ao objeto
+        user.role = this.userType;
+
+        this.userService.createAndUpdateUser(user)
             .then(() => {
                 this.messageService.add({
                     severity: 'success',
@@ -63,12 +62,4 @@ export class UserRegisterComponent {
             });
 
     }
-
-    // Atualiza um usuário existente
-    // private updateUser(user: User) {
-    //     this.userService.updateUser(user).subscribe({
-    //         next: () => alert('Usuário atualizado com sucesso!'),
-    //         error: (err) => alert(`Erro ao atualizar usuário: ${err.message}`),
-    //     });
-    // }
 }

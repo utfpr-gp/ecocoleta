@@ -53,9 +53,6 @@ export class LoginComponent {
     }
 
     login() {
-
-        console.log(this.loginForm.value); //TODO Remove this line of code
-
         if (this.loginForm.value.salvarSenha) {
             this.cookieService.set('salvarSenha', 'true');
             this.cookieService.set('usuarioSalvo', this.loginForm.value.email);

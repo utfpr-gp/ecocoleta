@@ -1,8 +1,8 @@
-<div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
-    <div class="col-12">
-        <app-user-form [formModeUpdate]="false" [userRole]="userType" (formSubmitted)="handleFormSubmission($event)"></app-user-form>
-    </div>
-</div>
+<!--<div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">-->
+<!--    <div class="col-12">-->
+<!--    </div>-->
+<!--</div>-->
+<app-user-form [formModeUpdate]="false" [userRole]="userType" (formSubmitted)="handleFormSubmission($event)"></app-user-form>
 
 
 <p-dialog [(visible)]="showModal" header="Selecione o tipo de usuário" [modal]="true" [closable]="false">

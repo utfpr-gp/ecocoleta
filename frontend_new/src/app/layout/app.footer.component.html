@@ -50,7 +50,7 @@
         </button>
         <span class="mt-2 w-full text-center">Histórico</span>
     </div>
-    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;" [routerLink]="'/home/user/perfil'">
+    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;" [routerLink]="['/home/user/perfil', user.id]">
         <button class="p-link layout-footer-button flex justify-content-center align-items-center">
             <i class="pi pi-user text-2xl"></i>
         </button>

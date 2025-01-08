@@ -17,13 +17,8 @@ export class AppFooterComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // this.userService.userSubject.subscribe((user) => {
-        //     this.user = user;
-        // });
         this.userService.user$.subscribe(user => {
             this.user = user;
         });
-
-        console.log('foooter this.user', this.user);
     }
 }

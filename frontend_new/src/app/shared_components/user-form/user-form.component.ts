@@ -42,6 +42,7 @@ import {AvatarModule} from "primeng/avatar";
 })
 export class UserFormComponent implements OnInit {
     formUser!: FormGroup;
+    @Input() formData: User | null = null;
     @Input() formModeUpdate: boolean = false; //se editar ou cadastrar
     @Input() userRole: string = null;
     @Output() formSubmitted = new EventEmitter<{ user: User, action: 'create' | 'update' }>();
@@ -59,22 +60,19 @@ export class UserFormComponent implements OnInit {
     }
 
     ngOnInit() {
-        // TODO  implementar como pegar id do user na rota para edição do user e abrir o form preenchido
-        // Verificar se estamos em modo de edição
-        // const userId = parseInt(this.route.snapshot.paramMap.get('id'));
-        // this.formModeUpdate = !!userId;
+        console.log('oninit form-user'); //TODO apagar apos teste
+
+        // Caso seja modo de edição, carregar os dados do usuário no formulário
+        if (this.formData) {
+
+            console.log('iniciando formData user-form: ', this.formData); //TODO apagar apos teste
+
+            this.userRole = this.formData.role;
+            this.formUser.patchValue(this.formData);
+        }
 
         // Inicializar formulário
         this.initForm();
-
-        // Caso seja modo de edição, carregar os dados do usuário
-        // if (this.formModeUpdate && userId) {
-        //     this.userService.getUserById(userId).subscribe((user) => {
-        //         this.userRole = user.role;
-        //         this.formUser.patchValue(user); // Preenche os campos com os dados do usuário
-        //         // this.updateValidations();
-        //     });
-        // }
     }
 
     initForm() {
