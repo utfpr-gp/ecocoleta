@@ -2,6 +2,7 @@ package com.ecocoleta.backend.controllers;
 
 import com.ecocoleta.backend.domain.material.Material;
 import com.ecocoleta.backend.domain.material.MaterialDTO;
+import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.services.MaterialService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,55 +22,106 @@ public class MaterialController {
     @Autowired
     MaterialService materialService;
 
+    /**
+     * Cria um novo material.
+     * @param materialDTO Dados do material a ser criado.
+     * @return ResponseEntity com o DTO do material criado.
+     */
     @PostMapping
     @Transactional
-    public ResponseEntity newMaterial(@RequestBody MaterialDTO materialDTO) {
-        Material material = new Material(materialDTO.name(), materialDTO.score());
-        materialService.saveMaterial(material);
-        return ResponseEntity.ok().body(new MaterialDTO(material.getId(), material.getName(), material.getScore()));
+    public ResponseEntity<MaterialDTO> newMaterial(@RequestBody @Valid MaterialDTO materialDTO) {
+        try {
+            Material material = new Material(materialDTO.name(), materialDTO.score());
+            materialService.saveMaterial(material);
+            return ResponseEntity.ok().body(new MaterialDTO(material.getId(), material.getName(), material.getScore()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null); // Retorna erro com resposta vazia
+        }
     }
 
-
-    //GET MATERIAL BY ID
+    /**
+     * Recupera um material pelo ID.
+     * @param id ID do material.
+     * @return ResponseEntity com os dados do material.
+     */
     @GetMapping("/{id}")
-    public ResponseEntity getMaterial(@PathVariable Long id) {
-        var material = materialService.getMaterialById(id);
+    public ResponseEntity<MaterialDTO> getMaterial(@PathVariable Long id) {
+        try {
+            var material = materialService.getMaterialById(id)
+                    .orElseThrow(() -> new ValidException("Material não encontrado!"));
 
-        return ResponseEntity.ok().body(new MaterialDTO(material.get().getId(), material.get().getName(), material.get().getScore()));
+            return ResponseEntity.ok().body(new MaterialDTO(material.getId(), material.getName(), material.getScore()));
+        } catch (ValidException e) {
+            return ResponseEntity.badRequest().body(null); // Retorna erro com resposta vazia
+        }
     }
 
-    //GET ALL LIST Materials
+    /**
+     * Recupera todos os materiais.
+     * @return ResponseEntity com a lista de materiais.
+     */
     @GetMapping("all")
     public ResponseEntity<List<MaterialDTO>> getListAllMaterial() {
-        List<Material> materials = materialService.getAllByOrderById();
-        List<MaterialDTO> materialsDTO = materials.stream().map(MaterialDTO::new).toList();
-
-        return ResponseEntity.ok().body(materialsDTO);
+        try {
+            List<Material> materials = materialService.getAllByOrderById();
+            List<MaterialDTO> materialsDTO = materials.stream().map(MaterialDTO::new).toList();
+            return ResponseEntity.ok().body(materialsDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null); // Retorna erro com resposta vazia
+        }
     }
 
-    //GET ALL Materials PAGEABLE
+    /**
+     * Recupera os materiais com paginação.
+     * @param pageable Dados de paginação.
+     * @return ResponseEntity com a lista paginada de materiais.
+     */
     @GetMapping("list")
     public ResponseEntity<Page<MaterialDTO>> listMaterials(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
-        var page = materialService.getAllByOrderByName(pageable).map(MaterialDTO::new);
-        return ResponseEntity.ok(page);
+        try {
+            var page = materialService.getAllByOrderByName(pageable).map(MaterialDTO::new);
+            return ResponseEntity.ok(page);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null); // Retorna erro com resposta vazia
+        }
     }
 
-    //update
+    /**
+     * Atualiza um material existente.
+     * @param materialDTO Dados atualizados do material.
+     * @return ResponseEntity com os dados do material atualizado.
+     */
     @PutMapping
     @Transactional
-    public ResponseEntity update(@RequestBody @Valid MaterialDTO materialDTO) {
-        var material = materialService.getMaterialById(materialDTO.id());
-        material.get().update(materialDTO);
+    public ResponseEntity<MaterialDTO> update(@RequestBody @Valid MaterialDTO materialDTO) {
+        try {
+            var material = materialService.getMaterialById(materialDTO.id())
+                    .orElseThrow(() -> new ValidException("Material não encontrado!"));
 
-        return ResponseEntity.ok(new MaterialDTO(material.get().getId(), material.get().getName(), material.get().getScore()));
+            material.update(materialDTO);
+
+            return ResponseEntity.ok(new MaterialDTO(material.getId(), material.getName(), material.getScore()));
+        } catch (ValidException e) {
+            return ResponseEntity.badRequest().body(null); // Retorna erro com resposta vazia
+        }
     }
 
+    /**
+     * Deleta um material.
+     * @param id ID do material a ser deletado.
+     * @return ResponseEntity com o status da operação.
+     */
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity deleteMaterial(@PathVariable Long id) {
-        var material = materialService.getMaterialById(id);
-        materialService.deleteMaterial(material.get());
+    public ResponseEntity<Void> deleteMaterial(@PathVariable Long id) {
+        try {
+            var material = materialService.getMaterialById(id)
+                    .orElseThrow(() -> new ValidException("Material não encontrado!"));
 
-        return ResponseEntity.noContent().build();
+            materialService.deleteMaterial(material);
+            return ResponseEntity.noContent().build();
+        } catch (ValidException e) {
+            return ResponseEntity.badRequest().body(null); // Retorna erro com resposta vazia
+        }
     }
 }

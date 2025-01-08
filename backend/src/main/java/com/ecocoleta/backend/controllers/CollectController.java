@@ -90,9 +90,7 @@ public class CollectController {
     @PostMapping("create_new_collect")
     @Transactional
     public ResponseEntity createNewCollect(@RequestBody @Valid CollectDTO collectDTO) {
-
         var dto = collectService.createCollect(collectDTO);
-
         return ResponseEntity.ok().body(dto);
     }
 
@@ -103,22 +101,26 @@ public class CollectController {
      */
     @GetMapping("get_collects")
     @Transactional
-    public ResponseEntity<List<CollectDTO>> getCollectsByStatus(@RequestParam @Valid Long userId, @RequestParam @Valid CollectStatus collectStatus, @PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
+    public ResponseEntity<List<CollectDTO>> getCollectsByStatus(@RequestParam @Valid Long userId,
+                                                                @RequestParam @Valid CollectStatus collectStatus,
+                                                                @PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
         try {
-            // Busca o usuário por ID
             if (!userService.existsByid(userId)) {
                 throw new ValidException("Usuário não encontrado!");
             }
 
-            // verifica se o status é válido
-            if (!collectStatus.equals(CollectStatus.PENDING) && !collectStatus.equals(CollectStatus.IN_PROGRESS) && !collectStatus.equals(CollectStatus.COMPLETED) && !collectStatus.equals(CollectStatus.CANCELLED)) {
+            if (!isValidCollectStatus(collectStatus)) {
                 throw new ValidException("Status inválido!");
             }
 
             List<CollectDTO> collects = collectService.getCollectsByStatusAndUserId(userId, collectStatus, pageable);
             return ResponseEntity.ok().body(collects);
+        } catch (ValidException e) {
+            // Retorna erro de validação com lista vazia em vez de String
+            return ResponseEntity.badRequest().body(List.of()); // Retorna lista vazia ao invés de String
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            // Retorna erro genérico com lista vazia
+            return ResponseEntity.internalServerError().body(List.of()); // Retorna lista vazia ao invés de String
         }
     }
 
@@ -130,15 +132,11 @@ public class CollectController {
     @PostMapping("get_avaible_collects")
     @Transactional
     public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollects(@RequestBody @Valid CollectSearchAvaibleListDTO collectSearchAvaibleListDTO) {
-
-
-        // Busca o Catador por ID
         if (!wasteCollectorService.existsWasteCollectorById(collectSearchAvaibleListDTO.idWasteCollector())) {
             throw new ValidException("Catador não encontrado!");
         }
 
         List<CollectAddressAvaibleDTO> collectAddressAvaibleDTOS = collectService.getCollectAvaibleList(collectSearchAvaibleListDTO);
-
         return ResponseEntity.ok().body(collectAddressAvaibleDTOS);
     }
 
@@ -156,11 +154,12 @@ public class CollectController {
             if (collectService.completedCollect(collectDTO)) {
                 return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity.badRequest().body("Coleta não finalizada!");
+                throw new ValidException("Coleta não finalizada!");
             }
-        } catch (Exception e) {
+        } catch (ValidException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-//            throw new ValidException("WasteCollector not found");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro inesperado: " + e.getMessage());
         }
     }
 
@@ -172,15 +171,16 @@ public class CollectController {
     @DeleteMapping("reset_collects")
     @Transactional
     public ResponseEntity resetCollects(@RequestParam @Valid Long wasteCollectorId) {
-        //TODo fazer para desistir de todas ou de uma coleta especifica recendno o id da coleta'
         try {
             if (collectService.resetAllCollects(wasteCollectorId)) {
                 return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity.badRequest().body("Coletas não resetadas!");
+                throw new ValidException("Coletas não resetadas!");
             }
-        } catch (Exception e) {
+        } catch (ValidException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro inesperado: " + e.getMessage());
         }
     }
 
@@ -198,10 +198,12 @@ public class CollectController {
             if (collectService.cancelCollect(collectId, user)) {
                 return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity.badRequest().body("Coleta não cancelada!");
+                throw new ValidException("Coleta não cancelada!");
             }
-        } catch (Exception e) {
+        } catch (ValidException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro inesperado: " + e.getMessage());
         }
     }
 
@@ -219,10 +221,19 @@ public class CollectController {
             User user = userService.getUserByUserEmail(userDetails.getUsername());
 
             CollectDTO collectDTO = collectService.pausedCollect(collectId, user);
-
             return ResponseEntity.ok().body(collectDTO);
-        } catch (Exception e) {
+        } catch (ValidException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro inesperado: " + e.getMessage());
         }
+    }
+
+    // Método auxiliar para validação do status
+    private boolean isValidCollectStatus(CollectStatus collectStatus) {
+        return collectStatus.equals(CollectStatus.PENDING) ||
+                collectStatus.equals(CollectStatus.IN_PROGRESS) ||
+                collectStatus.equals(CollectStatus.COMPLETED) ||
+                collectStatus.equals(CollectStatus.CANCELLED);
     }
 }

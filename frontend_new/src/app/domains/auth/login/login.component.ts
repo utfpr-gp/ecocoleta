@@ -81,11 +81,11 @@ export class LoginComponent {
 
                         this.loginForm.reset();
                     },
-                    error: (erro: any) => {
+                    error: (error: any) => {
                         this.messageService.add({
                             severity: 'error',
                             summary: 'Erro ao realizar login',
-                            detail: erro?.error?.detail,
+                            detail:  error?.message || 'Não foi possível realizar login.',
                             life: 3000
                         });
                     }
@@ -116,7 +116,7 @@ export class LoginComponent {
                 }),
                 catchError((error) => {
                     // Retorna um erro apropriado para o fluxo do observable
-                    return throwError(() => new Error(error.error?.detail || 'Erro ao realizar login.'));
+                    return throwError(() => new Error(error.error?.message || 'Erro ao realizar login.'));
                 })
             );
     }

@@ -12,6 +12,7 @@ import {PanelModule} from "primeng/panel";
 import {MessageComponent} from "../../../shared_components/message.component";
 import {UserFormComponent} from "../../../shared_components/user-form/user-form.component";
 import {ReactiveFormsModule} from "@angular/forms";
+import {ToastModule} from "primeng/toast";
 
 @NgModule({
     imports: [
@@ -25,7 +26,8 @@ import {ReactiveFormsModule} from "@angular/forms";
         PanelModule,
         MessageComponent,
         UserFormComponent,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        ToastModule
     ],
     declarations: [UserRegisterComponent]
 })

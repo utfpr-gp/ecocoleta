@@ -158,7 +158,7 @@ export class UserService {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Erro ao criar/atualizar usuário',
-                detail: this.getErrorMessage(error),
+                detail: this.getErrorMessage(error?.error),
                 life: 3000,
             });
 

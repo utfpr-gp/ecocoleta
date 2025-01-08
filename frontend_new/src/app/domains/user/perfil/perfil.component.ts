@@ -11,6 +11,7 @@ import {AddressService} from "../../../core/services/address.service";
 import {Address} from "../../../core/types/address.type";
 import {DialogModule} from "primeng/dialog";
 import {ButtonModule} from "primeng/button";
+import {ToastModule} from "primeng/toast";
 
 
 @Component({
@@ -22,7 +23,8 @@ import {ButtonModule} from "primeng/button";
         ButtonModule,
         ScrollPanelModule,
         TableModule,
-        DialogModule
+        DialogModule,
+        ToastModule
     ],
     templateUrl: './perfil.component.html',
     styleUrl: './perfil.component.scss'
@@ -52,12 +54,15 @@ export class PerfilComponent implements OnInit {
             this.userService.getUserById(this.userId).subscribe((user) => {
                 this.user = user;
                 this.userType = user.role;
+
                 // Se necessário, adicione a lógica para preencher o formulário ou outros dados
                 // this.loadForm();
-            });
 
-            // Buscar os endereços do usuário
-            this.loadUserAddresses();
+                // TODO - talvez carregar aqui os dados e passar para o form depois de carregalos ???
+
+                // Buscar os endereços do usuário
+                this.loadUserAddresses();
+            });
         }
     }
 
@@ -85,14 +90,14 @@ export class PerfilComponent implements OnInit {
                 });
                 this.router.navigate(['/home/user/perfil']);
             })
-            .catch((err) => {
+            .catch((error) => {
 
-                console.error('Erro ao atualizar usuário:', err); // TODO: Remover após teste
+                console.error('Erro ao atualizar usuário:', error); // TODO: Remover após teste
 
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Erro ao atualizar usuário',
-                    detail: err?.message,
+                    detail: error?.message,
                     life: 3000,
                 });
             });
@@ -101,16 +106,28 @@ export class PerfilComponent implements OnInit {
     //ENDEREÇOS
     // Método para carregar os endereços do usuário
     loadUserAddresses() {
-        // if (this.userId) {
-        //     this.addressService.getAllAddressByUserId(this.user.id).subscribe(
-        //         (addresses) => {
-        //             this.addresses = addresses;
-        //         },
-        //         (error) => {
-        //             this.messageService.add({severity: 'error', summary: 'Erro', detail: 'Não foi possível carregar os endereços.'});
-        //         }
-        //     );
-        // }
+        if (this.userId) {
+            this.addressService.getAllAddressByUserId(this.user.id).subscribe(
+                (addresses) => {
+
+                    console.log('Endereços do usuário:', addresses); //TODO apagar apos teste
+
+                    this.addresses = addresses;
+                },
+                (error) => {
+                    // Adiciona a mensagem no MessageService
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Erro endereços',
+                        detail: error?.message || 'Não foi possível carregar os endereços.',
+                        life: 3000
+                    });
+
+                    // Opcional: logar o erro completo para depuração
+                    console.error('Erro ao carregar endereços:', error); // TODO remover após teste
+                }
+            );
+        }
     }
 
     // Método para abrir a modal de adicionar endereço
