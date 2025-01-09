@@ -7,11 +7,12 @@ import { CommonModule } from '@angular/common';
 import {PanelModule} from "primeng/panel";
 import {ScrollPanelModule} from "primeng/scrollpanel";
 import {TableModule} from "primeng/table";
-import {AddressService} from "../../../core/services/address.service";
+import {AddressService} from "../../../shared_components/address-form-dialog/address.service";
 import {Address} from "../../../core/types/address.type";
 import {DialogModule} from "primeng/dialog";
 import {ButtonModule} from "primeng/button";
 import {ToastModule} from "primeng/toast";
+import {AddressFormDialogComponent} from "../../../shared_components/address-form-dialog/address-form-dialog.component";
 
 
 @Component({
@@ -24,7 +25,8 @@ import {ToastModule} from "primeng/toast";
         ScrollPanelModule,
         TableModule,
         DialogModule,
-        ToastModule
+        ToastModule,
+        AddressFormDialogComponent
     ],
     templateUrl: './perfil.component.html',
     styleUrl: './perfil.component.scss'
@@ -33,7 +35,11 @@ export class PerfilComponent implements OnInit {
     userId: string | null = null;
     user: User | null = null;
     userType: string = null;
+
+    //Atributos para endereços e modal
     addresses: Address[] = [];  // Lista de endereços do usuário
+    address_id: string | undefined = undefined;
+    addressFormDialog: boolean = false;
 
 
     constructor(private router: Router,
@@ -132,14 +138,22 @@ export class PerfilComponent implements OnInit {
 
     // Método para abrir a modal de adicionar endereço
     openAddAddressModal() {
+        this.addressFormDialog = true;
         // Aqui você pode abrir uma modal de adição de endereço
         // Defina a lógica para exibir a modal de adicionar
     }
 
     // Método para abrir a modal de edição de endereço
     openEditAddressModal(address: Address) {
+        this.addressFormDialog = true;
         // Aqui você pode abrir uma modal de edição de endereço
         // Passe o endereço selecionado para editar
+    }
+
+    hideDialog(bool: boolean) {
+        // this.addressForm.reset();
+        this.address_id = undefined;
+        this.addressFormDialog = bool;
     }
 
     // Método para remover um endereço
@@ -157,6 +171,4 @@ export class PerfilComponent implements OnInit {
             );
         }
     }
-
-
 }

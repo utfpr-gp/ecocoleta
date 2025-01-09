@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Address } from '../types/address.type';
+import { Address } from '../../core/types/address.type';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
