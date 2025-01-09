@@ -59,7 +59,7 @@ public class MyAccountController {
 
         Address address = new Address(
                 addressDTO.name(), addressDTO.city(), addressDTO.street(),
-                addressDTO.number(), addressDTO.neighborhood(), addressDTO.cep(),
+                addressDTO.number(), addressDTO.neighborhood(), addressDTO.cep(), addressDTO.state(),
                 addressDTO.latitude(), addressDTO.longitude()
         );
         UserAddress userAddress = new UserAddress(user, address);
@@ -91,6 +91,7 @@ public class MyAccountController {
                         userAddress.getAddress().getNumber(),
                         userAddress.getAddress().getNeighborhood(),
                         userAddress.getAddress().getCep(),
+                        userAddress.getAddress().getState(),
                         userAddress.getAddress().getLatitude(),
                         userAddress.getAddress().getLongitude()
                 ))

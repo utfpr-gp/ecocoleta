@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS address
     number       VARCHAR(255),
     neighborhood VARCHAR(255),
     cep          VARCHAR(255),
+    state        VARCHAR(255),
     latitude     DOUBLE PRECISION,
     longitude    DOUBLE PRECISION,
     location     GEOGRAPHY(POINT, 4326), -- Coluna para armazenar a localização

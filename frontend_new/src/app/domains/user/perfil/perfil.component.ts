@@ -157,18 +157,28 @@ export class PerfilComponent implements OnInit {
     }
 
     // Método para remover um endereço
-    removeAddress(addressId: number) {
+    removeAddress(addressId: string) {
         if (this.userId) {
-            this.addressService.deleteAddress(+this.userId, addressId).subscribe(
-                () => {
-                    this.messageService.add({severity: 'success', summary: 'Sucesso', detail: 'Endereço removido com sucesso.'});
+            this.addressService.deleteAddress(this.userId, addressId).subscribe({
+                next: () => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Endereço excluído com sucesso',
+                        life: 3000,
+                    });
                     // Recarregar a lista de endereços após a remoção
                     this.loadUserAddresses();
                 },
-                (error) => {
-                    this.messageService.add({severity: 'error', summary: 'Erro', detail: 'Não foi possível remover o endereço.'});
-                }
-            );
+                error: (error) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Erro ao excluir endereço',
+                        detail: error?.message || 'Não foi possível excluir o endereço.',
+                        life: 3000,
+                    });
+                    console.error('Erro ao excluir endereço:', error); // TODO remover após teste
+                },
+            });
         }
     }
 }

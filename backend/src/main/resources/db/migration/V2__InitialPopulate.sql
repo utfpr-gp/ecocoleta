@@ -17,11 +17,11 @@ INSERT INTO companys (id, cnpj, company_name) VALUES
 -- ST_MakePoint: Cria um ponto a partir das coordenadas de longitude e latitude, onde o primeiro valor é a longitude e o segundo é a latitude.
 -- Valores de latitude e longitude: São inseridos como números reais (sem aspas), pois são coordenadas geográficas.
 -- Inserindo dados na tabela address com o campo location geoespacial
-INSERT INTO address (name, city, street, number, neighborhood, cep, latitude, longitude, location) VALUES
-                                                                                                       ('Casa', 'Guarapuava', 'Rua Emiliano Perneta', 303, 'Alto da XV', 85065070, -25.3813, -51.45775, ST_SetSRID(ST_MakePoint(-51.45775, -25.3813), 4326)),
-                                                                                                       ('Empresa', 'Guarapuava', 'Rua Souza Naves', 77, 'Alto da XV', 85065080, -25.3800, -51.4573, ST_SetSRID(ST_MakePoint(-51.4573, -25.3800), 4326)),
-                                                                                                       ('Casa', 'Guarapuava', 'Rua Guaíra', 1379, 'Centro', 85015280, -25.3808, -51.4558, ST_SetSRID(ST_MakePoint(-51.4558, -25.3808), 4326)),
-                                                                                                       ('Empresa', 'Guarapuava', 'Rua Benjamin Constant', 862, 'Centro', 85010190, -25.3888, -51.4628, ST_SetSRID(ST_MakePoint(-51.4628, -25.3888), 4326));
+INSERT INTO address (name, city, street, number, neighborhood, cep, state, latitude, longitude, location) VALUES
+                                                                                                       ('Casa', 'Guarapuava', 'Rua Emiliano Perneta', 303, 'Alto da XV', 85065070, 'Paraná', -25.3813, -51.45775, ST_SetSRID(ST_MakePoint(-51.45775, -25.3813), 4326)),
+                                                                                                       ('Empresa', 'Guarapuava', 'Rua Souza Naves', 77, 'Alto da XV', 85065080, 'Paraná', -25.3800, -51.4573, ST_SetSRID(ST_MakePoint(-51.4573, -25.3800), 4326)),
+                                                                                                       ('Casa', 'Guarapuava', 'Rua Guaíra', 1379, 'Centro', 85015280,'Paraná', -25.3808, -51.4558, ST_SetSRID(ST_MakePoint(-51.4558, -25.3808), 4326)),
+                                                                                                       ('Empresa', 'Guarapuava', 'Rua Benjamin Constant', 862, 'Centro', 85010190,'Paraná', -25.3888, -51.4628, ST_SetSRID(ST_MakePoint(-51.4628, -25.3888), 4326));
 
 -- Vinculando usuários com os endereços
 INSERT INTO user_addresses (user_id, address_id) VALUES

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DialogModule} from "primeng/dialog";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {PanelModule} from "primeng/panel";
@@ -8,21 +8,29 @@ import {Address} from "../../core/types/address.type";
 import {Router} from "@angular/router";
 import {ViacepApiService} from "../../core/services/viacep-api.service";
 import {MessageService} from "primeng/api";
+import {InputTextModule} from "primeng/inputtext";
+import {ButtonModule} from "primeng/button";
+import {RippleModule} from "primeng/ripple";
+import {AddressService} from "./address.service";
 
 @Component({
-  selector: 'app-address-form-dialog',
-  standalone: true,
+    selector: 'app-address-form-dialog',
+    standalone: true,
     imports: [
         DialogModule,
         ProgressSpinnerModule,
         PanelModule,
         MessageComponent,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        InputTextModule,
+        ButtonModule,
+        RippleModule
     ],
-  templateUrl: './address-form-dialog.component.html',
-  styleUrl: './address-form-dialog.component.scss'
+    templateUrl: './address-form-dialog.component.html',
+    styleUrl: './address-form-dialog.component.scss'
 })
 export class AddressFormDialogComponent implements OnInit {
+    @Input() userId: string | null = null;
     @Input() address_id: string | undefined = undefined;
     @Input() addressFormDialog: boolean = false;
     @Output() outAddressFormDialog = new EventEmitter<boolean>();
@@ -34,12 +42,11 @@ export class AddressFormDialogComponent implements OnInit {
     addressForm!: FormGroup;
     address: Address = {}; // Variável para armazenar a credencial
 
-
-
     constructor(
         private router: Router,
         private formBuilder: FormBuilder,
         private messageService: MessageService,
+        private addressService: AddressService,
         private viacepApiService: ViacepApiService
     ) {
     }
@@ -48,10 +55,25 @@ export class AddressFormDialogComponent implements OnInit {
         this.configAddressForm();
     }
 
-    showDialog(){
-        if(this.address_id){
+    showDialog() {
+        if (this.address_id) {
             this.loading = true;
-            // Chama o serviço para pegar os dados do endereco
+            this.addressService.getAllAddressByUserId(this.address_id).subscribe({
+                next: (address) => {
+                    this.addressForm.patchValue(address);
+                    this.loading = false;
+                },
+                error: (error) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Erro ao carregar o endereço',
+                        detail: error?.message || 'Não foi possível carregar os dados do endereço.',
+                        life: 3000,
+                    });
+                    console.error('Erro ao carregar endereço:', error); // TODO remover após teste
+                    this.loading = false;
+                },
+            });
         }
     }
 
@@ -64,30 +86,29 @@ export class AddressFormDialogComponent implements OnInit {
 
     configAddressForm() {
         this.addressForm = this.formBuilder.group({
-            cep: new FormControl('', [Validators.required, Validators.minLength(8)]),
+            cep: new FormControl('', [Validators.required, Validators.minLength(7)]),
             name: new FormControl('', [
                 Validators.required,
-                Validators.minLength(2),
                 Validators.maxLength(250),
             ]),
             street: new FormControl('', [
                 Validators.required,
-                Validators.minLength(3),
                 Validators.maxLength(250),
             ]),
             number: new FormControl('', [
                 Validators.required,
-                Validators.minLength(1),
                 Validators.maxLength(250),
             ]),
             neighborhood: new FormControl('', [
                 Validators.required,
-                Validators.minLength(3),
                 Validators.maxLength(250),
             ]),
             city: new FormControl('', [
                 Validators.required,
-                Validators.minLength(3),
+                Validators.maxLength(250),
+            ]),
+            state: new FormControl('', [
+                Validators.required,
                 Validators.maxLength(250),
             ]),
         });
@@ -116,6 +137,7 @@ export class AddressFormDialogComponent implements OnInit {
                             street: dados.logradouro,
                             neighborhood: dados.bairro,
                             city: dados.localidade,
+                            state: dados.estado
                         });
                     }
                 },
@@ -131,54 +153,87 @@ export class AddressFormDialogComponent implements OnInit {
             });
         }
     }
+    // TODO implementar - pegar longitute lat do user????
 
-    salvarEndereco() {
+    salveAddress() {
         this.submitted = true;
         if (this.addressForm.valid) {
-            // Lógica para salvar o endereço
-            this.messageService.add({
-                severity: 'success',
-                summary: 'Endereço salvo com sucesso',
-                life: 3000
-            });
-            this.hideDialog();
+            const addressData: Address = this.addressForm.value;
+            if (this.address_id) {
+                // Atualizar endereço existente
+                addressData.id = this.address_id;
+                this.addressService.updateAddress(addressData).subscribe({
+                    next: () => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Endereço atualizado com sucesso',
+                            life: 3000,
+                        });
+                        this.hideDialog();
+                    },
+                    error: (error) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erro ao atualizar endereço',
+                            detail: error?.error?.message || 'Não foi possível atualizar o endereço.',
+                            life: 3000,
+                        });
+                        console.error('Erro ao atualizar endereço:', error); // TODO remover após teste
+                    },
+                });
+            } else {
+                // Criar novo endereço
+                this.addressService.createAddress(this.userId, addressData).subscribe({
+                    next: () => {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Endereço salvo com sucesso',
+                            life: 3000,
+                        });
+                        this.hideDialog();
+                    },
+                    error: (error) => {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erro ao salvar endereço',
+                            detail: error?.error?.message || 'Não foi possível salvar o endereço.',
+                            life: 3000,
+                        });
+                        console.error('Erro ao salvar endereço:', error); // TODO remover após teste
+                    },
+                });
+            }
         } else {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Erro',
                 detail: 'Por favor, preencha os campos obrigatórios',
-                life: 3000
+                life: 3000,
             });
         }
     }
 
-    // // Cria um novo usuário
-    // private createUser(user: User) {
-    //     if (!this.userType) {
-    //         alert('Selecione o tipo de usuário antes de prosseguir.');
-    //         return;
-    //     }
-    //
-    //     // Adiciona o tipo de usuário ao objeto
-    //     user.role = this.userType;
-    //
-    //     this.userService.createAndUpdateUser(user)
-    //         .then(() => {
-    //             this.messageService.add({
-    //                 severity: 'success',
-    //                 summary: 'Usuário criado com sucesso!',
-    //                 life: 3000,
-    //             });
-    //         })
-    //         .catch((err) => {
-    //             this.messageService.add({
-    //                 severity: 'error',
-    //                 summary: 'Erro ao criar usuário',
-    //                 detail: err?.message,
-    //                 life: 3000,
-    //             });
-    //         });
-    //
-    // }
-
+    excluirEndereco() {
+        if (this.address_id) {
+            this.addressService.deleteAddress(this.userId, this.address_id).subscribe({
+                next: () => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Endereço excluído com sucesso',
+                        life: 3000,
+                    });
+                    this.hideDialog();
+                },
+                error: (error) => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Erro ao excluir endereço',
+                        detail: error?.error?.message || 'Não foi possível excluir o endereço.',
+                        life: 3000,
+                    });
+                    console.error('Erro ao excluir endereço:', error); // TODO remover após teste
+                },
+            });
+        }
+    }
 }

@@ -1,125 +1,3 @@
-<!--<p-dialog [(visible)]="addressFormDialog" [modal]="true" [style]="{width: '900px', height: '1000px'}" class="p-fluid"-->
-<!--          [header]="address_id == null ? 'Cadastro de Endereço': 'Atualizar Endereço' +  formulario.get('descricao')?.value"-->
-<!--          (onShow)="showDialog()"-->
-<!--          (onHide)="hideDialog()">-->
-<!--    <div *ngIf="loading" style="display: flex;align-items: center;justify-content: center;flex-direction: column;text-align: center;" class="loading-overlay">-->
-<!--        <p-progressSpinner></p-progressSpinner>-->
-<!--    </div>-->
-
-<!--    &lt;!&ndash; Formulário &ndash;&gt;-->
-<!--    <ng-template pTemplate="content">-->
-<!--        <div *ngIf="!loading">-->
-<!--            <form (ngSubmit)="salvarCredencial()" [formGroup]="formulario" autocomplete="off">-->
-<!--                <div class="grid">-->
-
-<!--                    <p-panel class="col-12" header="Dados da credencial">-->
-<!--                        <div class="field col-10">-->
-<!--                            <label for="login">Login</label><b class="ml-1" style="color: crimson;">*</b>-->
-<!--                            <div class="p-inputgroup">-->
-<!--                                <input formControlName="login" id="login" required maxlength="255" pInputText type="text">-->
-<!--                                <button type="button" pButton icon="pi pi-copy" class="p-button-text" (click)="copiarTexto(formulario.get('login')?.value)"></button>-->
-<!--                            </div>-->
-<!--                            <app-message [control]="formulario.get('login')" error="required" text="É necessário preencher o login."></app-message>-->
-<!--                        </div>-->
-<!--                        <div class="field col-10">-->
-<!--                            <label for="senha">Senha</label><b class="ml-1" style="color: crimson;">*</b>-->
-<!--                            <div class="p-inputgroup" style="width: 100%;">-->
-<!--                                <p-password-->
-<!--                                    formControlName="senha"-->
-<!--                                    id="senha"-->
-<!--                                    required-->
-<!--                                    maxlength="255"-->
-<!--                                    [feedback]="true"-->
-<!--                                    toggleMask="true"-->
-<!--                                    styleClass="w-full">-->
-<!--                                </p-password>-->
-<!--                                <button type="button" pButton icon="pi pi-copy" class="p-button-text" (click)="copiarTexto(formulario.get('senha')?.value)"></button>-->
-<!--                            </div>-->
-<!--                            <app-message [control]="formulario.get('senha')" error="required" text="É necessário preencher a senha"></app-message>-->
-<!--                        </div>-->
-<!--                        <div class="field col-10">-->
-<!--                            <label for="descricao">Descrição</label><b class="ml-1" style="color: crimson;">*</b>-->
-<!--                            <div class="p-inputgroup">-->
-<!--                                <input formControlName="descricao" id="descricao" placeholder="ex: Acesso ao portal..." required maxlength="255" pInputText type="text">-->
-<!--                                <button type="button" pButton icon="pi pi-copy" class="p-button-text" (click)="copiarTexto(formulario.get('descricao')?.value)"></button>-->
-<!--                            </div>-->
-<!--                            <app-message [control]="formulario.get('descricao')" error="required" text="É necessário preencher uma descrição da credencial."></app-message>-->
-<!--                        </div>-->
-<!--                        <div class="field col-10">-->
-<!--                            <label for="nucleo">Núcleo</label><b class="ml-1" style="color: crimson;">*</b>-->
-<!--                            <div class="p-inputgroup">-->
-<!--                                <p-dropdown-->
-<!--                                    formControlName="nucleo"-->
-<!--                                    id="nucleo"-->
-<!--                                    [options]="nucleos"-->
-<!--                                    placeholder="Selecione o núcleo"-->
-<!--                                    [filter]="true"-->
-<!--                                    [showClear]="true"-->
-<!--                                    styleClass="w-full"-->
-<!--                                    [ngClass]="{ 'ng-invalid ng-dirty': formulario.get('nucleo')?.invalid && submitted }">-->
-<!--                                </p-dropdown>-->
-<!--                            </div>-->
-<!--                            <app-message-->
-<!--                                [control]="formulario.get('nucleo')"-->
-<!--                                error="required"-->
-<!--                                text="É necessário preencher o núcleo.">-->
-<!--                            </app-message>-->
-<!--                        </div>-->
-<!--                        <div class="field col-10">-->
-<!--                            <label for="estados">Estados</label><b class="ml-1" style="color: crimson;">*</b>-->
-<!--                            <div class="p-inputgroup">-->
-<!--                                <p-listbox-->
-<!--                                    id="estados"-->
-<!--                                    formControlName="estados"-->
-<!--                                    [options]="estados_list"-->
-<!--                                    optionLabel="name"-->
-<!--                                    optionValue="code"-->
-<!--                                    [style]="{'width':'15rem'}"-->
-<!--                                    [multiple]="true"-->
-<!--                                    [metaKeySelection]="false"-->
-<!--                                    [listStyle]="{'max-height': '220px'}"/>-->
-<!--                            </div>-->
-<!--                            <app-message [control]="formulario.get('estados')" error="required" text="É necessário selecionar para qual estado será utilizado essa credencial."></app-message>-->
-<!--                        </div>-->
-<!--                        <div class="field col-10">-->
-<!--                            <label for="disponivel_api_externa">Disponível em Api Externas</label> &nbsp;-->
-<!--                            <p-checkbox id="disponivel_api_externa" formControlName="disponivel_api_externa" inputId="disponivel_api_externa" [binary]="true"></p-checkbox>-->
-<!--                        </div>-->
-<!--                        <div class="field col-10">-->
-<!--                            <label for="site_link_url">Portal (url)</label>-->
-<!--                            <div class="p-inputgroup">-->
-<!--                                <input formControlName="site_link_url" id="site_link_url" maxlength="255" pInputText type="text">-->
-<!--                                <button type="button" pButton icon="pi pi-copy" class="p-button-text" (click)="copiarTexto(formulario.get('site_link_url')?.value)"></button>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </p-panel>-->
-<!--                </div>-->
-<!--            </form>-->
-<!--        </div>-->
-
-<!--    </ng-template>-->
-<!--    &lt;!&ndash; Footer com botões de edição&ndash;&gt;-->
-<!--    <ng-template pTemplate="footer" class="text-right">-->
-<!--        <button (click)="fecharFormDialog()"-->
-<!--                class="p-button-text"-->
-<!--                icon="pi pi-times"-->
-<!--                label="Cancelar"-->
-<!--                pButton-->
-<!--                pRipple></button>-->
-<!--        &lt;!&ndash; Botões Cadastrar/Alterar &ndash;&gt;-->
-<!--        @if (!isViewMode) {-->
-<!--            @if (podeEditarFlag || isAdmGestorCofre) {-->
-<!--                <button (click)="salvarCredencial()"-->
-<!--                        [disabled]="formulario.invalid || !formulario.dirty"-->
-<!--                        class="p-button-text"-->
-<!--                        icon="pi pi-check"-->
-<!--                        label="{{formulario.get('id')?.value ? 'Alterar' : 'Cadastrar' }}"-->
-<!--                        pButton-->
-<!--                        pRipple></button>-->
-<!--            }-->
-<!--        }-->
-<!--    </ng-template>-->
-<!--</p-dialog>-->
 <p-dialog
     [(visible)]="addressFormDialog"
     [modal]="true"
@@ -127,57 +5,72 @@
     [header]="address_id ? 'Editar Endereço' : 'Cadastrar Endereço'"
     (onShow)="showDialog()"
     (onHide)="hideDialog()">
-<!--TODO refatorar as divs para o padrão da dialog acima-->
-<!--TODO retirar o smalll e colocar o app message-->
+    <!--TODO refatorar as divs para o padrão da dialog acima-->
+    <!--TODO retirar o smalll e colocar o app message-->
 
     <ng-template pTemplate="content">
-        <form [formGroup]="addressForm" autocomplete="off" class="p-fluid">
-            <div class="field">
-                <label for="name">Rua</label>
-                <input id="name" formControlName="name" pInputText />
-                <small *ngIf="addressForm.get('name')?.invalid && submitted" class="p-error">Nome do seu endereço é obrigatório.</small>
+        <form [formGroup]="addressForm" autocomplete="off" class="p-grid p-justify-center">
+            <div class="field col-10 md:col-6">
+                <label for="name">Nome do endereço</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="name" id="name" required maxlength="255" pInputText type="text">
+                </div>
+                <app-message [control]="addressForm.get('name')" error="required" text="É necessário preencher o nome desse endereço."></app-message>
             </div>
 
-            <div class="field">
-                <label for="cep">CEP</label>
-                <input id="cep" formControlName="cep" pInputText (input)="onCepChange($event.target.value)" />
-                <small *ngIf="addressForm.get('cep')?.invalid && submitted" class="p-error">CEP é obrigatório.</small>
+            <div class="field col-10 md:col-6">
+                <label for="cep">Cep</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="cep" id="cep" required maxlength="255" pInputText type="text" (input)="onCepChange($event.target.value)">
+                </div>
+                <app-message [control]="addressForm.get('cep')" error="required" text="CEP é obrigatório."></app-message>
             </div>
 
-            <div class="field">
-                <label for="street">Rua</label>
-                <input id="street" formControlName="street" pInputText />
-                <small *ngIf="addressForm.get('street')?.invalid && submitted" class="p-error">Rua é obrigatória.</small>
+            <div class="field col-10 md:col-6">
+                <label for="street">Rua</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="street" id="street" required maxlength="255" pInputText type="text">
+                </div>
+                <app-message [control]="addressForm.get('street')" error="required" text="Rua é obrigatória."></app-message>
             </div>
 
-            <div class="field">
-                <label for="number">Número</label>
-                <input id="number" formControlName="number" pInputText />
-                <small *ngIf="addressForm.get('number')?.invalid && submitted" class="p-error">Número é obrigatório.</small>
+            <div class="field col-10 md:col-6">
+                <label for="number">Número</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="number" id="number" required maxlength="255" pInputText type="text">
+                </div>
+                <app-message [control]="addressForm.get('number')" error="required" text="Número é obrigatória."></app-message>
             </div>
 
-            <div class="field">
-                <label for="neighborhood">Bairro</label>
-                <input id="neighborhood" formControlName="neighborhood" pInputText />
-                <small *ngIf="addressForm.get('neighborhood')?.invalid && submitted" class="p-error">Bairro é obrigatório.</small>
+            <div class="field col-10 md:col-6">
+                <label for="neighborhood">Bairro</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="neighborhood" id="neighborhood" required maxlength="255" pInputText type="text">
+                </div>
+                <app-message [control]="addressForm.get('neighborhood')" error="required" text="Bairro é obrigatória."></app-message>
             </div>
 
-            <div class="field">
-                <label for="city">Cidade</label>
-                <input id="city" formControlName="city" pInputText />
-                <small *ngIf="addressForm.get('city')?.invalid && submitted" class="p-error">Cidade é obrigatória.</small>
+            <div class="field col-10 md:col-6">
+                <label for="city">Cidade</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="city" id="city" required maxlength="255" pInputText type="text">
+                </div>
+                <app-message [control]="addressForm.get('city')" error="required" text="Cidade é obrigatória."></app-message>
             </div>
 
-            <div class="field">
-                <label for="state">Estado</label>
-                <input id="state" formControlName="state" pInputText />
-                <small *ngIf="addressForm.get('state')?.invalid && submitted" class="p-error">Estado é obrigatório.</small>
+            <div class="field col-10 md:col-6">
+                <label for="state">Estado</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="state" id="state" required maxlength="255" pInputText type="text">
+                </div>
+                <app-message [control]="addressForm.get('state')" error="required" text="Estado é obrigatória."></app-message>
             </div>
+
         </form>
     </ng-template>
 
     <ng-template pTemplate="footer">
-        <button type="button" pButton label="Cancelar" icon="pi pi-times" (click)="hideDialog()"></button>
-        <button type="button" pButton label="Salvar" icon="pi pi-check" (click)="salvarEndereco()" [disabled]="loading"></button>
+        <button type="button" pButton pRipple label="Cancelar" class="p-button-text" icon="pi pi-times" (click)="hideDialog()"></button>
+        <button type="button" pButton pRipple label="{{address_id ? 'Alterar' : 'Cadastrar' }}" class="p-button-text" icon="pi pi-check" (click)="salveAddress()" [disabled]="addressForm.invalid || !addressForm.dirty"></button>
     </ng-template>
 </p-dialog>

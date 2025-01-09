@@ -13,7 +13,9 @@ export class ViacepApiService {
   buscarCep(cep: string): Observable<any> {
     return this.httpClient.get(`${this.API_URL}/${cep}/json`).pipe(
       catchError((err) => {
-        console.error('Erro na requisição da API ViaCEP:', err);
+
+        console.error('Erro na requisição da API ViaCEP:', err); //TODO remover
+
         throw err;
       })
     );

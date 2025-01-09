@@ -13,7 +13,7 @@ export class AddressService {
   constructor(private httpClient: HttpClient) {}
 
   //CREATE METHODS
-  createAddress(userID: number, address: Address): Observable<Address> {
+  createAddress(userID: String, address: Address): Observable<Address> {
     console.log('address service log> createAddress', address); //TODO apagar apos teste
 
     return this.httpClient.post<Address>(
@@ -64,7 +64,7 @@ export class AddressService {
   }
 
   //DELETE METHODS
-  deleteAddress(userId: number, addressId: number): Observable<Address> {
+  deleteAddress(userId: string, addressId: string): Observable<Address> {
     const params = new HttpParams()
       .set('userId', userId)
       .set('addressId', addressId);
