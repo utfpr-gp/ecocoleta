@@ -71,8 +71,49 @@ public class MyAccountController {
         }
     }
 
+    // GET Specific Address
+    @GetMapping("/address/{userId}/{addressId}")
+    @Transactional
+    public ResponseEntity<AddressDTO> getSpecificAddress(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long userId,
+            @PathVariable Long addressId) {
+        // Verifica se o usuário existe
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new ValidException("Usuário não encontrado para o ID: " + userId));
+
+        // Verifica autorização
+        if (!autorizationService.isAuthorized(userId, userDetails)) {
+            throw new ValidException("Acesso negado ao recurso solicitado.");
+        }
+
+        // Busca o endereço
+        Address address = addressService.getAddressById(addressId)
+                .orElseThrow(() -> new ValidException("Endereço não encontrado para o ID: " + addressId));
+
+        // Verifica se o relacionamento entre o usuário e o endereço existe
+        userAddressService.findByUserAndAddress(user, address)
+                .orElseThrow(() -> new ValidException("Relacionamento entre usuário e endereço não encontrado."));
+
+        // Mapeia o endereço para DTO
+        AddressDTO addressDTO = new AddressDTO(
+                address.getId(),
+                address.getName(),
+                address.getCity(),
+                address.getStreet(),
+                address.getNumber(),
+                address.getNeighborhood(),
+                address.getCep(),
+                address.getState(),
+                address.getLatitude(),
+                address.getLongitude()
+        );
+
+        return ResponseEntity.ok(addressDTO);
+    }
+
     // GET Address
-    @GetMapping("/address/{userId}")
+    @GetMapping("/address/address_list/{userId}")
     @Transactional
     public ResponseEntity<List<AddressDTO>> getAddress(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long userId) {
         User user = userService.getUserById(userId)

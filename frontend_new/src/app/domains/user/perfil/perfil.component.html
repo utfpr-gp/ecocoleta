@@ -12,8 +12,8 @@
             </ng-template>
             <ng-template pTemplate="body" let-address let-i="rowIndex">
                 <tr>
-                    <td>{{ address.street }}</td>
-                    <td>{{ address.city }}, {{ address.state }}</td>
+                    <td>{{ address.name }}</td>
+                    <td>{{ address.street }}, {{ address.neighborhood }}, {{ address.number }}, {{ address.city }} - {{ address.state }}</td>
                     <td class="text-right">
                         <button type="button" pButton icon="pi pi-pencil" class="p-button-warning p-button-rounded" (click)="openEditAddressModal(address)"></button>
                         <button type="button" pButton icon="pi pi-trash" class="p-button-danger p-button-rounded" (click)="removeAddress(address.id)"></button>
@@ -34,7 +34,9 @@
     </div>
 </p-panel>
 
-<app-address-form-dialog [userId]="user.id" [address_id]="address_id" [addressFormDialog]="addressFormDialog" (outAddressFormDialog)="hideDialog($event)" ></app-address-form-dialog>
+@if (addressFormDialog){
+    <app-address-form-dialog [userId]="userId" [address_id]="address_id" [addressFormDialog]="addressFormDialog" (outAddressFormDialog)="hideDialog($event)" ></app-address-form-dialog>
+}
 
 
 <!--TODO > tela de perfil usar 2 panels{

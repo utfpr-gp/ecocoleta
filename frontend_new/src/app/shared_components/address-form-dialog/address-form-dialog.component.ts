@@ -53,12 +53,18 @@ export class AddressFormDialogComponent implements OnInit {
 
     ngOnInit(): void {
         this.configAddressForm();
+
+        console.log('form address - userId', this.userId); //TODO apagar apos teste
+        console.log('form address - address_id', this.address_id); //TODO apagar apos teste
     }
 
     showDialog() {
         if (this.address_id) {
+
+            console.log('form address - iniciando a busca endereço - address_id', this.address_id); //TODO apagar apos teste
+
             this.loading = true;
-            this.addressService.getAllAddressByUserId(this.address_id).subscribe({
+            this.addressService.getOneAddressByUserIdAndAddressId(this.userId, this.address_id).subscribe({
                 next: (address) => {
                     this.addressForm.patchValue(address);
                     this.loading = false;
@@ -67,7 +73,7 @@ export class AddressFormDialogComponent implements OnInit {
                     this.messageService.add({
                         severity: 'error',
                         summary: 'Erro ao carregar o endereço',
-                        detail: error?.message || 'Não foi possível carregar os dados do endereço.',
+                        detail: error?.error?.message || 'Não foi possível carregar os dados do endereço.',
                         life: 3000,
                     });
                     console.error('Erro ao carregar endereço:', error); // TODO remover após teste

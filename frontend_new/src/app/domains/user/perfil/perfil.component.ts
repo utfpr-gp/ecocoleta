@@ -146,6 +146,7 @@ export class PerfilComponent implements OnInit {
     // Método para abrir a modal de edição de endereço
     openEditAddressModal(address: Address) {
         this.addressFormDialog = true;
+        this.address_id = address.id;
         // Aqui você pode abrir uma modal de edição de endereço
         // Passe o endereço selecionado para editar
     }
