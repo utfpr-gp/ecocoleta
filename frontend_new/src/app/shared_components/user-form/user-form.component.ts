@@ -62,6 +62,9 @@ export class UserFormComponent implements OnInit {
     ngOnInit() {
         console.log('oninit form-user'); //TODO apagar apos teste
 
+        // Inicializar formulário
+        this.initForm();
+
         // Caso seja modo de edição, carregar os dados do usuário no formulário
         if (this.formData) {
 
@@ -71,8 +74,6 @@ export class UserFormComponent implements OnInit {
             this.formUser.patchValue(this.formData);
         }
 
-        // Inicializar formulário
-        this.initForm();
     }
 
     initForm() {

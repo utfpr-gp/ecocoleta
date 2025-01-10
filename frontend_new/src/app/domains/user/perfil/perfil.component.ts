@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {User, UserRole, UserService} from "../user.service";
 import {UserFormComponent} from "../../../shared_components/user-form/user-form.component";
 import {MessageService} from "primeng/api";
-import { CommonModule } from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {PanelModule} from "primeng/panel";
 import {ScrollPanelModule} from "primeng/scrollpanel";
 import {TableModule} from "primeng/table";
@@ -53,22 +53,36 @@ export class PerfilComponent implements OnInit {
         this.userId = this.paramsRoute.snapshot.paramMap.get('user_id');
 
         if (this.userId) {
-
-            console.log('userId', this.userId); //TODO apagar apos teste
+            console.log('userId', this.userId);
 
             // Chama o serviço para pegar os dados do usuário
-            this.userService.getUserById(this.userId).subscribe((user) => {
-                this.user = user;
-                this.userType = user.role;
+            this.userService.getUserById(this.userId).subscribe(
+                (user) => {
+                    this.user = user;
+                    this.userType = user.role;
 
-                // Se necessário, adicione a lógica para preencher o formulário ou outros dados
-                // this.loadForm();
+                    // Mensagem de sucesso
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Usuário carregado com sucesso!',
+                        detail: 'Os dados do usuário foram carregados corretamente.',
+                        life: 3000,
+                    });
 
-                // TODO - talvez carregar aqui os dados e passar para o form depois de carregalos ???
-
-                // Buscar os endereços do usuário
-                this.loadUserAddresses();
-            });
+                    // Carregar os endereços do usuário
+                    this.loadUserAddresses();
+                },
+                (error) => {
+                    // Mensagem de erro
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Erro ao carregar usuário',
+                        detail: error?.message || 'Não foi possível carregar os dados do usuário.',
+                        life: 3000,
+                    });
+                    console.error('Erro ao carregar dados do usuário:', error);
+                }
+            );
         }
     }
 
