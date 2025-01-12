@@ -20,6 +20,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from "@angular/platform-browser";
 import {JwtModule} from "@auth0/angular-jwt";
 import {MessageService} from "primeng/api";
+import { GoogleMapsModule } from '@angular/google-maps';
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
     return new TranslateHttpLoader(httpClient);
@@ -38,6 +39,7 @@ export function tokenGetter(): string {
         BrowserAnimationsModule,
         HttpClientModule,
         AuthModule,
+        GoogleMapsModule,
         JwtModule.forRoot(
             {
                 config: {

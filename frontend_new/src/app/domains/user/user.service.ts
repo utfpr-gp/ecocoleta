@@ -6,7 +6,6 @@ import {AuthenticateTokenService} from "../auth/authenticate-token.service";
 import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {CloudinaryUploadImgService} from "../../core/services/cloudinary-upload-img.service";
-import {el} from "@fullcalendar/core/internal-common";
 
 export type User = {
     id: string;
