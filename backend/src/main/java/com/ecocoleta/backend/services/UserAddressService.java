@@ -4,15 +4,14 @@ import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.userAddress.UserAddress;
-import com.ecocoleta.backend.domain.userAddress.UserAddressPK;
 import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.repositories.UserAddressRepository;
+import com.google.maps.model.GeocodingResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +25,9 @@ public class UserAddressService {
 
     @Autowired
     private AddressService addressService;
+
+    @Autowired
+    private GeocodingService geocodingService;
 
     public List<AddressDTO> getAddressList(Long userId) {
         User user = userService.getUserById(userId)
@@ -54,6 +56,10 @@ public class UserAddressService {
                 .orElseThrow(() -> new ValidException("Usuário não encontrado para o ID: " + userId));
 
         Address address = convertFromDTO(addressDTO);
+
+        // Busca coordenadas a partir do endereço
+        setCoordinates(address);
+
         UserAddress userAddress = new UserAddress(user, address);
 
         if (isAddressCreationAllowed(user, userAddress)) {
@@ -74,6 +80,10 @@ public class UserAddressService {
                 .orElseThrow(() -> new ValidException("Relacionamento entre usuário e endereço não encontrado."));
 
         updateAddressFromDTO(userAddress.getAddress(), addressDTO);
+
+        // Atualiza coordenadas caso o endereço tenha sido modificado
+        setCoordinates(address);
+
         userAddressRepository.save(userAddress);
     }
 
@@ -109,6 +119,24 @@ public class UserAddressService {
         address.setCep(addressDTO.cep());
         address.setLatitude(addressDTO.latitude());
         address.setLongitude(addressDTO.longitude());
+    }
+
+    private void setCoordinates(Address address) {
+        String fullAddress = String.format("%s, %s, %s, %s, %s",
+                address.getStreet(),
+                address.getNumber(),
+                address.getCity(),
+                address.getState(),
+                address.getCep());
+
+        GeocodingResult[] results = geocodingService.getCoordinates(fullAddress);
+        if (results != null && results.length > 0) {
+            address.setLatitude(results[0].geometry.location.lat);
+            address.setLongitude(results[0].geometry.location.lng);
+            address.setLocationFromCoordinates(); // Atualiza o Point na entidade
+        } else {
+            throw new ValidException("Não foi possível obter coordenadas para o endereço fornecido.");
+        }
     }
 
     private Address convertFromDTO(AddressDTO dto) {
