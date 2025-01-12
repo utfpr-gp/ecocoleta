@@ -8,7 +8,7 @@ import {environment} from '../../../environments/environment';
     providedIn: 'root',
 })
 export class AddressService {
-    apiUrlMyAcountAddress: string = `${environment.API}/myaccount/address`;
+    private apiUrlMyAcountAddress: string = `${environment.API}/myaccount`;
 
     constructor(private httpClient: HttpClient) {
     }
@@ -20,7 +20,7 @@ export class AddressService {
         console.log('address service log> createAddress', address); //TODO apagar apos teste
 
         return this.httpClient.post<Address>(
-            `${this.apiUrlMyAcountAddress}/${userID}`,
+            `${this.apiUrlMyAcountAddress}/${userID}/addresses`,
             address
         );
         // .pipe
@@ -38,7 +38,7 @@ export class AddressService {
         console.log('address service log> getAddressById', userID); //TODO apagar apos teste
 
         return this.httpClient.get<Address[]>(
-            `${this.apiUrlMyAcountAddress}/address_list/${userID}`
+            `${this.apiUrlMyAcountAddress}/${userID}/addresses`
         );
         // .pipe(
         //   tap((address: Address[]) => {
@@ -59,7 +59,7 @@ export class AddressService {
         ); // TODO apagar após teste
 
         return this.httpClient.get<Address>(
-            `${this.apiUrlMyAcountAddress}/${userId}/${addressId}`
+            `${this.apiUrlMyAcountAddress}/${userId}/addresses/${addressId}`
         )
             .pipe(
                 tap((address: Address) => {
@@ -72,11 +72,11 @@ export class AddressService {
     }
 
     //UPDATE METHODS
-    updateAddress(address: Address): Observable<Address> {
+    updateAddress(userId: string, address: Address): Observable<Address> {
         console.log('address service log> updateAddress', address); //TODO apagar apos teste
 
         return this.httpClient
-            .put<Address>(`${this.apiUrlMyAcountAddress}/${address.id}`, address)
+            .put<Address>(`${this.apiUrlMyAcountAddress}/${userId}/addresses`, address)
             .pipe(
                 tap((address: Address) => {
                     console.log(
@@ -88,27 +88,15 @@ export class AddressService {
     }
 
     //DELETE METHODS
-    deleteAddress(userId: string, addressId: string): Observable<Address> {
-        const params = new HttpParams()
-            .set('userId', userId)
-            .set('addressId', addressId);
+    deleteAddress(userId: string, addressId: string): Observable<void> {
+        console.log('address service log> deleteAddress', userId, 'addressID', addressId); // TODO apagar após teste
 
-        console.log(
-            'address service log> deleteAddress',
-            userId,
-            'addressID',
-            addressId
-        ); //TODO apagar apos teste
-
-        return this.httpClient
-            .delete<Address>(`${this.apiUrlMyAcountAddress}/`, {params})
+        return this.httpClient.delete<void>(`${this.apiUrlMyAcountAddress}/${userId}/addresses/${addressId}`)
             .pipe(
-                tap((address: Address) => {
-                    console.log(
-                        'address service log retorno tap> deleteAddress',
-                        address
-                    ); //TODO apagar apos teste
+                tap(() => {
+                    console.log(`Address with ID ${addressId} for user ${userId} deleted successfully`); // TODO apagar após teste
                 })
             );
     }
+
 }

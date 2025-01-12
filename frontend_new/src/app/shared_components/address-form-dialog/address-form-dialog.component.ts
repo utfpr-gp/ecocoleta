@@ -168,7 +168,7 @@ export class AddressFormDialogComponent implements OnInit {
             if (this.address_id) {
                 // Atualizar endereço existente
                 addressData.id = this.address_id;
-                this.addressService.updateAddress(addressData).subscribe({
+                this.addressService.updateAddress(this.userId, addressData).subscribe({
                     next: () => {
                         this.messageService.add({
                             severity: 'success',

@@ -36,13 +36,7 @@ public class MyAccountController {
      * */
 
     @Autowired
-    UserService userService;
-
-    @Autowired
     AutorizationService autorizationService;
-
-    @Autowired
-    AddressService addressService;
 
     @Autowired
     UserAddressService userAddressService;
@@ -50,7 +44,38 @@ public class MyAccountController {
     //TODO  metodo myacont/id para pegar dados do usuario
 
     //Metodos de Address>>>>>
-    // CREATE Address
+    @GetMapping("/{userId}/addresses")
+    public ResponseEntity<List<AddressDTO>> getAddresses(@PathVariable Long userId) {
+        return ResponseEntity.ok(userAddressService.getAddressList(userId));
+    }
+
+    @GetMapping("/{userId}/addresses/{addressId}")
+    public ResponseEntity<AddressDTO> getSpecificAddress(
+            @PathVariable Long userId,
+            @PathVariable Long addressId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        autorizationService.isAuthorized(userId, userDetails);
+        return ResponseEntity.ok(userAddressService.getSpecificAddress(userId, addressId));
+    }
+
+    @PostMapping("/{userId}/addresses")
+    public ResponseEntity<Void> createAddress(@PathVariable Long userId, @RequestBody @Valid AddressDTO addressDTO) {
+        userAddressService.createAddress(userId, addressDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{userId}/addresses")
+    public ResponseEntity<Void> updateAddress(@PathVariable Long userId, @RequestBody @Valid AddressDTO addressDTO) {
+        userAddressService.updateAddress(userId, addressDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{userId}/addresses/{addressId}")
+    public ResponseEntity<Void> deleteAddress(@PathVariable Long userId, @PathVariable Long addressId) {
+        userAddressService.deleteAddress(userId, addressId);
+        return ResponseEntity.ok().build();
+    }
+    /*// CREATE Address
     @PostMapping("/address/{userId}")
     @Transactional
     public ResponseEntity<Void> createAddress(@PathVariable Long userId, @RequestBody @Valid AddressDTO addressDTO) {
@@ -175,5 +200,5 @@ public class MyAccountController {
 
         userAddressService.deleteAddress(userAddress.getId());
         return ResponseEntity.ok().build();
-    }
+    }*/
 }
