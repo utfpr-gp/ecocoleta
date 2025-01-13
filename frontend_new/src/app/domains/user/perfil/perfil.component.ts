@@ -3,7 +3,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {User, UserRole, UserService} from "../user.service";
 import {UserFormComponent} from "../../../shared_components/user-form/user-form.component";
 import {MessageService} from "primeng/api";
-import {CommonModule} from '@angular/common';
 import {PanelModule} from "primeng/panel";
 import {ScrollPanelModule} from "primeng/scrollpanel";
 import {TableModule} from "primeng/table";

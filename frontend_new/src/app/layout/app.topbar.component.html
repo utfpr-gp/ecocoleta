@@ -17,25 +17,25 @@
     <div #topbarmenu class="layout-topbar-menu"
          [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
         <button class="p-link layout-topbar-button">
-            <span>Olá, {{user.name}}</span>
+            <span>Olá, {{user?.name}}</span>
         </button>
         <button class="p-link layout-topbar-button" [routerLink]="'/home'">
             <i class="pi pi-map"></i>
             <span>Home</span>
         </button>
-        <button class="p-link layout-topbar-button" [routerLink]="'/home/coletas'">
+        <button class="p-link layout-topbar-button" [routerLink]="'/coletas'">
             <i class="pi pi-table"></i>
             <span>Coletas</span>
         </button>
-        <button class="p-link layout-topbar-button" [routerLink]="'/home/coletas-historico'">
+        <button class="p-link layout-topbar-button" [routerLink]="'/coletas-historico'">
             <i class="pi pi-history"></i>
             <span>Histórico de coletas</span>
         </button>
-        <button class="p-link layout-topbar-button" [routerLink]="['/home/user/perfil', user.id]">
+        <button class="p-link layout-topbar-button" [routerLink]="['/user/perfil', user?.id]">
             <i class="pi pi-user"></i>
             <span>Perfil</span>
         </button>
-        <button class="p-link layout-topbar-button" [routerLink]="'/home/user/notificacoes'">
+        <button class="p-link layout-topbar-button" [routerLink]="'/user/notificacoes'">
             <i class="pi pi-bell"></i>
             <span>Notificações</span>
         </button>

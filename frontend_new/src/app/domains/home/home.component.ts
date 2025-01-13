@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {CardModule} from "primeng/card";
-import {MapComponent} from "../../../shared_components/map/map.component";
+import {MapComponent} from "../../shared_components/map/map.component";
 
 @Component({
   selector: 'app-resident',
@@ -9,9 +9,9 @@ import {MapComponent} from "../../../shared_components/map/map.component";
         CardModule,
         MapComponent
     ],
-  templateUrl: './resident.component.html',
-  styleUrl: './resident.component.scss'
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss'
 })
-export class ResidentComponent {
+export class HomeComponent {
 
 }

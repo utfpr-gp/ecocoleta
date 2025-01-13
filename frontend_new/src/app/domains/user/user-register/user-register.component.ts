@@ -1,10 +1,33 @@
 import {Component, Output} from '@angular/core';
 import {User, UserRole, UserService} from "../user.service";
 import {MessageService} from "primeng/api";
+import {ToastModule} from "primeng/toast";
+import {UserFormComponent} from "../../../shared_components/user-form/user-form.component";
+import {DialogModule} from "primeng/dialog";
+import { CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
+import {DropdownModule} from "primeng/dropdown";
+import {InputTextModule} from "primeng/inputtext";
+import {InputTextareaModule} from "primeng/inputtextarea";
+import {PanelModule} from "primeng/panel";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @Component({
     selector: 'app-access',
     templateUrl: './user-register.component.html',
+    standalone: true,
+    imports: [
+        ToastModule,
+        UserFormComponent,
+        DialogModule,
+        CommonModule,
+        ButtonModule,
+        DropdownModule,
+        InputTextModule,
+        InputTextareaModule,
+        PanelModule,
+        ReactiveFormsModule,
+    ]
 })
 export class UserRegisterComponent {
 
@@ -22,16 +45,12 @@ export class UserRegisterComponent {
         console.log("tipo de user :: " + type) //todo remover
     }
 
-    // TODO implementar update de usuário
     handleFormSubmission(event: { user: User, action: 'create' | 'update' }) {
         const {user, action} = event;
 
         if (action === 'create') {
             this.createUser(user);
         }
-        // else if (action === 'update') {
-        //     this.updateUser(user);
-        // }
     }
 
     // Cria um novo usuário

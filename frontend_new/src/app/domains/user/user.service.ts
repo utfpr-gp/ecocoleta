@@ -132,6 +132,9 @@ export class UserService {
                 // Criando um novo usuário
                 console.log('Criando novo usuário ::', user); // TODO: Remover após teste
 
+                // Limpa o token do usuário antes de criar um novo
+                this.authService.limparToken();
+
                 if (user.role === 'WASTE_COLLECTOR' && user.picture) {
                     const file: File = user.picture as File;
 
