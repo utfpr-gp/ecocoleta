@@ -1,13 +1,11 @@
 import {RouterModule} from '@angular/router';
 import {NgModule} from '@angular/core';
 import {AuthGuard} from './core/guards/auth.guard';
-import {NotfoundComponent} from './shared_components/notfound/notfound.component';
+import {NotfoundComponent} from './shared-components/notfound/notfound.component';
 import {AppLayoutComponent} from "./layout/app.layout.component";
 import {PerfilComponent} from "./domains/user/perfil/perfil.component";
 import {HomeComponent} from "./domains/home/home.component";
 import {NotificacoesComponent} from "./domains/user/notificacoes/notificacoes.component";
-import {ColetasComponent} from "./domains/coletas/coletas.component";
-import {ColetasHistoricoComponent} from "./domains/coletas-historico/coletas-historico.component";
 import {UserRegisterComponent} from "./domains/user/user-register/user-register.component";
 
 @NgModule({
@@ -34,13 +32,8 @@ import {UserRegisterComponent} from "./domains/user/user-register/user-register.
                     },
                     {
                         path: 'coletas',
-                        component: ColetasComponent,
                         canActivate: [AuthGuard],
-                    },
-                    {
-                        path: 'coletas-historico',
-                        component: ColetasHistoricoComponent,
-                        canActivate: [AuthGuard],
+                        loadChildren: () => import('./domains/collect/collect-routing.module').then(m => m.CollectRoutingModule),
                     },
                     {
                         path: 'user',

@@ -1,17 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {User, UserRole, UserService} from "../user.service";
-import {UserFormComponent} from "../../../shared_components/user-form/user-form.component";
+import {UserFormComponent} from "../../../shared-components/user-form/user-form.component";
 import {MessageService} from "primeng/api";
 import {PanelModule} from "primeng/panel";
 import {ScrollPanelModule} from "primeng/scrollpanel";
 import {TableModule} from "primeng/table";
-import {AddressService} from "../../../shared_components/address-form-dialog/address.service";
+import {AddressService} from "../../../shared-components/address-form-dialog/address.service";
 import {Address} from "../../../core/types/address.type";
 import {DialogModule} from "primeng/dialog";
 import {ButtonModule} from "primeng/button";
 import {ToastModule} from "primeng/toast";
-import {AddressFormDialogComponent} from "../../../shared_components/address-form-dialog/address-form-dialog.component";
+import {AddressFormDialogComponent} from "../../../shared-components/address-form-dialog/address-form-dialog.component";
 
 
 @Component({

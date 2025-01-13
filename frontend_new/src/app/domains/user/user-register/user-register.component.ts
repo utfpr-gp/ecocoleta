@@ -2,7 +2,7 @@ import {Component, Output} from '@angular/core';
 import {User, UserRole, UserService} from "../user.service";
 import {MessageService} from "primeng/api";
 import {ToastModule} from "primeng/toast";
-import {UserFormComponent} from "../../../shared_components/user-form/user-form.component";
+import {UserFormComponent} from "../../../shared-components/user-form/user-form.component";
 import {DialogModule} from "primeng/dialog";
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';

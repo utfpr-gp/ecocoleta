@@ -2,10 +2,10 @@ import {Component, OnInit, Type} from '@angular/core';
 import {CardModule} from "primeng/card";
 import {User, UserRole, UserService} from "../user/user.service";
 import {ButtonModule} from "primeng/button";
-import {HomeResidentComponent} from "../../shared_components/home-resident/home-resident.component";
-import {HomeWasteCollectorComponent} from "../../shared_components/home-waste-collector/home-waste-collector.component";
-import {HomeAdminComponent} from "../../shared_components/home-admin/home-admin.component";
-import {HomeCompanyComponent} from "../../shared_components/home-company/home-company.component";
+import {HomeResidentComponent} from "../../shared-components/home-resident/home-resident.component";
+import {HomeWasteCollectorComponent} from "../../shared-components/home-waste-collector/home-waste-collector.component";
+import {HomeAdminComponent} from "../../shared-components/home-admin/home-admin.component";
+import {HomeCompanyComponent} from "../../shared-components/home-company/home-company.component";
 import {CommonModule} from "@angular/common";
 
 @Component({

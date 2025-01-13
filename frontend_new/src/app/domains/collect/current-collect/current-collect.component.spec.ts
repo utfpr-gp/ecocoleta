@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ColetasComponent } from './coletas.component';
+import { CurrentCollectComponent } from './current-collect.component';
 
-describe('ColetasComponent', () => {
-  let component: ColetasComponent;
-  let fixture: ComponentFixture<ColetasComponent>;
+describe('CurrentCollectComponent', () => {
+  let component: CurrentCollectComponent;
+  let fixture: ComponentFixture<CurrentCollectComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ColetasComponent]
+      imports: [CurrentCollectComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(ColetasComponent);
+    fixture = TestBed.createComponent(CurrentCollectComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

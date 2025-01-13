@@ -84,6 +84,8 @@ public class CollectService {
 
         collectRepository.save(collect);
 
+//        TODO recebe uma lista de enum de materiais
+
 //        TODO mudar para embbeded o materials em vez de relação nxn, assim fica uma lista dentro de collect e não precisa de relação direta com materials
 //        /*criação de relação entre coleta e materiais*/
 //        if (!collectDTO.materials().isEmpty()) {
