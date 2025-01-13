@@ -1,17 +1,44 @@
-import { Component } from '@angular/core';
+import {Component, OnInit, Type} from '@angular/core';
 import {CardModule} from "primeng/card";
-import {MapComponent} from "../../shared_components/map/map.component";
+import {User, UserRole, UserService} from "../user/user.service";
+import {ButtonModule} from "primeng/button";
+import {HomeResidentComponent} from "../../shared_components/home-resident/home-resident.component";
+import {HomeWasteCollectorComponent} from "../../shared_components/home-waste-collector/home-waste-collector.component";
+import {HomeAdminComponent} from "../../shared_components/home-admin/home-admin.component";
+import {HomeCompanyComponent} from "../../shared_components/home-company/home-company.component";
+import {CommonModule} from "@angular/common";
 
 @Component({
-  selector: 'app-resident',
-  standalone: true,
+    selector: 'app-home',
+    standalone: true,
     imports: [
         CardModule,
-        MapComponent
+        ButtonModule,
+        CommonModule,
     ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+    user: User | null = null;
+    userRole: UserRole | null = null;
+    componentToLoad: Type<any> | null = null;
 
+    private componentMap: { [key in UserRole]: Type<any> } = {
+        [UserRole.RESIDENT]: HomeResidentComponent,
+        [UserRole.WASTE_COLLECTOR]: HomeWasteCollectorComponent,
+        [UserRole.ADMIN]: HomeAdminComponent,
+        [UserRole.COMPANY]: HomeCompanyComponent,
+    };
+
+    constructor(private userService: UserService) {
+    }
+
+    ngOnInit(): void {
+        this.userService.user$.subscribe((user) => {
+            this.user = user;
+            this.userRole = user?.role as UserRole;
+            this.componentToLoad = this.componentMap[this.userRole] || null;
+        });
+    }
 }

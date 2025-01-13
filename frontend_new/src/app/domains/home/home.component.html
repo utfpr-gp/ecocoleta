@@ -1,11 +1,3 @@
-<div class="card flex justify-content-center">
-<!--    <p-card header="Simple Card">-->
-<!--        <p class="m-0">-->
-<!--            BOTÃOZÃO DE ADD COLETA-->
-<!--        </p>-->
-<!--    </p-card>-->
-</div>
-
-<p>MAPA?? OU CAROUSEL DE DICAS??? resident works!</p>
-
-<app-map></app-map>
+<ng-container *ngIf="componentToLoad">
+    <ng-container *ngComponentOutlet="componentToLoad"></ng-container>
+</ng-container>
