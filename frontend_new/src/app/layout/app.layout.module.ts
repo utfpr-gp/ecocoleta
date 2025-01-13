@@ -18,6 +18,7 @@ import { AppConfigModule } from './config/config.module';
 import { AppSidebarComponent } from "./app.sidebar.component";
 import { AppLayoutComponent } from "./app.layout.component";
 import {ToastModule} from "primeng/toast";
+import {TooltipModule} from "primeng/tooltip";
 
 @NgModule({
     declarations: [
@@ -41,7 +42,8 @@ import {ToastModule} from "primeng/toast";
         RippleModule,
         RouterModule,
         AppConfigModule,
-        ToastModule
+        ToastModule,
+        TooltipModule
     ],
     exports: [AppLayoutComponent]
 })

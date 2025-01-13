@@ -1,45 +1,52 @@
 <div class="layout-topbar">
-    <a class="layout-topbar-logo" routerLink="">
+    <a class="layout-topbar-logo" [routerLink]="'/home'">
         <!--TODO inserir mini logo ?-->
         <!--        <img src="assets/layout/images/{{layoutService.config().colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="logo">-->
         <span>EcoColeta</span>
     </a>
 
-    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
-        <i class="pi pi-bars"></i>
-    </button>
+    <!--Chamado do menu desativado ate uso futuro-->
+    <!--    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">-->
+    <!--        <i class="pi pi-bars"></i>-->
+    <!--    </button>-->
 
     <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button"
-            (click)="layoutService.showProfileSidebar()">
+            (click)="layoutService.showProfileSidebar()" pTooltip="Abrir menu do usuário">
         <i class="pi pi-ellipsis-v"></i>
     </button>
 
     <div #topbarmenu class="layout-topbar-menu"
          [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-        <button class="p-link layout-topbar-button">
-            <span>Olá, {{user?.name}}</span>
+        <button class="p-link layout-topbar-button" pTooltip="Bem-vindo!" tooltipPosition="bottom">
+            <span>Olá, {{ user?.name }}</span>
         </button>
-        <button class="p-link layout-topbar-button" [routerLink]="'/home'">
+        <button class="p-link layout-topbar-button" [routerLink]="'/home'" pTooltip="Ir para Home"
+                tooltipPosition="bottom">
             <i class="pi pi-map"></i>
             <span>Home</span>
         </button>
-        <button class="p-link layout-topbar-button" [routerLink]="'/coletas'">
+        <button class="p-link layout-topbar-button" [routerLink]="'/coletas'" pTooltip="Ver coletas"
+                tooltipPosition="bottom">
             <i class="pi pi-table"></i>
             <span>Coletas</span>
         </button>
-        <button class="p-link layout-topbar-button" [routerLink]="'/coletas-historico'">
+        <button class="p-link layout-topbar-button" [routerLink]="'/coletas-historico'"
+                pTooltip="Ver histórico de coletas" tooltipPosition="bottom">
             <i class="pi pi-history"></i>
             <span>Histórico de coletas</span>
         </button>
-        <button class="p-link layout-topbar-button" [routerLink]="['/user/perfil', user?.id]">
+        <button class="p-link layout-topbar-button" [routerLink]="['/user/perfil', user?.id]" pTooltip="Ver perfil"
+                tooltipPosition="bottom">
             <i class="pi pi-user"></i>
             <span>Perfil</span>
         </button>
-        <button class="p-link layout-topbar-button" [routerLink]="'/user/notificacoes'">
+        <button class="p-link layout-topbar-button" [routerLink]="'/user/notificacoes'" pTooltip="Ver notificações"
+                tooltipPosition="bottom">
             <i class="pi pi-bell"></i>
             <span>Notificações</span>
         </button>
-        <button class="p-link layout-topbar-button" (click)="logout()">
+        <button class="p-link layout-topbar-button" (click)="logout()" pTooltip="Sair do sistema"
+                tooltipPosition="bottom">
             <i class="pi pi-sign-out"></i>
             <span>Sair</span>
         </button>
