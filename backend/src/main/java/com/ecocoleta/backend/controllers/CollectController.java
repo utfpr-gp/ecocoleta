@@ -94,6 +94,8 @@ public class CollectController {
         return ResponseEntity.ok().body(dto);
     }
 
+//    TODO rota de upodate de coleta??? ou é melhor fazer um cancelamento e criar uma nova coleta?
+
     /**
      * Endpoint para listar coletas por status e ID de usuário.
      * Recebe o ID do usuário e o status da coleta.

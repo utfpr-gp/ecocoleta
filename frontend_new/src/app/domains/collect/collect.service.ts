@@ -6,46 +6,82 @@ import {AuthenticateTokenService} from "../auth/authenticate-token.service";
 import {Router} from "@angular/router";
 import {MessageService} from "primeng/api";
 import {CloudinaryUploadImgService} from "../../core/services/cloudinary-upload-img.service";
+import {User} from "../user/user.service";
 
 export type Collect = {
     id: string;
-    name?: string;
-    email: string;
-    password?: string;
-    phone?: number;
-    cpf?: number;
-    cnpj?: number;
+    isIntern?: string;
+    schedule?: string;
     picture?: string | File;
-    token?: string;
-    createdAt?: string;
-    updatedAt?: string;
+    amount?: number;
+    status?: CollectStatus;
+    initTime?: string;
+    endTime?: string;
+    createTime?: string;
+    updateTime?: string;
+    id_address?: number;
+    id_resident?: number;
+    id_waste_collector?: number;
+    materials?: MateriaisReciclaveis[]; // Lista de materiais recicláveis
 };
 
 export enum MateriaisReciclaveis {
-    VIDRO = 'Vidro',
-    PLASTICO = 'Plástico',
-    PAPEL = 'Papel',
-    METAL = 'Metal',
-    ELETRONICO = 'Eletrônico',
-    OUTROS = 'Outros'
+    VIDRO = 'VIDRO',
+    PLASTICO = 'PLÁSTICO',
+    PAPEL = 'PAPEL',
+    METAL = 'METAL',
+    ELETRONICO = 'ELERÔNICO',
+    OUTROS = 'OUTROS',
 }
 
+export enum CollectStatus {
+    PENDING = 'PENDING',
+    PAUSED = 'PAUSED',
+    IN_PROGRESS = 'IN_PROGRESS',
+    COMPLETED = 'COMPLETED',
+    CANCELLED = 'CANCELLED'
+}
 
 @Injectable({
     providedIn: 'root',
 })
-export class UserService {
-    // apiUrlUser: string = `${environment.API}/user`;
-    // private userSubject = new BehaviorSubject<User | null>(null);
-    // user$ = this.userSubject.asObservable(); // Observable para componentes assinarem
+export class CollectService {
+    apiUrl: string = `${environment.API}/collect`;
 
     constructor(
         private http: HttpClient,
-        private router: Router,
-        private authService: AuthenticateTokenService,
-        private cloudinaryUploadImgService: CloudinaryUploadImgService,
         private messageService: MessageService
     ) {
+    }
+
+
+    /**
+     * Cria uma nova coleta.
+     * @param collect Dados da coleta a ser criada.
+     * @returns Observable com os dados da coleta criada.
+     */
+    createCollect(collect: Collect): Observable<Collect> {
+        return this.http.post<Collect>(`${this.apiUrl}/create_new_collect`, collect);
+    }
+
+    /**
+     * Atualiza uma coleta existente.
+     * @param collect Dados da coleta a ser atualizada.
+     * @returns Observable com os dados da coleta atualizada.
+     */
+    updateCollect(collect: Collect): Observable<Collect> {
+        if (!collect.id) {
+            throw new Error('O ID da coleta é obrigatório para atualizações.');
+        }
+        return this.http.put<Collect>(`${this.apiUrl}/${collect.id}`, collect);
+    }
+
+    /**
+     * Retorna todos os materiais recicláveis disponíveis (baseado no enum).
+     * @returns Lista de materiais recicláveis.
+     */
+    getMaterials(): MateriaisReciclaveis[] {
+        return Object.values(MateriaisReciclaveis);
     }
 
 

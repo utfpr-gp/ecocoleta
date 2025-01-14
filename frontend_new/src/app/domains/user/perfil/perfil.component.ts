@@ -164,7 +164,7 @@ export class PerfilComponent implements OnInit {
         // Passe o endereço selecionado para editar
     }
 
-    hideDialog(bool: boolean) {
+    hideAddressDialog(bool: boolean) {
         // this.addressForm.reset();
         this.address_id = undefined;
         this.addressFormDialog = bool;

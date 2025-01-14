@@ -1,14 +1,15 @@
 package com.ecocoleta.backend.domain.collect.dto;
 
+import com.ecocoleta.backend.domain.collect.CollectMaterials;
 import com.ecocoleta.backend.domain.collect.CollectStatus;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 public record CollectDTO(
         long id,
-        @NotNull
         @JsonAlias({"intern", "interno", "is_intern"})
         boolean isIntern,
         @Future
@@ -29,8 +30,10 @@ public record CollectDTO(
         @JsonAlias({"id_resident"})
         Long resident,
         @JsonAlias({"id_waste_collector"})
-        Long wasteCollector
-//        List<MaterialIdDTO> materials // Lista de materiais
+        Long wasteCollector,
+        @NotNull
+//        @Size(min = 1, message = "A coleta deve conter pelo menos um material")
+        List<CollectMaterials> materials // Lista de materiais baseada no enum
 ) {
 }
 

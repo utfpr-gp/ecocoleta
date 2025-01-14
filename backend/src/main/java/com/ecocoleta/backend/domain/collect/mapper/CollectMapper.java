@@ -1,7 +1,10 @@
 package com.ecocoleta.backend.domain.collect.mapper;
 
+import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.collect.Collect;
 import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
+import com.ecocoleta.backend.domain.resident.Resident;
+import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.repositories.AddressRepository;
 import com.ecocoleta.backend.repositories.ResidentRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,17 +40,26 @@ public class CollectMapper {
                 collect.getUpdateTime(),
                 collect.getAddress().getId(),
                 collect.getResident().getId(),
-                collect.getWasteCollector() != null ? collect.getWasteCollector().getId() : null
-        );
+                collect.getWasteCollector() != null ? collect.getWasteCollector().getId() : null,
+                collect.getMaterials()
+                );
     }
 
     public Collect toEntity(CollectDTO dto) {
+        Address address = addressRepository.findById(dto.address())
+                .orElseThrow(() -> new ValidException("Endereço não encontrado: " + dto.address()));
+
+        Resident resident = residentRepository.findById(dto.resident())
+                .orElseThrow(() -> new ValidException("Residente não encontrado: " + dto.resident()));
+
         return new Collect(
                 dto.isIntern(),
                 dto.picture(),
                 dto.amount(),
-                addressRepository.findById(dto.address()).get(),
-                residentRepository.findById(dto.resident()).get()
+                address,
+                resident,
+                dto.materials() // Lista de materiais
         );
     }
+
 }

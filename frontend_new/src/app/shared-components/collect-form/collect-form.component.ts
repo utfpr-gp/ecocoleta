@@ -18,6 +18,7 @@ import {ListboxModule} from "primeng/listbox";
 import {Address} from "../../core/types/address.type";
 import {Collect, MateriaisReciclaveis} from "../../domains/collect/collect.service";
 import {AddressService} from "../address-form-dialog/address.service";
+import {AddressFormDialogComponent} from "../address-form-dialog/address-form-dialog.component";
 
 @Component({
   selector: 'app-collect-form',
@@ -36,7 +37,8 @@ import {AddressService} from "../address-form-dialog/address.service";
         RippleModule,
         TooltipModule,
         ListboxModule,
-        NgClass
+        NgClass,
+        AddressFormDialogComponent
     ],
   templateUrl: './collect-form.component.html',
   styleUrl: './collect-form.component.scss'
@@ -47,11 +49,13 @@ export class CollectFormComponent implements OnInit {
     @Input() formData: Collect | null = null;
     @Input() formModeUpdate: boolean = false; //se editar ou cadastrar
     @Input() userRole: string = null;
-    @Output() formSubmitted = new EventEmitter<{ user: User, action: 'create' | 'update' }>();
+    @Output() formSubmitted = new EventEmitter<{ collect: Collect, action: 'create' | 'update' }>();
 
     materials: { name: string, code: string }[] = [];
 
+    //Atributos para endereços e modal
     addresses: Address[] = [];  // Lista de endereços do usuário
+    addressFormDialog: boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -64,7 +68,7 @@ export class CollectFormComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log('oninit form-user'); //TODO apagar apos teste
+        console.log('oninit form-collect'); //TODO apagar apos teste
 
         // Inicializar formulário
         this.initForm();
@@ -95,12 +99,12 @@ export class CollectFormComponent implements OnInit {
 
     onSubmit() {
         if (this.formCollect.valid) {
-            const user = this.formCollect.value as User;
+            const collect = this.formCollect.value as Collect;
 
             if (this.formModeUpdate) {
-                this.formSubmitted.emit({user, action: 'update'});
+                this.formSubmitted.emit({collect, action: 'update'});
             } else {
-                this.formSubmitted.emit({user, action: 'create'});
+                this.formSubmitted.emit({collect, action: 'create'});
             }
         }
     }
@@ -137,15 +141,15 @@ export class CollectFormComponent implements OnInit {
             );
         }
 
-    adicionarEndereco(): void {
-        // Exemplo: Abre um modal ou redireciona para uma página de criação de endereço.
-        console.log('Abrir modal ou navegação para adicionar endereço.');
+    // Abrir a modal de adicionar endereço
+    openAddAddressModal() {
+        this.addressFormDialog = true;
     }
 
-
-    onCancel(): void {
-        // Lógica para voltar ou cancelar ação
-        console.log('Cancel action');
-        this.router.navigate(['/landing']);
+    // Fecha modal de endereço
+    hideAddressDialog(bool: boolean) {
+        // this.addressForm.reset();
+        this.addressFormDialog = bool;
+        this.loadUserAddresses();
     }
 }

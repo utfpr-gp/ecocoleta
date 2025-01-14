@@ -89,6 +89,7 @@ CREATE TABLE IF NOT EXISTS collects
     picture             VARCHAR(255),
     amount              INTEGER,
     status              VARCHAR(255)                 NOT NULL,
+    materials           VARCHAR(255),
     init_time           TIMESTAMP,
     end_time            TIMESTAMP,
     create_time         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

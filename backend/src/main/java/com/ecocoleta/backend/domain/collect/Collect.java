@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Table(name = "collects")
 @Entity(name = "Collect")
@@ -44,15 +45,31 @@ public class Collect {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "waste_collector_id")
     private WasteCollector wasteCollector;
+    // Lista de materiais baseada no enum
+    @Column(name = "materials")
+    @Convert(converter = CollectMaterialsConverter.class) // Usando o conversor
+    private List<CollectMaterials> materials;
 
-//    TODO fazer atributo 'lista de materias', assim não tendo relação direta nxn para entidade materials, salva uma lista de ids de materiais e ai retronar e salvar fica mais facil ?
+//TODO modificar logica do agendamento ...
+//    ADD campo de ativa boolean para ativar ou desativar o coleta
+//    add dados fake na coluna materials...
 
-    public Collect(boolean isIntern, String picture, Integer amount, Address address, Resident resident) {
+    public Collect(boolean isIntern, String picture, Integer amount, Address address, Resident resident, List<CollectMaterials> materials) {
         this.isIntern = isIntern;
         this.picture = picture;
         this.amount = amount;
         this.address = address;
         this.resident = resident;
+        this.materials = materials;
+    }
+
+    public Collect(Integer amount, Address address, Resident resident, List<CollectMaterials> materials) {
+//        this.isIntern = isIntern;
+//        this.picture = picture;
+        this.amount = amount;
+        this.address = address;
+        this.resident = resident;
+        this.materials = materials;
     }
 
     @PrePersist
@@ -61,11 +78,10 @@ public class Collect {
         this.createTime = LocalDateTime.now();
     }
 
-//    /TODO atualizar o tempo de update
-    /*@PostPersist
+    @PostUpdate
     public void postPersist() {
         this.updateTime = LocalDateTime.now();
-    }*/
+    }
 
     @Override
     public String toString() {
@@ -80,9 +96,10 @@ public class Collect {
                 ", endTime=" + endTime +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
-                ", address=" + address +
-                ", resident=" + resident +
-                ", wasteCollector=" + wasteCollector +
+                ", address=" + (address != null ? address.getId() : "null") +
+                ", resident=" + (resident != null ? resident.getId() : "null") +
+                ", wasteCollector=" + (wasteCollector != null ? wasteCollector.getId() : "null") +
+                ", materials=" + materials +
                 '}';
     }
 }

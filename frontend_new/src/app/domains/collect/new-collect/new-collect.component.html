@@ -1,5 +1,5 @@
 <p>new-collect works!</p>
-<app-collect-form [formModeUpdate]="false"></app-collect-form>
+<app-collect-form [formModeUpdate]="false" [user]="user" (formSubmitted)="handleFormSubmission($event)"></app-collect-form>
 <!--<app-collect-form ></app-collect-form>-->
 <!--TODO continuar tela form collect-->
 

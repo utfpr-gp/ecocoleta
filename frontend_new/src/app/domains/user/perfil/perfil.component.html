@@ -37,7 +37,7 @@
 </p-panel>
 
 @if (addressFormDialog){
-    <app-address-form-dialog [userId]="userId" [address_id]="address_id" [addressFormDialog]="addressFormDialog" (outAddressFormDialog)="hideDialog($event)" ></app-address-form-dialog>
+    <app-address-form-dialog [userId]="userId" [address_id]="address_id" [addressFormDialog]="addressFormDialog" (outAddressFormDialog)="hideAddressDialog($event)" ></app-address-form-dialog>
 }
 
 

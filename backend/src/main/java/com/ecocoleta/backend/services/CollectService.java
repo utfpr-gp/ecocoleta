@@ -1,12 +1,14 @@
 package com.ecocoleta.backend.services;
 
 import com.ecocoleta.backend.Utils.DataUtils;
+import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.collect.dto.CollectSearchAvaibleListDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.domain.collect.mapper.CollectMapper;
 import com.ecocoleta.backend.domain.collectMaterial.CollectMaterial;
 import com.ecocoleta.backend.domain.material.Material;
 import com.ecocoleta.backend.domain.material.MaterialIdDTO;
+import com.ecocoleta.backend.domain.resident.Resident;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.infra.exception.ValidException;
@@ -77,29 +79,26 @@ public class CollectService {
      */
     public CollectDTO createCollect(CollectDTO collectDTO) {
 
-        if (!addressRepository.existsById(collectDTO.address()) && !residentRepository.existsById(collectDTO.resident())) {
-            throw new ValidException("Id Address ou Resident informado não existe");
+        // Validação do endereço
+        Address address = addressRepository.findById(collectDTO.address())
+                .orElseThrow(() -> new ValidException("Endereço informado não existe: " + collectDTO.address()));
+
+        // Validação do residente
+        Resident resident = residentRepository.findById(collectDTO.resident())
+                .orElseThrow(() -> new ValidException("Residente informado não existe: " + collectDTO.resident()));
+
+        // Validação dos materiais
+        if (collectDTO.materials() == null || collectDTO.materials().isEmpty()) {
+            throw new ValidException("A lista de materiais não pode estar vazia.");
         }
+
+        // Mapeamento de DTO para entidade
         Collect collect = collectMapper.toEntity(collectDTO);
 
+        // Salvar no banco
         collectRepository.save(collect);
 
-//        TODO recebe uma lista de enum de materiais
-
-//        TODO mudar para embbeded o materials em vez de relação nxn, assim fica uma lista dentro de collect e não precisa de relação direta com materials
-//        /*criação de relação entre coleta e materiais*/
-//        if (!collectDTO.materials().isEmpty()) {
-//            for (MaterialIdDTO materialId : collectDTO.materials()) {
-//                Material material = materialService.getMaterialById(materialId.id()).orElseThrow(() -> new ValidException("Material not found"));
-//                CollectMaterial collectMaterial = new CollectMaterial(collect, material);
-//                collectMaterialRepository.save(collectMaterial);
-//            }
-//        }
-
-
-//        return new CollectNewResponseDTO(collect);
-
-        //TODO collectMapper de retorno para DTO
+        // Retornar DTO
         return collectMapper.toDto(collect);
     }
 

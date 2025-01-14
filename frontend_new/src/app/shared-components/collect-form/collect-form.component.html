@@ -57,18 +57,18 @@
                         id="address"
                         formControlName="address"
                         [options]="addresses"
+                        [optionValue]="'id'"
                         [placeholder]="'Escolha um endereço'"
-                        [optionLabel]="'nome'"
-                        [filter]="true"
+                        [optionLabel]="'name'"
                         [showClear]="true"
                         emptyFilterMessage="Endereço não encontrado"
                         emptyMessage="Nenhum endereço encontrado"
                         styleClass="w-full"
                         [ngClass]="{ 'ng-invalid ng-dirty': formCollect.get('address')?.invalid }">
-                        <ng-template let-endereco pTemplate="item">
+                        <ng-template let-address pTemplate="item">
                             <div class="p-d-flex p-flex-column">
-                                <strong>{{ endereco.nome }}</strong>
-                                <small>{{ endereco.descricao }}</small>
+                                <strong>{{ address.name }}</strong> <br>
+                                <small>{{ address.street +', '+ address.number +', '+ address.neighborhood +', '+ address.city +', '+ address.state }}</small>
                             </div>
                         </ng-template>
                     </p-dropdown>
@@ -86,34 +86,38 @@
                         icon="pi pi-plus"
                         label="Endereço"
                         class="p-button-success p-button-rounded"
-                        (click)="adicionarEndereco()">
+                        (click)="openAddAddressModal()">
                     </button>
                 </div>
             </div>
 
         </div>
-        <!--        <div class="w-full flex flex-column md:flex-row align-items-center justify-content-center gap-2 mt-4">-->
-        <!--            <div *ngIf="!formModeUpdate" class="col-12 md:col-3">-->
-        <!--                <button-->
-        <!--                    pButton-->
-        <!--                    pRipple-->
-        <!--                    label="Voltar"-->
-        <!--                    (click)="onCancel()"-->
-        <!--                    class="w-full p-3 text-xl p-button-rounded p-button-outlined"-->
-        <!--                    type="button">-->
-        <!--                </button>-->
-        <!--            </div>-->
-        <!--            <div class="col-12 md:col-3">-->
-        <!--                <button-->
-        <!--                    pButton-->
-        <!--                    pRipple-->
-        <!--                    label="{{formModeUpdate ? 'Atualizar' : 'Salvar' }}"-->
-        <!--                    type="submit"-->
-        <!--                    class="w-full p-3 text-xl p-button-rounded"-->
-        <!--                    [disabled]="formCollect.invalid">-->
-        <!--                </button>-->
-        <!--            </div>-->
-        <!--        </div>-->
+                <div class="w-full flex flex-column md:flex-row align-items-center justify-content-center gap-2 mt-4">
+<!--                    <div *ngIf="!formModeUpdate" class="col-12 md:col-3">-->
+<!--                        <button-->
+<!--                            pButton-->
+<!--                            pRipple-->
+<!--                            label="Voltar"-->
+<!--                            (click)="onCancel()"-->
+<!--                            class="w-full p-3 text-xl p-button-rounded p-button-outlined"-->
+<!--                            type="button">-->
+<!--                        </button>-->
+<!--                    </div>-->
+                    <div class="col-12 md:col-3">
+                        <button
+                            pButton
+                            pRipple
+                            label="{{formModeUpdate ? 'Atualizar' : 'Criar' }}"
+                            type="submit"
+                            class="w-full p-3 text-xl p-button-rounded"
+                            [disabled]="formCollect.invalid">
+                        </button>
+                    </div>
+                </div>
     </form>
 </p-panel>
+
+@if (addressFormDialog){
+    <app-address-form-dialog [userId]="user?.id" [addressFormDialog]="addressFormDialog" (outAddressFormDialog)="hideAddressDialog($event)" ></app-address-form-dialog>
+}
 
