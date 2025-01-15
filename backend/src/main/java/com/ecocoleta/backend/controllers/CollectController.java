@@ -94,7 +94,34 @@ public class CollectController {
         return ResponseEntity.ok().body(dto);
     }
 
-//    TODO rota de upodate de coleta??? ou é melhor fazer um cancelamento e criar uma nova coleta?
+    //    TODO rota de upodate de coleta??? ou é melhor fazer um cancelamento e criar uma nova coleta?
+
+    @GetMapping("/active_collects")
+    public ResponseEntity<List<CollectDTO>> getActiveCollects(@RequestParam @Valid Long userId,
+                                                              @PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
+        List<CollectStatus> statuses = List.of(
+                CollectStatus.PENDING, CollectStatus.PAUSED, CollectStatus.IN_PROGRESS, CollectStatus.COMPLETED
+        );
+
+        List<CollectDTO> collects = collectService.getCollectsByStatusesAndEvaluation(userId, statuses, false, pageable);
+
+        return ResponseEntity.ok().body(collects);
+    }
+
+    @GetMapping("/history_collects")
+    public ResponseEntity<List<CollectDTO>> getHistoryCollects(@RequestParam @Valid Long userId,
+                                                               @RequestParam(required = false) CollectStatus collectStatus,
+                                                               @PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
+        // Se nenhum status for informado, buscar "COMPLETED" e "CANCELLED"
+        List<CollectStatus> statuses = (collectStatus != null) ?
+                List.of(collectStatus) : List.of(CollectStatus.COMPLETED, CollectStatus.CANCELLED);
+
+        List<CollectDTO> collects = collectService.getCollectsByStatusesAndEvaluation(userId, statuses, null, pageable);
+
+        return ResponseEntity.ok().body(collects);
+    }
+
+
 
     /**
      * Endpoint para listar coletas por status e ID de usuário.
@@ -127,7 +154,7 @@ public class CollectController {
     }
 
     /**
-     * Endpoint para buscar as coletas disponíveis.
+     * Endpoint para buscar as coletas disponíveis aos waste_collectors.
      * Recebe um CollectSearchAvaibleListDTO com os parâmetros de busca.
      * Retorna uma lista de CollectAddressAvaibleDTO com as coletas disponíveis.
      */

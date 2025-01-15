@@ -88,6 +88,8 @@ CREATE TABLE IF NOT EXISTS collects
     schedule            TIMESTAMP,
     picture             VARCHAR(255),
     amount              INTEGER,
+    is_evaluated        BOOLEAN DEFAULT false,
+    rating              INTEGER,
     status              VARCHAR(255)                 NOT NULL,
     materials           VARCHAR(255),
     init_time           TIMESTAMP,

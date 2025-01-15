@@ -53,6 +53,14 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
     @Query("SELECT c FROM Collect c WHERE (c.status = 'PENDING' or c.status = 'IN_PROGRESS') AND c.initTime < :sixHoursAgo")
     List<Collect> findOutdatedCollects(@Param("sixHoursAgo") LocalDateTime sixHoursAgo);
 
+    // Pega coletas por status e avaliação
+    @Query("SELECT c FROM Collect c WHERE c.resident.id = :userId AND c.status IN :statuses " +
+            "AND (:isEvaluated IS NULL OR c.isEvaluated = :isEvaluated)")
+    List<Collect> findByStatusesAndEvaluation(@Param("userId") Long userId,
+                                              @Param("statuses") List<CollectStatus> statuses,
+                                              @Param("isEvaluated") Boolean isEvaluated,
+                                              Pageable pageable);
+
     //Cancela todas as coletas em andamento para um catador
     @Query("SELECT c FROM Collect c WHERE c.wasteCollector.id = :wasteCollectorId AND c.status = :status")
     List<Collect> findAllOngoingCollectsByWasteCollectorId(@Param("wasteCollectorId") Long wasteCollectorId,

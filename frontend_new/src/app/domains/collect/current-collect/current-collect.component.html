@@ -1,4 +1,124 @@
-<p>current-collect works!
-    TELA DAS COLETAS ATUAIS, LISTA AS COLETAS...
-</p>
-<!--TODO TELA DAS COLETAS ATUAIS, LISTA AS COLETAS...-->
+<!--<p-panel class="col-12" header="Coletas Atuais">-->
+<!--    <p-table-->
+<!--        [value]="collects"-->
+<!--        [lazy]="true"-->
+<!--        [rows]="10"-->
+<!--        [paginator]="true"-->
+<!--        [totalRecords]="totalRecords"-->
+<!--        [loading]="loading"-->
+<!--        (onLazyLoad)="loadCollects($event.first / $event.rows, $event.rows)"-->
+<!--    >-->
+<!--        <ng-template pTemplate="header">-->
+<!--            <tr>-->
+<!--                <th>ID</th>-->
+<!--                <th>Descrição</th>-->
+<!--                <th>Pausar Coleta</th>-->
+<!--                <th>Ações</th>-->
+<!--            </tr>-->
+<!--        </ng-template>-->
+
+<!--        <ng-template pTemplate="body" let-collect>-->
+<!--            <tr>-->
+<!--                <td>{{ collect.id }}</td>-->
+<!--                <td>{{ collect.description }}</td>-->
+<!--                <td>-->
+<!--                    <button-->
+<!--                        pButton-->
+<!--                        type="button"-->
+<!--                        icon="pi pi-refresh"-->
+<!--                        label="Pausar"-->
+<!--                        class="p-button-text"-->
+<!--                        (click)="pauseCollect(collect)"-->
+<!--                    ></button>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <button-->
+<!--                        pButton-->
+<!--                        type="button"-->
+<!--                        icon="pi pi-eye"-->
+<!--                        label="Avaliar"-->
+<!--                        class="p-button-info p-button-rounded"-->
+<!--                        (click)="evaluateCollect(collect)"-->
+<!--                    ></button>-->
+<!--                    <button-->
+<!--                        pButton-->
+<!--                        type="button"-->
+<!--                        icon="pi pi-trash"-->
+<!--                        label="Deletar"-->
+<!--                        class="p-button-danger p-button-rounded"-->
+<!--                        (click)="deleteCollect(collect)"-->
+<!--                    ></button>-->
+<!--                </td>-->
+<!--            </tr>-->
+<!--        </ng-template>-->
+
+<!--        <ng-template pTemplate="emptymessage">-->
+<!--            <tr>-->
+<!--                <td colspan="4" class="text-center">Nenhuma coleta encontrada.</td>-->
+<!--            </tr>-->
+<!--        </ng-template>-->
+<!--    </p-table>-->
+<!--</p-panel>-->
+<p-panel class="col-12" header="Coletas Ativas e Avaliação">
+    <p-table
+        [value]="collects"
+        [paginator]="true"
+        [rows]="10"
+        [loading]="loading"
+        [totalRecords]="totalRecords"
+        (onLazyLoad)="loadCollects($event.first / $event.rows, $event.rows)"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ID</th>
+                <th>Status</th>
+                <th>Descrição</th>
+                <th>Ações</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-collect>
+            <tr>
+                <td>{{ collect.id }}</td>
+                <td>{{ collect.status }}</td>
+<!--                <td>{{ collect.description }}</td>-->
+                <td></td>
+                <td>
+                    <button *ngIf="collect.status === 'PENDING' || collect.status === 'PAUSED'"
+                            pButton label="Continuar" ></button>
+                    <button *ngIf="collect.status === 'IN_PROGRESS'"
+                            pButton label="Pausar" (click)="pauseCollect(collect)"></button>
+                    <button *ngIf="collect.status === 'COMPLETED' && !collect.isEvaluated"
+                            pButton label="Avaliar" (click)="evaluateCollect(collect)"></button>
+                    <button pButton label="Cancelar" (click)="deleteCollect(collect)"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+
+
+
+
+
+
+
+
+<!--TODO TELA DAS COLETAS ATUAIS, LISTA AS COLETAS-->
+<!-- lista em tabela as coletas, com coluna id, descrição = (data dd/mm/aaaa e hora), pausar coleta = (botão swap), ação (avaliar, deletar)-->
+<!-- listagem usando o pageble do spring e listando as ativadas-->
+<!-- fazer pagina das atuais onde tras todas exeto cancelado e concluida ? modificar o ucriar metodo no back para trazer isso -->
+<!-- pagina historico pode trazer todos os status e com filtragem por status e listagem ? necessario implantar no back isso-->
+<!-- Fluxo Geral
+Tela 1: Coletas Ativas
+
+Lista coletas com status PENDING, PAUSED, IN_PROGRESS e COMPLETED (não avaliadas).
+Ações disponíveis: Continuar, Pausar, Avaliar, Cancelar.
+Tela 2: Histórico
+
+Lista coletas com status COMPLETED (avaliadas) e CANCELLED.
+Permite filtrar por status e período.
+Campos Adicionados:
+
+isEvaluated: Identifica se a coleta foi avaliada.
+rating: Armazena a pontuação (1-5 estrelas).-->

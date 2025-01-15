@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {CollectFormComponent} from "../../../shared-components/collect-form/collect-form.component";
-import {UserFormComponent} from "../../../shared-components/user-form/user-form.component";
 import {User, UserService} from "../../user/user.service";
 import {Collect, CollectService} from "../collect.service";
 import {MessageService} from "primeng/api";
@@ -11,7 +10,6 @@ import {Router} from "@angular/router";
     standalone: true,
     imports: [
         CollectFormComponent,
-        UserFormComponent
     ],
     templateUrl: './new-collect.component.html',
     styleUrl: './new-collect.component.scss'

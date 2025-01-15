@@ -27,6 +27,9 @@ public class Collect {
     private LocalDateTime schedule;
     private String picture;
     private Integer amount;
+    @Column(name = "is_evaluated", nullable = false)
+    private boolean isEvaluated = false; // Inicia como não avaliado
+    private Integer rating; // Avaliação opcional (1-5 estrelas)
     @Enumerated(EnumType.STRING)
     private CollectStatus status;
     @Column(name = "init_time")
@@ -52,7 +55,7 @@ public class Collect {
     private List<CollectMaterials> materials;
 
 //TODO modificar logica do agendamento ...
-//    ADD campo de ativa boolean para ativar ou desativar o coleta
+//    ADD campo de ativa boolean para ativar ou desativar o coleta - usa status para isso
 //    add dados fake na coluna materials...
 
     public Collect(boolean isIntern, String picture, Integer amount, Address address, Resident resident, List<CollectMaterials> materials) {

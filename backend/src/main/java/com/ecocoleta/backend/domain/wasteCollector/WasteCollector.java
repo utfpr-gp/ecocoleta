@@ -28,6 +28,13 @@ public class WasteCollector extends User {
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
+//TODO add  atributos para sincronizar icones no mapa do catadores atuais:
+// localização_updated - date?
+// localização atual - geo-point?
+// fazer sincronismo no front som stTimeOut de 5 min manda localização?
+// trazer dados para front  onde o localização_updated < que 30 min
+
+
     public WasteCollector(String name, String email, String password, String phone, UserRole role, String cpf, String picture) {
         super(name, email, password, phone, role);
         this.cpf = cpf;

@@ -213,6 +213,14 @@ public class CollectService {
         return true;
     }
 
+    public List<CollectDTO> getCollectsByStatusesAndEvaluation(Long userId, List<CollectStatus> statuses, Boolean isEvaluated, Pageable pageable) {
+        // Consulta condicional (se isEvaluated não for nulo, adiciona ao filtro)
+        List<Collect> collects = collectRepository.findByStatusesAndEvaluation(userId, statuses, isEvaluated, pageable);
+
+        return collects.stream().map(collectMapper::toDto).toList();
+    }
+
+
     /**
      * Obtém uma lista de coletas por status e ID de usuário.
      *

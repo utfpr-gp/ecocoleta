@@ -1,4 +1,4 @@
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, tap} from 'rxjs';
 import {environment} from '../../../environments/environment';
@@ -74,6 +74,34 @@ export class CollectService {
             throw new Error('O ID da coleta é obrigatório para atualizações.');
         }
         return this.http.put<Collect>(`${this.apiUrl}/${collect.id}`, collect);
+    }
+
+    /**
+     * Obtém coletas por status e usuário.
+     * @param userId ID do usuário.
+     * @param collectStatus Status das coletas.
+     * @param page Página atual (para paginação).
+     * @param size Tamanho da página.
+     * @returns Observable com a lista de coletas.
+     */
+    getCollectsByStatus(
+        userId: number,
+        collectStatus: CollectStatus,
+        page: number = 0,
+        size: number = 10
+    ): Observable<Collect[]> {
+        const params = new HttpParams()
+            .set('userId', userId)
+            .set('collectStatus', collectStatus)
+            .set('page', page)
+            .set('size', size);
+
+        return this.http.get<Collect[]>(`${this.apiUrl}/get_collects`, { params });
+    }
+
+    getActiveCollects(userId: string, page: number = 0, size: number = 10): Observable<Collect[]> {
+        const params = new HttpParams().set('userId', userId).set('page', page).set('size', size);
+        return this.http.get<Collect[]>(`${this.apiUrl}/active_collects`, { params });
     }
 
     /**

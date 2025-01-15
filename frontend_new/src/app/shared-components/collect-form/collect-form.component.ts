@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {User, UserService} from "../../domains/user/user.service";
+import {User} from "../../domains/user/user.service";
 import {AvatarModule} from "primeng/avatar";
 import {ButtonModule} from "primeng/button";
 import {FileUploadModule} from "primeng/fileupload";
@@ -59,7 +59,6 @@ export class CollectFormComponent implements OnInit {
 
     constructor(
         private formBuilder: FormBuilder,
-        private userService: UserService,
         private route: ActivatedRoute,
         private router: Router,
         private addressService: AddressService,
