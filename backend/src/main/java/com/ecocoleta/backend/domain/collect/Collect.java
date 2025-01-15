@@ -21,6 +21,7 @@ public class Collect {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Use GenerationType.IDENTITY para suportar autoincremento
     private Long id;
+//    TODO talvez remover o picture, isIntern e schedule
     @Column(name = "is_intern")
     private boolean isIntern;
     private LocalDateTime schedule;

@@ -7,6 +7,7 @@ import jakarta.persistence.Tuple;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -28,6 +29,10 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
     List<Collect> findCollectsByStatusAndWasteCollectorId(CollectStatus status, Long wasteCollectorId, Pageable pageable);
 
     List<Collect> findCollectsByStatusAndResidentId(CollectStatus status, Long residentId, Pageable pageable);
+
+    @Modifying
+    @Query("UPDATE Collect c SET c.address = NULL WHERE c.address.id = :addressId")
+    void updateAddressToNull(@Param("addressId") Long addressId);
 
     // Buscar coletas disponiveis onde calcula a distancia entre o coletor e a coleta em um raio de 5000 metros limitando a 10 coletas e ordenando pela localizacao, usando tupla para retornar os dados nomeados
     @Query(value = "select c.id as id, c.is_intern as isIntern, c.schedule as schedule, c.picture as picture, c.amount as amount, " +

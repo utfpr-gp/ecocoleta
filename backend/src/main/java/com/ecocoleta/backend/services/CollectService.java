@@ -5,9 +5,9 @@ import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.collect.dto.CollectSearchAvaibleListDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.domain.collect.mapper.CollectMapper;
-import com.ecocoleta.backend.domain.collectMaterial.CollectMaterial;
-import com.ecocoleta.backend.domain.material.Material;
-import com.ecocoleta.backend.domain.material.MaterialIdDTO;
+//import com.ecocoleta.backend.domain.collectMaterial.CollectMaterial;
+//import com.ecocoleta.backend.domain.material.Material;
+//import com.ecocoleta.backend.domain.material.MaterialIdDTO;
 import com.ecocoleta.backend.domain.resident.Resident;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
@@ -15,9 +15,7 @@ import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.domain.collect.Collect;
 import com.ecocoleta.backend.domain.collect.CollectStatus;
 import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
-import com.ecocoleta.backend.domain.collect.dto.CollectNewResponseDTO;
 import com.ecocoleta.backend.repositories.AddressRepository;
-import com.ecocoleta.backend.repositories.CollectMaterialRepository;
 import com.ecocoleta.backend.repositories.CollectRepository;
 import com.ecocoleta.backend.repositories.ResidentRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -49,8 +47,8 @@ public class CollectService {
     @Autowired
     private ResidentRepository residentRepository;
 
-    @Autowired
-    private CollectMaterialRepository collectMaterialRepository;
+//    @Autowired
+//    private CollectMaterialRepository collectMaterialRepository;
 
     @Autowired
     private AddressService addressService;
@@ -61,8 +59,6 @@ public class CollectService {
     @Autowired
     private WasteCollectorService wasteCollectorService;
 
-    @Autowired
-    private MaterialService materialService;
 
     @Autowired
     private UserService userService;

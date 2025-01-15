@@ -6,6 +6,7 @@ import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.userAddress.UserAddress;
 import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.infra.exception.ValidException;
+import com.ecocoleta.backend.repositories.CollectRepository;
 import com.ecocoleta.backend.repositories.UserAddressRepository;
 import com.google.maps.model.GeocodingResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class UserAddressService {
 
     @Autowired
     private GeocodingService geocodingService;
+
+    @Autowired
+    private CollectRepository collectRepository;
 
     public List<AddressDTO> getAddressList(Long userId) {
         User user = userService.getUserById(userId)
@@ -93,6 +97,9 @@ public class UserAddressService {
 
         Address address = addressService.getAddressById(addressId)
                 .orElseThrow(() -> new ValidException("Endereço não encontrado para o ID: " + addressId));
+
+        // Atualiza as coletas relacionadas para `address_id = NULL`
+        // collectRepository.updateAddressToNull(addressId);
 
         UserAddress userAddress = userAddressRepository.findByUserAndAddress(user, address)
                 .orElseThrow(() -> new ValidException("Relacionamento entre usuário e endereço não encontrado."));

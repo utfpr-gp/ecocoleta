@@ -4,6 +4,7 @@ import {UserFormComponent} from "../../../shared-components/user-form/user-form.
 import {User, UserService} from "../../user/user.service";
 import {Collect, CollectService} from "../collect.service";
 import {MessageService} from "primeng/api";
+import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-new-collect',
@@ -19,6 +20,7 @@ export class NewCollectComponent implements OnInit {
     user: User | null = null;
 
     constructor(private userService: UserService,
+                private router: Router,
                 private collectService: CollectService,
                 private messageService: MessageService
     ) {
@@ -62,7 +64,8 @@ export class NewCollectComponent implements OnInit {
                     life: 3000
                 });
 
-                // Aqui você pode redirecionar ou atualizar a lista de coletas
+                this.router.navigate(['/home']);
+            //     todo routr para coleta lista
             },
             error: (error) => {
                 console.error('Erro ao criar coleta:', error); //todo apagar apos teste

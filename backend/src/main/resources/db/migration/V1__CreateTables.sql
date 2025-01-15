@@ -94,13 +94,13 @@ CREATE TABLE IF NOT EXISTS collects
     end_time            TIMESTAMP,
     create_time         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time         TIMESTAMP,
-    address_id          BIGSERIAL                    NOT NULL,
-    resident_id        BIGSERIAL                     NOT NULL,
+    address_id          BIGSERIAL,
+    resident_id        BIGSERIAL,
     waste_collector_id BIGSERIAL,
     CONSTRAINT fk_collects_address1
         FOREIGN KEY (address_id)
             REFERENCES address (id)
-            ON DELETE NO ACTION
+            ON DELETE SET NULL
             ON UPDATE NO ACTION,
     CONSTRAINT fk_collects_resident1
         FOREIGN KEY (resident_id)
@@ -202,3 +202,5 @@ CREATE TABLE IF NOT EXISTS products_has_exchanges
 -- Alter to acept null
 ALTER TABLE collects
     ALTER COLUMN waste_collector_id DROP NOT NULL;
+ALTER TABLE collects
+    ALTER COLUMN address_id DROP NOT NULL;
