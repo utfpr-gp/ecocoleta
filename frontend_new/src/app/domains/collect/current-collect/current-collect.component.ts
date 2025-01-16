@@ -1,16 +1,24 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit,} from '@angular/core';
 import {Collect, CollectService, CollectStatus} from "../collect.service";
 import {MessageService} from "primeng/api";
 import {PanelModule} from "primeng/panel";
 import {TableModule} from "primeng/table";
 import {User, UserService} from "../../user/user.service";
+import {CommonModule} from "@angular/common";
+import {ButtonModule} from 'primeng/button';
+import {TooltipModule} from "primeng/tooltip";
+import {StatusTranslatePipe} from 'src/app/core/services/status-translate.pipe';
 
 @Component({
     selector: 'app-current-collect',
     standalone: true,
     imports: [
         PanelModule,
-        TableModule
+        TableModule,
+        ButtonModule,
+        CommonModule,
+        TooltipModule,
+        StatusTranslatePipe
     ],
     templateUrl: './current-collect.component.html',
     styleUrl: './current-collect.component.scss'
@@ -43,38 +51,42 @@ export class CurrentCollectComponent implements OnInit {
 
     /**
      * Carrega as coletas de acordo com a página e tamanho.
-     * @param page Número da página.
-     * @param size Tamanho da página.
+     * @param offset Número da página.
+     * @param rows Tamanho da página.
      */
-    loadCollects(page: number, size: number): void {
+    loadCollects(offset: number, rows: number) {
+        const page = offset / rows; // Calcula a página com base no offset
         this.loading = true;
 
-        console.log('Carregando coletas... USERID: ' + this.user.id + ' PAGE:' + page + ' SIZE:' + size); // TODO REMOVER
+        this.collectService.getActiveCollects(this.user.id, page, rows).subscribe({
+            next: (response: any) => {
+                console.log('Coletas carregadas:', response); // TODO REMOVER
+                this.collects = response.content; // Registros da página atual
+                this.totalRecords = response.totalElements; // Total de registros no banco
+                this.loading = false;
+            },
+            error: (err) => {
+                console.error('Erro ao carregar coletas:', err);
+                this.loading = false;
 
-        this.collectService
-            // .getCollectsByStatus(this.userId, this.collectStatus, page, size)
-            .getActiveCollects(this.user.id, page, size)
-            .subscribe({
-                next: (response) => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: 'Não foi possível carregar as coletas.',
+                });
+            },
+        });
+    }
 
-                    console.log('Coletas carregadas:', response); // TODO REMOVER
+    continueCollect(collect: Collect): void {
+        // Simulação de lógica para continuar a coleta
+        console.log('Continuar coleta:', collect);
+        this.messageService.add({
+            severity: 'info',
+            summary: 'Continuar Coleta',
+            detail: `Coleta #${collect.id} está sendo continuada.`,
+        });
 
-                    this.collects = response; // Dados da API
-                    this.totalRecords = response.length; // Ajuste se o backend retornar o total
-                    this.loading = false;
-                },
-                error: (err) => {
-                    console.error('Erro ao carregar coletas:', err);
-                    this.loading = false;
-
-                    // Exibe mensagem de erro
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Erro',
-                        detail: 'Não foi possível carregar as coletas.',
-                    });
-                },
-            });
     }
 
     /**
@@ -118,4 +130,5 @@ export class CurrentCollectComponent implements OnInit {
         });
     }
 
+    protected readonly CollectStatus = CollectStatus;
 }

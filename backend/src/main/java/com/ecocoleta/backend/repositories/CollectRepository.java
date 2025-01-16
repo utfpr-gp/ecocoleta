@@ -56,7 +56,7 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
     // Pega coletas por status e avaliação
     @Query("SELECT c FROM Collect c WHERE c.resident.id = :userId AND c.status IN :statuses " +
             "AND (:isEvaluated IS NULL OR c.isEvaluated = :isEvaluated)")
-    List<Collect> findByStatusesAndEvaluation(@Param("userId") Long userId,
+    Page<Collect> findByStatusesAndEvaluation(@Param("userId") Long userId,
                                               @Param("statuses") List<CollectStatus> statuses,
                                               @Param("isEvaluated") Boolean isEvaluated,
                                               Pageable pageable);

@@ -23,6 +23,7 @@ import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -213,13 +214,13 @@ public class CollectService {
         return true;
     }
 
-    public List<CollectDTO> getCollectsByStatusesAndEvaluation(Long userId, List<CollectStatus> statuses, Boolean isEvaluated, Pageable pageable) {
-        // Consulta condicional (se isEvaluated não for nulo, adiciona ao filtro)
-        List<Collect> collects = collectRepository.findByStatusesAndEvaluation(userId, statuses, isEvaluated, pageable);
+    public Page<CollectDTO> getCollectsByStatusesAndEvaluation(Long userId, List<CollectStatus> statuses, Boolean isEvaluated, Pageable pageable) {
+        // Consulta com paginação
+        Page<Collect> collects = collectRepository.findByStatusesAndEvaluation(userId, statuses, isEvaluated, pageable);
 
-        return collects.stream().map(collectMapper::toDto).toList();
+        // Converte cada entidade Collect em CollectDTO
+        return collects.map(collectMapper::toDto);
     }
-
 
     /**
      * Obtém uma lista de coletas por status e ID de usuário.

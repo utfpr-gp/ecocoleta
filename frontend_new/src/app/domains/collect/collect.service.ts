@@ -1,12 +1,7 @@
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, tap} from 'rxjs';
+import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
-import {AuthenticateTokenService} from "../auth/authenticate-token.service";
-import {Router} from "@angular/router";
-import {MessageService} from "primeng/api";
-import {CloudinaryUploadImgService} from "../../core/services/cloudinary-upload-img.service";
-import {User} from "../user/user.service";
 
 export type Collect = {
     id: string;
@@ -50,15 +45,18 @@ export class CollectService {
 
     constructor(
         private http: HttpClient,
-        private messageService: MessageService
     ) {
     }
 
 
     /**
      * Cria uma nova coleta.
-     * @param collect Dados da coleta a ser criada.
-     * @returns Observable com os dados da coleta criada.
+     *
+     * Este método faz uma requisição HTTP para o endpoint `/create_new_collect`,
+     * enviando os dados de uma nova coleta para serem salvos no servidor.
+     *
+     * @param collect - Dados da coleta a ser criada.
+     * @returns Observable contendo os dados da coleta criada.
      */
     createCollect(collect: Collect): Observable<Collect> {
         return this.http.post<Collect>(`${this.apiUrl}/create_new_collect`, collect);
@@ -66,8 +64,13 @@ export class CollectService {
 
     /**
      * Atualiza uma coleta existente.
-     * @param collect Dados da coleta a ser atualizada.
-     * @returns Observable com os dados da coleta atualizada.
+     *
+     * Este método faz uma requisição HTTP para atualizar os dados de uma coleta existente.
+     * O ID da coleta é obrigatório para identificar o registro a ser atualizado.
+     *
+     * @param collect - Dados atualizados da coleta.
+     * @returns Observable contendo os dados da coleta atualizada.
+     * @throws Error se o ID da coleta não for fornecido.
      */
     updateCollect(collect: Collect): Observable<Collect> {
         if (!collect.id) {
@@ -77,35 +80,81 @@ export class CollectService {
     }
 
     /**
-     * Obtém coletas por status e usuário.
-     * @param userId ID do usuário.
-     * @param collectStatus Status das coletas.
-     * @param page Página atual (para paginação).
-     * @param size Tamanho da página.
-     * @returns Observable com a lista de coletas.
+     * Obtém coletas filtradas por status e usuário.
+     *
+     * Este método faz uma requisição HTTP ao endpoint `/get_collects` para buscar coletas específicas
+     * de um usuário, filtradas pelo status e paginadas de acordo com os parâmetros fornecidos.
+     *
+     * @param userId - ID do usuário para quem as coletas serão buscadas.
+     * @param collectStatus - Status das coletas a serem buscadas (ex.: `PENDING`, `COMPLETED`).
+     * @param page - Número da página (inicia em 0, padrão: 0).
+     * @param size - Quantidade de registros por página (padrão: 10).
+     * @returns Observable contendo a lista de coletas.
      */
-    getCollectsByStatus(
-        userId: number,
-        collectStatus: CollectStatus,
-        page: number = 0,
-        size: number = 10
-    ): Observable<Collect[]> {
+    getCollectsByStatus(userId: number, collectStatus: CollectStatus, page: number = 0, size: number = 10): Observable<Collect[]> {
         const params = new HttpParams()
             .set('userId', userId)
             .set('collectStatus', collectStatus)
             .set('page', page)
             .set('size', size);
 
-        return this.http.get<Collect[]>(`${this.apiUrl}/get_collects`, { params });
-    }
-
-    getActiveCollects(userId: string, page: number = 0, size: number = 10): Observable<Collect[]> {
-        const params = new HttpParams().set('userId', userId).set('page', page).set('size', size);
-        return this.http.get<Collect[]>(`${this.apiUrl}/active_collects`, { params });
+        return this.http.get<Collect[]>(`${this.apiUrl}/get_collects`, {params});
     }
 
     /**
-     * Retorna todos os materiais recicláveis disponíveis (baseado no enum).
+     * Obtém coletas ativas para um usuário.
+     *
+     * Este método faz uma requisição HTTP ao endpoint `/active_collects` para buscar as coletas ativas
+     * associadas a um usuário. Coletas ativas incluem os status:
+     * - `PENDING`
+     * - `PAUSED`
+     * - `IN_PROGRESS`
+     * - `COMPLETED` (não avaliadas).
+     *
+     * @param userId - ID do usuário.
+     * @param page - Número da página (inicia em 0, padrão: 0).
+     * @param size - Quantidade de registros por página (padrão: 10).
+     * @returns Observable contendo os dados das coletas ativas paginadas.
+     */
+    getActiveCollects(userId: string, page: number = 0, size: number = 10): Observable<any> {
+        const params = new HttpParams()
+            .set('userId', userId)
+            .set('page', page.toString())
+            .set('size', size.toString());
+
+        return this.http.get<any>(`${this.apiUrl}/active_collects`, {params});
+    }
+
+    /**
+     * Obtém o histórico de coletas para um usuário.
+     *
+     * Este método faz uma requisição HTTP ao endpoint `/history_collects` para buscar as coletas
+     * com status de histórico, como:
+     * - `COMPLETED`
+     * - `CANCELLED`
+     *
+     * A resposta é paginada com os registros da página solicitada.
+     *
+     * @param userId - ID do usuário.
+     * @param page - Número da página (inicia em 0, padrão: 0).
+     * @param size - Quantidade de registros por página (padrão: 10).
+     * @returns Observable contendo os dados do histórico de coletas paginadas.
+     */
+    getHistoryCollects(userId: string, page: number = 0, size: number = 10): Observable<any> {
+        const params = new HttpParams()
+            .set('userId', userId)
+            .set('page', page.toString())
+            .set('size', size.toString());
+
+        return this.http.get<any>(`${this.apiUrl}/history_collects`, {params});
+    }
+
+    /**
+     * Obtém todos os materiais recicláveis disponíveis.
+     *
+     * Este método retorna a lista de valores definidos no enum `MateriaisReciclaveis`,
+     * representando os materiais recicláveis suportados no sistema.
+     *
      * @returns Lista de materiais recicláveis.
      */
     getMaterials(): MateriaisReciclaveis[] {

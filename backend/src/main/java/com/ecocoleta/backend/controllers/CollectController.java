@@ -13,7 +13,9 @@ import com.ecocoleta.backend.services.UserService;
 import com.ecocoleta.backend.services.WasteCollectorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -97,31 +99,29 @@ public class CollectController {
     //    TODO rota de upodate de coleta??? ou é melhor fazer um cancelamento e criar uma nova coleta?
 
     @GetMapping("/active_collects")
-    public ResponseEntity<List<CollectDTO>> getActiveCollects(@RequestParam @Valid Long userId,
-                                                              @PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
+    public ResponseEntity<Page<CollectDTO>> getActiveCollects(@RequestParam @Valid Long userId,
+                                                              @PageableDefault(size = 10, sort = {"createTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
         List<CollectStatus> statuses = List.of(
                 CollectStatus.PENDING, CollectStatus.PAUSED, CollectStatus.IN_PROGRESS, CollectStatus.COMPLETED
         );
 
-        List<CollectDTO> collects = collectService.getCollectsByStatusesAndEvaluation(userId, statuses, false, pageable);
+        Page<CollectDTO> collects = collectService.getCollectsByStatusesAndEvaluation(userId, statuses, false, pageable);
 
-        return ResponseEntity.ok().body(collects);
+        return ResponseEntity.ok(collects); // Retorna o objeto paginado diretamente
     }
 
     @GetMapping("/history_collects")
-    public ResponseEntity<List<CollectDTO>> getHistoryCollects(@RequestParam @Valid Long userId,
+    public ResponseEntity<Page<CollectDTO>> getHistoryCollects(@RequestParam @Valid Long userId,
                                                                @RequestParam(required = false) CollectStatus collectStatus,
                                                                @PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
         // Se nenhum status for informado, buscar "COMPLETED" e "CANCELLED"
         List<CollectStatus> statuses = (collectStatus != null) ?
                 List.of(collectStatus) : List.of(CollectStatus.COMPLETED, CollectStatus.CANCELLED);
 
-        List<CollectDTO> collects = collectService.getCollectsByStatusesAndEvaluation(userId, statuses, null, pageable);
+        Page<CollectDTO> collects = collectService.getCollectsByStatusesAndEvaluation(userId, statuses, null, pageable);
 
-        return ResponseEntity.ok().body(collects);
+        return ResponseEntity.ok(collects);
     }
-
-
 
     /**
      * Endpoint para listar coletas por status e ID de usuário.

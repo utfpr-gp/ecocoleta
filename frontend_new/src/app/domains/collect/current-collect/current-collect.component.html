@@ -1,107 +1,84 @@
-<!--<p-panel class="col-12" header="Coletas Atuais">-->
-<!--    <p-table-->
-<!--        [value]="collects"-->
-<!--        [lazy]="true"-->
-<!--        [rows]="10"-->
-<!--        [paginator]="true"-->
-<!--        [totalRecords]="totalRecords"-->
-<!--        [loading]="loading"-->
-<!--        (onLazyLoad)="loadCollects($event.first / $event.rows, $event.rows)"-->
-<!--    >-->
-<!--        <ng-template pTemplate="header">-->
-<!--            <tr>-->
-<!--                <th>ID</th>-->
-<!--                <th>Descrição</th>-->
-<!--                <th>Pausar Coleta</th>-->
-<!--                <th>Ações</th>-->
-<!--            </tr>-->
-<!--        </ng-template>-->
-
-<!--        <ng-template pTemplate="body" let-collect>-->
-<!--            <tr>-->
-<!--                <td>{{ collect.id }}</td>-->
-<!--                <td>{{ collect.description }}</td>-->
-<!--                <td>-->
-<!--                    <button-->
-<!--                        pButton-->
-<!--                        type="button"-->
-<!--                        icon="pi pi-refresh"-->
-<!--                        label="Pausar"-->
-<!--                        class="p-button-text"-->
-<!--                        (click)="pauseCollect(collect)"-->
-<!--                    ></button>-->
-<!--                </td>-->
-<!--                <td>-->
-<!--                    <button-->
-<!--                        pButton-->
-<!--                        type="button"-->
-<!--                        icon="pi pi-eye"-->
-<!--                        label="Avaliar"-->
-<!--                        class="p-button-info p-button-rounded"-->
-<!--                        (click)="evaluateCollect(collect)"-->
-<!--                    ></button>-->
-<!--                    <button-->
-<!--                        pButton-->
-<!--                        type="button"-->
-<!--                        icon="pi pi-trash"-->
-<!--                        label="Deletar"-->
-<!--                        class="p-button-danger p-button-rounded"-->
-<!--                        (click)="deleteCollect(collect)"-->
-<!--                    ></button>-->
-<!--                </td>-->
-<!--            </tr>-->
-<!--        </ng-template>-->
-
-<!--        <ng-template pTemplate="emptymessage">-->
-<!--            <tr>-->
-<!--                <td colspan="4" class="text-center">Nenhuma coleta encontrada.</td>-->
-<!--            </tr>-->
-<!--        </ng-template>-->
-<!--    </p-table>-->
-<!--</p-panel>-->
 <p-panel class="col-12" header="Coletas Ativas e Avaliação">
     <p-table
         [value]="collects"
         [paginator]="true"
-        [rows]="10"
+        [rows]="5"
         [loading]="loading"
         [totalRecords]="totalRecords"
-        (onLazyLoad)="loadCollects($event.first / $event.rows, $event.rows)"
+        [lazy]="true"
+        (onLazyLoad)="loadCollects($event.first, $event.rows)"
     >
         <ng-template pTemplate="header">
             <tr>
                 <th>ID</th>
                 <th>Status</th>
-                <th>Descrição</th>
-                <th>Ações</th>
+                <th>Data</th>
+                <th class="fixed-column" style="min-width:8rem;">Ações</th>
+
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-collect>
             <tr>
                 <td>{{ collect.id }}</td>
-                <td>{{ collect.status }}</td>
-<!--                <td>{{ collect.description }}</td>-->
-                <td></td>
-                <td>
-                    <button *ngIf="collect.status === 'PENDING' || collect.status === 'PAUSED'"
-                            pButton label="Continuar" ></button>
-                    <button *ngIf="collect.status === 'IN_PROGRESS'"
-                            pButton label="Pausar" (click)="pauseCollect(collect)"></button>
-                    <button *ngIf="collect.status === 'COMPLETED' && !collect.isEvaluated"
-                            pButton label="Avaliar" (click)="evaluateCollect(collect)"></button>
-                    <button pButton label="Cancelar" (click)="deleteCollect(collect)"></button>
+                <td>{{ collect.status | statusTranslate }}</td>
+                <td>{{ collect.createTime | date:'dd/MM/yy, hh:mm a' }}</td>
+                <td class="fixed-column">
+                    <!-- Botão de Continuar -->
+                    <button
+                        *ngIf="collect.status === 'PAUSED'"
+                        pButton
+                        class="p-button-rounded p-button-success p-button-sm mr-1"
+                        icon="pi pi-play"
+                        (click)="continueCollect(collect)"
+                        title="Continuar Coleta"
+                    ></button>
+
+                    <!-- Botão de Pausar -->
+                    <button
+                        *ngIf="collect.status === 'PENDING' || collect.status === 'IN_PROGRESS'"
+                        pButton
+                        class="p-button-rounded p-button-warning p-button-sm mr-1"
+                        icon="pi pi-pause"
+                        (click)="pauseCollect(collect)"
+                        pTooltip="Pausar Coleta"
+                    ></button>
+
+                    <!-- Botão de Avaliar -->
+                    <button
+                        *ngIf="collect.status === 'COMPLETED' && !collect.isEvaluated"
+                        pButton
+                        class="p-button-rounded p-button-info p-button-sm mr-1"
+                        icon="pi pi-star"
+                        (click)="evaluateCollect(collect)"
+                        pTooltip="Avaliar Coleta"
+                    ></button>
+
+                    <!-- Botão de Cancelar -->
+                    <button
+                        *ngIf="collect.status !== 'COMPLETED'"
+                        pButton
+                        class="p-button-rounded p-button-danger p-button-sm mr-1"
+                        icon="pi pi-times"
+                        (click)="deleteCollect(collect)"
+                        pTooltip="Cancelar Coleta"
+                    ></button>
                 </td>
+                <!--                <td>-->
+                <!--                    @if (collect.status === CollectStatus.PAUSED) {-->
+                <!--                        <button pButton label="Continuar"></button>-->
+                <!--                    } @else if (collect.status === CollectStatus.PENDING || collect.status === CollectStatus.IN_PROGRESS) {-->
+                <!--                        <button pButton label="Pausar" (click)="pauseCollect(collect)"></button>-->
+                <!--                    } @else if (collect.status === CollectStatus.COMPLETED && !collect.isEvaluated) {-->
+                <!--                        <button pButton label="Avaliar" (click)="evaluateCollect(collect)"></button>-->
+                <!--                    }-->
+                <!--                    @if (collect.status != CollectStatus.COMPLETED) {-->
+                <!--                        <button pButton label="Cancelar" (click)="deleteCollect(collect)"></button>-->
+                <!--                    }-->
+                <!--                </td>-->
             </tr>
         </ng-template>
     </p-table>
 </p-panel>
-
-
-
-
-
-
-
 
 
 <!--TODO TELA DAS COLETAS ATUAIS, LISTA AS COLETAS-->
