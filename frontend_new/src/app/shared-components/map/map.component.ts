@@ -11,6 +11,21 @@ import {GoogleMap} from "@angular/google-maps";
   styleUrl: './map.component.scss'
 })
 export class MapComponent {
+    // TODO criar service map (inserir localização,)
+    // TODO criar service no core global de para localização do dispositivo (mandar localização)
+    // TODO criar service fazer um service ou status global da coletas algo assim para se usuario catador trocar de tela não fechar a coleta em andamento no mapa.
+    //fluxo geral catador
+    // ao iniciar o app, o app deve pegar a localização do dispositivo e mandar para o servidor
+    // ao clicar em iniciar o servidor deve retornar as coletas mais proximas
+    // o app deve mostrar as coletas no mapa e mrota para a coleta mais proxima
+    // ao chegar na coleta o app deve mandar ao back que chegou na coleta (a cada 30 segundos verificar localização atual com a lista de coletas e sua localização)
+    // ao finalizar a coleta o app deve mandar ao back que finalizou a coleta
+    // ao finalizar a coleta o app deve pegar a localização do dispositivo e mandar para o servidor
+
+    //fluxo geral usuario
+    // ao iniciar o app, o app deve pegar a localização dos catadores ativos e inserir no mapa
+
+
 
     center: google.maps.LatLngLiteral = { lat: -23.55052, lng: -46.633308 }; // Coordenadas de São Paulo
     zoom = 12; // Nível de zoom inicial

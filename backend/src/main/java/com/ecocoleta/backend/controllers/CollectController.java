@@ -113,7 +113,7 @@ public class CollectController {
     @GetMapping("/history_collects")
     public ResponseEntity<Page<CollectDTO>> getHistoryCollects(@RequestParam @Valid Long userId,
                                                                @RequestParam(required = false) CollectStatus collectStatus,
-                                                               @PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
+                                                               @PageableDefault(size = 10, sort = {"createTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
         // Se nenhum status for informado, buscar "COMPLETED" e "CANCELLED"
         List<CollectStatus> statuses = (collectStatus != null) ?
                 List.of(collectStatus) : List.of(CollectStatus.COMPLETED, CollectStatus.CANCELLED);
