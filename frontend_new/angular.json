@@ -63,6 +63,13 @@
                 },
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
+                    "options": {
+                        "ssl": true,
+                        "sslKey": "ssl/localhost.key",
+                        "sslCert": "ssl/localhost.crt",
+                        "host": "0.0.0.0",
+                        "port": 4200
+                    },
                     "configurations": {
                         "production": {
                             "buildTarget": "sakai-ng:build:production"
@@ -103,6 +110,6 @@
         }
     },
     "cli": {
-      "analytics": false
+        "analytics": false
     }
 }

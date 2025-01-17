@@ -34,3 +34,6 @@ build/
 
 ### everioments ###
 .env
+
+### Certificates ###
+/ssl/*
