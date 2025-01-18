@@ -42,12 +42,6 @@ public class SecurityConfigurations {
                                 .requestMatchers(HttpMethod.PUT, "/myaccount/**").authenticated()
                                 .requestMatchers(HttpMethod.DELETE, "/myaccount/**").authenticated()
 
-                                //MATERIAL
-                                .requestMatchers(HttpMethod.POST, "/material/**").authenticated()
-                                .requestMatchers(HttpMethod.GET, "/material/**").authenticated()
-                                .requestMatchers(HttpMethod.PUT, "/material/**").authenticated()
-                                .requestMatchers(HttpMethod.DELETE, "/material/**").authenticated()
-
                                 //COLLECT
                                 .requestMatchers(HttpMethod.POST, "/collect/**").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/collect/**").authenticated()

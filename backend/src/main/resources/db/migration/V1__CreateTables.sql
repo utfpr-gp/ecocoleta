@@ -139,26 +139,6 @@ CREATE TABLE IF NOT EXISTS evaluations
             ON UPDATE NO ACTION
 );
 
--- Table ecocoleta_db.materials
-CREATE TABLE IF NOT EXISTS materials
-(
-    id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    name        VARCHAR(255)                 NOT NULL,
-    score       BIGINT                       NOT NULL,
-    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_time TIMESTAMP
-);
-
--- Table ecocoleta_db.collects_materials
-CREATE TABLE IF NOT EXISTS collects_materials
-(
-    collect_id  BIGINT NOT NULL,
-    material_id BIGINT NOT NULL,
-    PRIMARY KEY (collect_id, material_id),
-    FOREIGN KEY (collect_id) REFERENCES collects (id) ON DELETE CASCADE ON UPDATE NO ACTION,
-    FOREIGN KEY (material_id) REFERENCES materials (id) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
 -- Table ecocoleta_db.products
 CREATE TABLE IF NOT EXISTS products
 (
