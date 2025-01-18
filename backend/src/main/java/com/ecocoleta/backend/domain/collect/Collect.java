@@ -21,11 +21,6 @@ public class Collect {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Use GenerationType.IDENTITY para suportar autoincremento
     private Long id;
-//    TODO talvez remover o picture, isIntern e schedule
-    @Column(name = "is_intern")
-    private boolean isIntern;
-    private LocalDateTime schedule;
-    private String picture;
     private Integer amount;
     @Column(name = "is_evaluated", nullable = false)
     private boolean isEvaluated = false; // Inicia como não avaliado
@@ -54,22 +49,7 @@ public class Collect {
     @Convert(converter = CollectMaterialsConverter.class) // Usando o conversor
     private List<CollectMaterials> materials;
 
-//TODO modificar logica do agendamento ...
-//    ADD campo de ativa boolean para ativar ou desativar o coleta - usa status para isso
-//    add dados fake na coluna materials...
-
-    public Collect(boolean isIntern, String picture, Integer amount, Address address, Resident resident, List<CollectMaterials> materials) {
-        this.isIntern = isIntern;
-        this.picture = picture;
-        this.amount = amount;
-        this.address = address;
-        this.resident = resident;
-        this.materials = materials;
-    }
-
     public Collect(Integer amount, Address address, Resident resident, List<CollectMaterials> materials) {
-//        this.isIntern = isIntern;
-//        this.picture = picture;
         this.amount = amount;
         this.address = address;
         this.resident = resident;
@@ -91,9 +71,6 @@ public class Collect {
     public String toString() {
         return "Collect{" +
                 "id=" + id +
-                ", isIntern=" + isIntern +
-                ", schedule=" + schedule +
-                ", picture='" + picture + '\'' +
                 ", amount=" + amount +
                 ", status=" + status +
                 ", initTime=" + initTime +

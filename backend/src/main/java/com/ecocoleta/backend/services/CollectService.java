@@ -143,9 +143,6 @@ public class CollectService {
         // Converter os resultados para DTOs
         return tuples.stream().map(tuple -> new CollectAddressAvaibleDTO(
                 tuple.get("id", Long.class),
-                tuple.get("isIntern", Boolean.class),
-                DataUtils.convertToLocalDateTime(tuple.get("schedule", Timestamp.class)),
-                tuple.get("picture", String.class),
                 tuple.get("amount", Integer.class),
                 tuple.get("status", String.class),
                 DataUtils.convertToLocalDateTime(tuple.get("initTime", Timestamp.class)),
@@ -292,6 +289,7 @@ public class CollectService {
      * @return DTO da coleta atualizados.
      * @throws ValidException Se o usuário não tiver permissão para cancelar a coleta.
      */
+//    TODO mudar para receber o user id e não o user
     public CollectDTO pausedCollect(@Valid Long collectId, User user) {
 
         if (user.getRole().equals(UserRole.WASTE_COLLECTOR)) {

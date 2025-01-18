@@ -10,13 +10,6 @@ import java.util.List;
 
 public record CollectDTO(
         long id,
-        @JsonAlias({"intern", "interno", "is_intern"})
-        boolean isIntern,
-        @Future
-//        @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-        LocalDateTime schedule,
-        String picture,
-//        @Pattern(regexp = "^([1-9]|[1-9][0-9])$", message = "O número deve ser entre 1 e 99")
         Integer amount,
         CollectStatus status,
         LocalDateTime initTime,
@@ -36,24 +29,3 @@ public record CollectDTO(
         List<CollectMaterials> materials // Lista de materiais baseada no enum
 ) {
 }
-
-//Exemplo json
-//{
-//        "is_intern": true,
-//        "schedule": "2024-09-01T10:00:00",
-//        "picture": "coleta1.jpg",
-//        "amount": 5,
-//        "address_id": 1,
-//        "resident_id": 2,
-//        "waste_Collector_id": 3,
-//        "materials": [
-//        {
-//        "materialId": 10,
-//        "quantity": 2
-//        },
-//        {
-//        "materialId": 15,
-//        "quantity": 3
-//        }
-//        ]
-//        }

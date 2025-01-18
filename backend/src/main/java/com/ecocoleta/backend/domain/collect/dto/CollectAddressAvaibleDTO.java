@@ -8,9 +8,6 @@ import java.time.LocalDateTime;
 public record CollectAddressAvaibleDTO(
         @NotNull
         long id,
-        boolean isIntern,
-        LocalDateTime schedule,
-        String picture,
         Integer amount,
         @NotNull
         String status,

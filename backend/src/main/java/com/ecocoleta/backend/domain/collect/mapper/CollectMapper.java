@@ -29,9 +29,6 @@ public class CollectMapper {
     public CollectDTO toDto(Collect collect) {
         return new CollectDTO(
                 collect.getId(),
-                collect.isIntern(),
-                collect.getSchedule(),
-                collect.getPicture(),
                 collect.getAmount(),
                 collect.getStatus(),
                 collect.getInitTime(),
@@ -53,8 +50,6 @@ public class CollectMapper {
                 .orElseThrow(() -> new ValidException("Residente não encontrado: " + dto.resident()));
 
         return new Collect(
-                dto.isIntern(),
-                dto.picture(),
                 dto.amount(),
                 address,
                 resident,

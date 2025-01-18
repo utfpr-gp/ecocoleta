@@ -84,9 +84,6 @@ CREATE TABLE IF NOT EXISTS companys
 CREATE TABLE IF NOT EXISTS collects
 (
     id                  BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    is_intern           BOOLEAN DEFAULT false,
-    schedule            TIMESTAMP,
-    picture             VARCHAR(255),
     amount              INTEGER,
     is_evaluated        BOOLEAN DEFAULT false,
     rating              INTEGER,
