@@ -1,4 +1,4 @@
-package com.ecocoleta.backend.domain.wasteCollector;
+package com.ecocoleta.backend.domain.wasteCollector.dto;
 
 import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.user.UserRole;

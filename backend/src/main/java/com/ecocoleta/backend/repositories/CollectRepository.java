@@ -44,7 +44,7 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
      * @param limit            Limite de resultados.
      * @return Lista de coletas disponíveis, Buscar coletas disponiveis onde calcula a distancia entre o coletor e a coleta em um raio de 3000 metros(ou parâmetro) limitando a 3 coletas(ou parâmetro) e ordenando pela localizacao, usando tupla para retornar os dados nomeados
      */
-    @Query(value = "select c.id as id, c.is_intern as isIntern, c.schedule as schedule, c.picture as picture, c.amount as amount, " +
+    @Query(value = "select c.id as id, c.amount as amount, " +
             "c.status as status, c.init_time as initTime, c.end_time as endTime, c.create_time as createTime, c.update_time as updateTime, " +
             "c.address_id as addressId, c.resident_id as residentId, c.waste_collector_id as wasteCollectorId, " +
             "a.longitude as longitude, a.latitude as latitude, ST_AsText(a.location) as location " +

@@ -78,4 +78,7 @@ public class UserService {
         return userRepository.existsById(id);
     }
 
+    public Page<User> getAllByRole(UserRole role, Pageable pageable) {
+        return userRepository.findAllByRole(role, pageable);
+    }
 }

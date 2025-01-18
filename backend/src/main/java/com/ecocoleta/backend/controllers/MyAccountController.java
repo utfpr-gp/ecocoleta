@@ -16,15 +16,6 @@ import java.util.List;
 @RequestMapping("myaccount")
 public class MyAccountController {
 
-    //TODO FAZER... CONTROLLER PARA EDIÇAÕ E CADASTRO DE INFORMAÇÕES DE TODOS OS TIPOS DE USUARIOS.
-
-    /*
-     * CONTROLLER PARA EDIÇAÕ E CADASTRO DE INFORMAÇÕES DE TODOS OS TIPOS DE USUARIOS
-     * EX: https://github.com/utfpr-gp/servicebook/blob/develop/src/main/java/br/edu/utfpr/servicebook/controller/MyAccountController.java
-     * EDITA, VALIDA > EMAIL, NUMERO, FOTO.
-     * EDITA, VALIDA > ENDEREÇO.
-     * */
-
     @Autowired
     AutorizationService autorizationService;
 

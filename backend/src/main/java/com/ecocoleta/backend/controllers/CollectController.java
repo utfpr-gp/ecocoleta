@@ -33,19 +33,13 @@ public class CollectController {
     @Autowired
     private CollectService collectService;
 
-
     @Autowired
     UserService userService;
 
     @Autowired
     WasteCollectorService wasteCollectorService;
 
-    @Autowired
-    private WasteCollectorRespository wasteCollectorRespository;
-    @Autowired
-    private AutorizationService autorizationService;
-
-
+//TODO remover essa explicação - documentar docstring....
     /**
      * Usando a API Geolocation do HTML5, o dispositivo envia a localização em longitude e latitude,
      * que serão utilizadas nos métodos para consulta e retorno de um array JSON com as 10 coletas

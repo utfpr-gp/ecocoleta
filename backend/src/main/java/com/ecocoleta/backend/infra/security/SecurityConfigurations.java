@@ -54,6 +54,12 @@ public class SecurityConfigurations {
                                 .requestMatchers(HttpMethod.PUT, "/collect/**").authenticated()
                                 .requestMatchers(HttpMethod.DELETE, "/collect/**").authenticated()
 
+                                //WASTE_COLLECTOR
+                                .requestMatchers(HttpMethod.POST, "/waste_collector/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/waste_collector/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/waste_collector/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/waste_collector/**").authenticated()
+
                                 //OTHER ROUTES
                                 .requestMatchers(HttpMethod.GET, "/hello").permitAll() //todos user -- teste
 //                                .requestMatchers(HttpMethod.GET, "/hello").hasRole("ADMIN") //apenas usuarios admin -- teste

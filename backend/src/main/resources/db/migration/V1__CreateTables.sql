@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS users
     phone       VARCHAR(11)                  NOT NULL,
     role        VARCHAR(255)                 NOT NULL,
     activo      BOOLEAN                      NOT NULL,
-    check_phone BOOLEAN DEFAULT false,
-    check_email BOOLEAN DEFAULT false,
+    check_phone BOOLEAN   DEFAULT false,
+    check_email BOOLEAN   DEFAULT false,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time TIMESTAMP
 );
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS users
 CREATE TABLE IF NOT EXISTS address
 (
     id           BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    name VARCHAR(255),
+    name         VARCHAR(255),
     city         VARCHAR(255),
     street       VARCHAR(255),
     number       VARCHAR(255),
@@ -49,8 +49,8 @@ CREATE TABLE IF NOT EXISTS residents
 -- Table ecocoleta_db.user_address
 CREATE TABLE IF NOT EXISTS user_addresses
 (
-    user_id     BIGINT                 NOT NULL,
-    address_id  BIGINT                 NOT NULL,
+    user_id    BIGINT NOT NULL,
+    address_id BIGINT NOT NULL,
     PRIMARY KEY (user_id, address_id),
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE CASCADE ON UPDATE NO ACTION
@@ -59,41 +59,45 @@ CREATE TABLE IF NOT EXISTS user_addresses
 -- Table ecocoleta_db.waste_collectors
 CREATE TABLE IF NOT EXISTS waste_collectors
 (
-    id          BIGINT PRIMARY KEY,
-    cpf         VARCHAR(11),
-    score       INTEGER DEFAULT null,
-    picture     VARCHAR(255),
-    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_time TIMESTAMP,
+    id               BIGINT PRIMARY KEY,
+    cpf              VARCHAR(11),
+    score            INTEGER   DEFAULT null,
+    picture          VARCHAR(255),
+    location         GEOGRAPHY(POINT, 4326), -- Coluna para armazenar a localização
+    location_updated TIMESTAMP,
+    create_time      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time      TIMESTAMP,
     FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
+
+-- Criar índice espacial para localização (eficiência nas consultas)
+CREATE INDEX idx_waste_collectors_location ON waste_collectors USING GIST (location);
 
 -- Table ecocoleta_db.companys
 CREATE TABLE IF NOT EXISTS companys
 (
-    id          BIGINT PRIMARY KEY,
-    cnpj         VARCHAR(11)                  NOT NULL,
-    company_name VARCHAR(255)                 NOT NULL,
+    id           BIGINT PRIMARY KEY,
+    cnpj         VARCHAR(11)  NOT NULL,
+    company_name VARCHAR(255) NOT NULL,
     create_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time  TIMESTAMP,
     FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
-
 -- Table ecocoleta_db.collects
 CREATE TABLE IF NOT EXISTS collects
 (
-    id                  BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    amount              INTEGER,
-    is_evaluated        BOOLEAN DEFAULT false,
-    rating              INTEGER,
-    status              VARCHAR(255)                 NOT NULL,
-    materials           VARCHAR(255),
-    init_time           TIMESTAMP,
-    end_time            TIMESTAMP,
-    create_time         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_time         TIMESTAMP,
-    address_id          BIGSERIAL,
+    id                 BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
+    amount             INTEGER,
+    is_evaluated       BOOLEAN   DEFAULT false,
+    rating             INTEGER,
+    status             VARCHAR(255)                 NOT NULL,
+    materials          VARCHAR(255),
+    init_time          TIMESTAMP,
+    end_time           TIMESTAMP,
+    create_time        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time        TIMESTAMP,
+    address_id         BIGSERIAL,
     resident_id        BIGSERIAL,
     waste_collector_id BIGSERIAL,
     CONSTRAINT fk_collects_address1
@@ -112,7 +116,6 @@ CREATE TABLE IF NOT EXISTS collects
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 );
-
 
 -- Table ecocoleta_db.evaluations
 CREATE TABLE IF NOT EXISTS evaluations
@@ -136,7 +139,6 @@ CREATE TABLE IF NOT EXISTS evaluations
             ON UPDATE NO ACTION
 );
 
-
 -- Table ecocoleta_db.materials
 CREATE TABLE IF NOT EXISTS materials
 (
@@ -150,8 +152,8 @@ CREATE TABLE IF NOT EXISTS materials
 -- Table ecocoleta_db.collects_materials
 CREATE TABLE IF NOT EXISTS collects_materials
 (
-    collect_id    BIGINT                 NOT NULL,
-    material_id   BIGINT                 NOT NULL,
+    collect_id  BIGINT NOT NULL,
+    material_id BIGINT NOT NULL,
     PRIMARY KEY (collect_id, material_id),
     FOREIGN KEY (collect_id) REFERENCES collects (id) ON DELETE CASCADE ON UPDATE NO ACTION,
     FOREIGN KEY (material_id) REFERENCES materials (id) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -186,8 +188,8 @@ CREATE TABLE IF NOT EXISTS exchanges
 -- Table ecocoleta_db.products_has_exchanges
 CREATE TABLE IF NOT EXISTS products_has_exchanges
 (
-    products_id  BIGINT                 NOT NULL,
-    exchanges_id BIGINT                 NOT NULL,
+    products_id  BIGINT NOT NULL,
+    exchanges_id BIGINT NOT NULL,
     FOREIGN KEY (products_id)
         REFERENCES products (id)
         ON DELETE NO ACTION

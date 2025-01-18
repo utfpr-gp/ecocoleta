@@ -9,10 +9,9 @@ import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.domain.user.dto.UserDTO;
 import com.ecocoleta.backend.domain.user.dto.UserGetDTO;
-import com.ecocoleta.backend.domain.user.dto.UserGetTokenDTO;
 import com.ecocoleta.backend.domain.user.dto.UserUpdateDTO;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
-import com.ecocoleta.backend.domain.wasteCollector.WasteCollectorDTO;
+import com.ecocoleta.backend.domain.wasteCollector.dto.WasteCollectorDTO;
 import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.services.AuthenticationService;
 import com.ecocoleta.backend.services.UserService;
@@ -21,13 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Faz o cadastro do usuário individual ou empresa.
@@ -136,6 +133,14 @@ public class UserController {
     @GetMapping("list")
     public ResponseEntity<Page<UserGetDTO>> listUser(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
         var page = userService.getAllByActivoTrue(pageable).map(UserGetDTO::new);
+        return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/waste-collectors")
+    public ResponseEntity<Page<UserGetDTO>> listWasteCollectors(
+            @PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
+        var page = userService.getAllByRole(UserRole.WASTE_COLLECTOR, pageable)
+                .map(UserGetDTO::new);
         return ResponseEntity.ok(page);
     }
 
