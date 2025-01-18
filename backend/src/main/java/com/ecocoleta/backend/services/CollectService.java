@@ -111,32 +111,36 @@ public class CollectService {
      * Obtém uma lista de coletas disponíveis com base nos critérios fornecidos.
      *
      * @param collectSearchAvaibleListDTO Dados de busca para coletas disponíveis.
+     * @param radius                      Raio de busca em metros.
+     * @param limit                       Quantidade máxima de coletas.
      * @return Lista de coletas disponíveis.
      */
     @Transactional
-    public List<CollectAddressAvaibleDTO> getCollectAvaibleList(CollectSearchAvaibleListDTO collectSearchAvaibleListDTO) {
+    public List<CollectAddressAvaibleDTO> getCollectAvaibleList(
+            CollectSearchAvaibleListDTO collectSearchAvaibleListDTO, double radius, int limit) {
+
         Double currentLatitude = collectSearchAvaibleListDTO.currentLatitude();
         Double currentLongitude = collectSearchAvaibleListDTO.currentLongitude();
         Long wasteCollectorId = collectSearchAvaibleListDTO.idWasteCollector();
 
-        // Chamar o repositório para fazer a consulta
-        List<Tuple> tuples = collectRepository.findAvailableCollects(currentLongitude, currentLatitude, wasteCollectorId);
+        // Chamar o repositório para fazer a consulta com raio e limite dinâmicos
+        List<Tuple> tuples = collectRepository.findAvailableCollects(
+                currentLongitude, currentLatitude, wasteCollectorId, radius, limit);
 
         LocalDateTime now = LocalDateTime.now();
 
         // Marcar as coletas com o wasteCollectorId, status e initTime
         tuples.forEach(tuple -> {
-            Collect collect = collectRepository.findById(tuple.get("id", Long.class)).orElseThrow(() -> new EntityNotFoundException("Collect not found"));
-            /*if (collect.getWasteCollector() != null && !Objects.equals(collect.getWasteCollector().getId(), wasteCollectorId)) {
-                throw new ValidException("Collect already reserved");
-            }*/
-            collect.setWasteCollector(wasteCollectorService.getWasteCollectorById(wasteCollectorId).orElseThrow(() -> new EntityNotFoundException("WasteCollector not found")));
+            Collect collect = collectRepository.findById(tuple.get("id", Long.class))
+                    .orElseThrow(() -> new EntityNotFoundException("Collect not found"));
+            collect.setWasteCollector(wasteCollectorService.getWasteCollectorById(wasteCollectorId)
+                    .orElseThrow(() -> new EntityNotFoundException("WasteCollector not found")));
             collect.setInitTime(now);
             collect.setStatus(CollectStatus.IN_PROGRESS);
             collectRepository.save(collect);
         });
 
-        // Retono da lista de Tuple para a lista de CollectAddressAvaibleDTO
+        // Converter os resultados para DTOs
         return tuples.stream().map(tuple -> new CollectAddressAvaibleDTO(
                 tuple.get("id", Long.class),
                 tuple.get("isIntern", Boolean.class),

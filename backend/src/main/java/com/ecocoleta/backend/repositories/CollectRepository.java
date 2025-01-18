@@ -34,20 +34,35 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
     @Query("UPDATE Collect c SET c.address = NULL WHERE c.address.id = :addressId")
     void updateAddressToNull(@Param("addressId") Long addressId);
 
-    // Buscar coletas disponiveis onde calcula a distancia entre o coletor e a coleta em um raio de 5000 metros limitando a 10 coletas e ordenando pela localizacao, usando tupla para retornar os dados nomeados
+    /**
+     * Buscar coletas disponíveis com parâmetros de raio e limite.
+     *
+     * @param longitude        Longitude do coletor.
+     * @param latitude         Latitude do coletor.
+     * @param wasteCollectorId ID do coletor.
+     * @param radius           Raio de busca em metros.
+     * @param limit            Limite de resultados.
+     * @return Lista de coletas disponíveis, Buscar coletas disponiveis onde calcula a distancia entre o coletor e a coleta em um raio de 3000 metros(ou parâmetro) limitando a 3 coletas(ou parâmetro) e ordenando pela localizacao, usando tupla para retornar os dados nomeados
+     */
     @Query(value = "select c.id as id, c.is_intern as isIntern, c.schedule as schedule, c.picture as picture, c.amount as amount, " +
             "c.status as status, c.init_time as initTime, c.end_time as endTime, c.create_time as createTime, c.update_time as updateTime, " +
             "c.address_id as addressId, c.resident_id as residentId, c.waste_collector_id as wasteCollectorId, " +
             "a.longitude as longitude, a.latitude as latitude, ST_AsText(a.location) as location " +
             "from collects c " +
             "left join address a on c.address_id = a.id " +
-            "and ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, 5000) " +
+            "and ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, :radius) " +
             "where c.status = 'PENDING' " +
             "and (c.waste_collector_id = :wasteCollectorId or c.waste_collector_id is null) " +
             "order by a.location " +
-            "limit 10",
+            "limit :limit",
             nativeQuery = true)
-    List<Tuple> findAvailableCollects(@Param("longitude") Double longitude, @Param("latitude") Double latitude, @Param("wasteCollectorId") Long wasteCollectorId);
+    List<Tuple> findAvailableCollects(
+            @Param("longitude") Double longitude,
+            @Param("latitude") Double latitude,
+            @Param("wasteCollectorId") Long wasteCollectorId,
+            @Param("radius") Double radius,
+            @Param("limit") Integer limit);
+
 
     // Pega todas as coletas pendentes que estão atrasadas
     @Query("SELECT c FROM Collect c WHERE (c.status = 'PENDING' or c.status = 'IN_PROGRESS') AND c.initTime < :sixHoursAgo")

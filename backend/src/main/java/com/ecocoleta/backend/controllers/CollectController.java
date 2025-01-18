@@ -160,14 +160,25 @@ public class CollectController {
      */
     @PostMapping("get_avaible_collects")
     @Transactional
-    public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollects(@RequestBody @Valid CollectSearchAvaibleListDTO collectSearchAvaibleListDTO) {
+    public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollects(
+            @RequestBody @Valid CollectSearchAvaibleListDTO collectSearchAvaibleListDTO,
+            @RequestParam(required = false) Double radius,
+            @RequestParam(required = false) Integer limit) {
+
         if (!wasteCollectorService.existsWasteCollectorById(collectSearchAvaibleListDTO.idWasteCollector())) {
             throw new ValidException("Catador não encontrado!");
         }
 
-        List<CollectAddressAvaibleDTO> collectAddressAvaibleDTOS = collectService.getCollectAvaibleList(collectSearchAvaibleListDTO);
+        // Configura valores padrão
+        double effectiveRadius = (radius != null) ? radius : 3000.0; // Raio padrão: 3 km
+        int effectiveLimit = (limit != null) ? limit : 3;            // Limite padrão: 3 coletas
+
+        List<CollectAddressAvaibleDTO> collectAddressAvaibleDTOS = collectService.getCollectAvaibleList(
+                collectSearchAvaibleListDTO, effectiveRadius, effectiveLimit);
+
         return ResponseEntity.ok().body(collectAddressAvaibleDTOS);
     }
+
 
     /**
      * Endpoint para finalizar coleta completa.
