@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {LayoutService} from "./service/app.layout.service";
 import {User, UserService} from "../domains/user/user.service";
+import {CollectorStateService} from "../domains/collect/collector-state.service";
 
 @Component({
     selector: 'app-footer',
@@ -12,7 +13,8 @@ export class AppFooterComponent implements OnInit {
     startColetaFlag: boolean = false;
 
     constructor(public layoutService: LayoutService,
-                private userService: UserService
+                private userService: UserService,
+                private collectorStateService: CollectorStateService
     ) {
     }
 
@@ -20,5 +22,14 @@ export class AppFooterComponent implements OnInit {
         this.userService.user$.subscribe(user => {
             this.user = user;
         });
+    }
+
+    toggleColeta(): void {
+        this.startColetaFlag = !this.startColetaFlag;
+        if (this.startColetaFlag) {
+            this.collectorStateService.startCollection();
+        } else {
+            this.collectorStateService.stopCollection();
+        }
     }
 }

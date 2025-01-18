@@ -23,6 +23,8 @@
                 <td>{{ collect.status | statusTranslate }}</td>
                 <td>{{ collect.createTime | date:'dd/MM/yy, hh:mm a' }}</td>
                 <td class="fixed-column">
+                    <!--TODO fazer bootão para abrir modal detalhes da coleta??-->
+                    <!--TODO fazer botões funcionarem-->
                     <!-- Botão de Continuar -->
                     <button
                         *ngIf="collect.status === 'PAUSED'"

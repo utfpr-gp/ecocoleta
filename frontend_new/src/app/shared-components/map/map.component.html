@@ -3,4 +3,9 @@
     width="100%"
     [center]="center"
     [zoom]="zoom">
+    <map-marker
+        *ngFor="let marker of markers"
+        [position]="marker.position"
+        [title]="marker.title">
+    </map-marker>
 </google-map>

@@ -1,13 +1,16 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {GoogleMap} from "@angular/google-maps";
+import {GoogleMap, MapMarker} from "@angular/google-maps";
 import {LocationService} from "../../core/services/location.service";
-import {CollectService} from "../../domains/collect/collect.service";
+import {CollectorStateService} from "../../domains/collect/collector-state.service";
+import {NgForOf} from "@angular/common";
 
 @Component({
     selector: 'app-map',
     standalone: true,
     imports: [
-        GoogleMap
+        GoogleMap,
+        MapMarker,
+        NgForOf
     ],
     templateUrl: './map.component.html',
     styleUrl: './map.component.scss'
@@ -27,18 +30,48 @@ export class MapComponent implements OnInit, OnDestroy {
     //fluxo geral usuario
     // ao iniciar o app, o app deve pegar a localização dos catadores ativos e inserir no mapa
 
-    // center: google.maps.LatLngLiteral = { lat: -23.55052, lng: -46.633308 }; // Coordenadas de São Paulo
     center: google.maps.LatLngLiteral = {lat: 0, lng: 0};
+    markers: google.maps.MarkerOptions[] = [];
     zoom = 15; // Nível de zoom inicial
 
     constructor(
         private locationService: LocationService,
-        private collectService: CollectService
+        private collectorStateService: CollectorStateService
     ) {
     }
 
     ngOnInit(): void {
-        this.initUserLocation();
+        // Atualizar mapa com localização atual
+        this.collectorStateService.location$.subscribe((location) => {
+            if (location) {
+                this.center = location;
+
+                // Adicionar ou atualizar o marcador do usuário
+                const userMarkerIndex = this.markers.findIndex((m) => m.title === 'Você');
+                if (userMarkerIndex > -1) {
+                    this.markers[userMarkerIndex] = {
+                        ...this.markers[userMarkerIndex],
+                        position: location,
+                    };
+                } else {
+                    this.markers.push({
+                        position: location,
+                        title: 'Você',
+                        icon: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png', // Ícone personalizado
+                    });
+                }
+            }
+        });
+
+        // Adicionar marcadores das coletas
+        this.collectorStateService.coletaData$.subscribe((data) => {
+            this.markers = this.markers.filter((m) => m.title === 'Você'); // Manter apenas o marcador do usuário
+            const coletaMarkers = data.map((coleta) => ({
+                position: {lat: coleta.latitude, lng: coleta.longitude},
+                title: `Coleta ${coleta.id}`,
+            }));
+            this.markers = [...this.markers, ...coletaMarkers];
+        });
     }
 
     ngOnDestroy(): void {

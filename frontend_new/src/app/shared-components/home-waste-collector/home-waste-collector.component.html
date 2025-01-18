@@ -1,12 +1,37 @@
-<p>home-waste-collector works!</p>
-<svg xmlns="http://www.w3.org/2000/svg" width="400" height="100" viewBox="0 0 400 100" role="img" aria-label="EcoColeta">
-    <defs>
-        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style="stop-color: #66ff99; stop-opacity: 1;" />
-            <stop offset="100%" style="stop-color: #33cc66; stop-opacity: 1;" />
-        </linearGradient>
-    </defs>
-    <text x="20" y="70" font-family="'Poppins', sans-serif" font-size="50" fill="url(#gradient)" font-weight="bold">
-        EcoColeta
-    </text>
-</svg>
+<!--TODO - criar essa home com o map, passando sua localização-->
+<!--TODO - criar integração com o botão do footer de iniciar e pausar-->
+<!--WASTE_COLLECTOR{
+		> abre o /home, manda sua localização
+		> centraliza no mapa
+		> apresenta os catadores ativos e as coletas proximas (sem pegar para ele?) (pensar melhor pois pode virar bagunça- o cara vai so vendo e pegando sem iniciar rota)
+		ou >>> > apresenta os catadores ativos e quantidade de coletas proximas
+		> ao clicar em iniciar coleta, manda localização...
+		> com retorno da lista manda para api do google
+		> com o retorno da google monta apresentando a rota e o cursor do catador se movendo
+		> ao chegar em 10 15 mts perto do ponto manda ao back que coletou com isso> (back encerra coleta e envia notificaçãoao user resident??)
+		> a ochegar na ultima coleta da rota finaliza automatico
+	}-->
+
+<div class="waste-collector-container">
+    <h1 class="text-3xl text-center">Coletas Disponíveis 50</h1>
+<!--TODO aparecer aqui o numero de coletas disponiveis na região -->
+    <p>home-waste-collector works!</p>
+<!--    &lt;!&ndash; Botão de Ação &ndash;&gt;-->
+<!--    <div class="flex justify-content-center p-5">-->
+<!--        <button-->
+<!--            pButton-->
+<!--            label="Coleta"-->
+<!--            class="p-button-rounded p-button-icon-start p-button-success"-->
+<!--            icon="pi pi-plus"-->
+<!--            style="font-size: 1.5rem; height: 4rem; width: 16rem;"-->
+<!--            [routerLink]="'/coletas/nova'">-->
+<!--        </button>-->
+<!--    </div>-->
+
+    <!-- Mapa Responsivo -->
+    <div class="map-container">
+        <app-map></app-map>
+    </div>
+</div>
+
+

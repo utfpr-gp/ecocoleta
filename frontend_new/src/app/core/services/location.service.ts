@@ -50,7 +50,6 @@ export class LocationService {
         });
     }
 
-
     // Monitora a localização continuamente
     watchLocation(onLocationUpdate: (position: GeolocationPosition) => void, onError?: (error: GeolocationPositionError) => void): void {
         if (navigator.geolocation) {
