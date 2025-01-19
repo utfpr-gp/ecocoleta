@@ -5,8 +5,6 @@ import {environment} from '../../../environments/environment';
 
 export type Collect = {
     id: string;
-    isIntern?: string;
-    schedule?: string;
     picture?: string | File;
     amount?: number;
     status?: CollectStatus;
@@ -14,10 +12,13 @@ export type Collect = {
     endTime?: string;
     createTime?: string;
     updateTime?: string;
-    id_address?: number;
-    id_resident?: number;
-    id_waste_collector?: number;
+    addressId?: number;
+    residentId?: number;
+    wasteCollectorId?: number;
     materials?: MateriaisReciclaveis[]; // Lista de materiais recicláveis
+    longitude?: number;
+    latitude?: number;
+    location?: string;
 };
 
 export enum MateriaisReciclaveis {
@@ -102,9 +103,9 @@ export class CollectService {
     }
 
     /**
-     * Obtém coletas ativas para um usuário.
+     * Obtém coletas atuais para um usuário.
      *
-     * Este método faz uma requisição HTTP ao endpoint `/active_collects` para buscar as coletas ativas
+     * Este método faz uma requisição para buscar as coletas ativas
      * associadas a um usuário. Coletas ativas incluem os status:
      * - `PENDING`
      * - `PAUSED`
@@ -161,5 +162,57 @@ export class CollectService {
         return Object.values(MateriaisReciclaveis);
     }
 
+    //WASTECOLLECTOR>>
+    /**
+     * Obtém coletas disponíveis sem atrelar ao WasteCollector.
+     *
+     * Este método faz uma requisição HTTP ao endpoint `/get_show_unlinked_collects`
+     * para buscar coletas disponíveis sem serem reservadas para um WasteCollector.
+     *
+     * @param longitude - Longitude para a busca.
+     * @param latitude - Latitude para a busca.
+     * @param radius - Raio de busca em metros (padrão: 10 km).
+     * @returns Observable contendo a lista de coletas disponíveis.
+     */
+    getUnlinkedCollects(longitude: number, latitude: number, radius: number = 10000): Observable<Collect[]> {
+        const body = {
+            currentLongitude: longitude,
+            currentLatitude: latitude,
+        };
 
+        return this.http.post<Collect[]>(`${this.apiUrl}/get_show_unlinked_collects?radius=${radius}`, body);
+    }
+
+    /**
+     * Obtém coletas disponíveis e as reserva para um WasteCollector.
+     *
+     * Este método faz uma requisição HTTP ao endpoint `/get_avaible_collects_reserved`
+     * para buscar e reservar coletas disponíveis para um WasteCollector específico.
+     *
+     * @param idWasteCollector - ID do WasteCollector.
+     * @param longitude - Longitude para a busca.
+     * @param latitude - Latitude para a busca.
+     * @param radius - Raio de busca em metros (padrão: 3 km).
+     * @param limit - Limite de coletas a serem retornadas (padrão: 3).
+     * @returns Observable contendo a lista de coletas reservadas.
+     */
+    getReservedCollects(
+        idWasteCollector: string,
+        longitude: number,
+        latitude: number,
+        radius: number = 3000,
+        limit: number = 3
+    ): Observable<Collect[]> {
+        const body = {
+            idWasteCollector,
+            currentLongitude: longitude,
+            currentLatitude: latitude
+        };
+
+        const params = new HttpParams()
+            .set('radius', radius.toString())
+            .set('limit', limit.toString());
+
+        return this.http.post<Collect[]>(`${this.apiUrl}/get_avaible_collects_reserved`, body, { params });
+    }
 }

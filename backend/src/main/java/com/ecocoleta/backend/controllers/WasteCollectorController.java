@@ -60,6 +60,7 @@ public class WasteCollectorController {
     public ResponseEntity<Optional<WasteCollector>> getCollectorById(@PathVariable Long id) {
         try {
             Optional<WasteCollector> collector = wasteCollectorService.getWasteCollectorById(id);
+//            TODO passar para um dto??
             return ResponseEntity.ok(collector);
         } catch (ValidException e) {
             return ResponseEntity.badRequest().body(null);

@@ -108,39 +108,52 @@ public class CollectService {
     }
 
     /**
-     * Obtém uma lista de coletas disponíveis com base nos critérios fornecidos.
+     * Obtém uma lista de coletas disponíveis, opcionalmente atrelando ao wasteCollector.
      *
-     * @param collectSearchAvaibleListDTO Dados de busca para coletas disponíveis.
+     * @param collectSearchAvaibleListDTO Dados de busca para coletas.
      * @param radius                      Raio de busca em metros.
-     * @param limit                       Quantidade máxima de coletas.
+     * @param limit                       Limite de resultados.
+     * @param linkToWasteCollector        Indica se as coletas devem ser atreladas ao wasteCollector.
      * @return Lista de coletas disponíveis.
      */
     @Transactional
-    public List<CollectAddressAvaibleDTO> getCollectAvaibleList(
-            CollectSearchAvaibleListDTO collectSearchAvaibleListDTO, double radius, int limit) {
+    public List<CollectAddressAvaibleDTO> getAvailableCollects(
+            CollectSearchAvaibleListDTO collectSearchAvaibleListDTO,
+            double radius,
+            Integer limit,
+            boolean linkToWasteCollector) {
 
         Double currentLatitude = collectSearchAvaibleListDTO.currentLatitude();
         Double currentLongitude = collectSearchAvaibleListDTO.currentLongitude();
         Long wasteCollectorId = collectSearchAvaibleListDTO.idWasteCollector();
 
-        // Chamar o repositório para fazer a consulta com raio e limite dinâmicos
-        List<Tuple> tuples = collectRepository.findAvailableCollects(
-                currentLongitude, currentLatitude, wasteCollectorId, radius, limit);
+        if (linkToWasteCollector && !wasteCollectorService.existsWasteCollectorById(wasteCollectorId)) {
+            throw new ValidException("Catador não encontrado!");
+        }
+
+        List<Tuple> tuples;
+        if (limit != null) {
+            tuples = collectRepository.findAvailableCollectsWithLimit(
+                    currentLongitude, currentLatitude, wasteCollectorId, radius, limit, linkToWasteCollector);
+        } else {
+            tuples = collectRepository.findAvailableCollectsWithoutLimit(
+                    currentLongitude, currentLatitude, wasteCollectorId, radius, linkToWasteCollector);
+        }
 
         LocalDateTime now = LocalDateTime.now();
 
-        // Marcar as coletas com o wasteCollectorId, status e initTime
-        tuples.forEach(tuple -> {
-            Collect collect = collectRepository.findById(tuple.get("id", Long.class))
-                    .orElseThrow(() -> new EntityNotFoundException("Collect not found"));
-            collect.setWasteCollector(wasteCollectorService.getWasteCollectorById(wasteCollectorId)
-                    .orElseThrow(() -> new EntityNotFoundException("WasteCollector not found")));
-            collect.setInitTime(now);
-            collect.setStatus(CollectStatus.IN_PROGRESS);
-            collectRepository.save(collect);
-        });
+        if (linkToWasteCollector) {
+            tuples.forEach(tuple -> {
+                Collect collect = collectRepository.findById(tuple.get("id", Long.class))
+                        .orElseThrow(() -> new EntityNotFoundException("Collect not found"));
+                collect.setWasteCollector(wasteCollectorService.getWasteCollectorById(wasteCollectorId)
+                        .orElseThrow(() -> new EntityNotFoundException("WasteCollector not found")));
+                collect.setInitTime(now);
+                collect.setStatus(CollectStatus.IN_PROGRESS);
+                collectRepository.save(collect);
+            });
+        }
 
-        // Converter os resultados para DTOs
         return tuples.stream().map(tuple -> new CollectAddressAvaibleDTO(
                 tuple.get("id", Long.class),
                 tuple.get("amount", Integer.class),
@@ -151,7 +164,7 @@ public class CollectService {
                 DataUtils.convertToLocalDateTime(tuple.get("updateTime", Timestamp.class)),
                 tuple.get("addressId", Long.class),
                 tuple.get("residentId", Long.class),
-                tuple.get("wasteCollectorId", Long.class),
+                linkToWasteCollector ? wasteCollectorId : null,
                 tuple.get("longitude", Double.class),
                 tuple.get("latitude", Double.class),
                 tuple.get("location", String.class)

@@ -1,28 +1,31 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {MapComponent} from "../map/map.component";
 import {User, UserRole, UserService} from "../../domains/user/user.service";
-import {LayoutService} from "../../layout/service/app.layout.service";
-import {CollectorStateService} from "../../domains/collect/collector-state.service";
-import {LocationService} from "../../core/services/location.service";
+import {CollectorAndMapStateService} from "../../core/services/collector-and-map-state.service";
+import {WasteCollectorService} from "../../core/services/waste-collector.service";
+import {CollectService} from "../../domains/collect/collect.service";
 
 @Component({
     selector: 'app-home-waste-collector',
     standalone: true,
     imports: [
         ButtonModule,
-        MapComponent
+        MapComponent,
     ],
     templateUrl: './home-waste-collector.component.html',
     styleUrl: './home-waste-collector.component.scss'
 })
-export class HomeWasteCollectorComponent implements OnInit {
+export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
     user: User | null = null;
+    coletaStatus: boolean = false; // Variável pública para acessar no template
+    totalAvailableCollects = 0;
 
-    constructor(public layoutService: LayoutService,
-                private userService: UserService,
-                private locationService: LocationService,
-                private collectorStateService: CollectorStateService
+    constructor(
+        private userService: UserService,
+        private collectorAndMapStateService: CollectorAndMapStateService,
+        private wasteCollectorService: WasteCollectorService,
+        private collectService: CollectService
     ) {
     }
 
@@ -31,23 +34,59 @@ export class HomeWasteCollectorComponent implements OnInit {
             this.user = user;
         });
 
-        // Obter a localização inicial
-        this.locationService.getCurrentLocation().then((position) => {
-            const location = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-            };
+        if (this.user && this.user.role === UserRole.WASTE_COLLECTOR) {
+            // Inicia o monitoramento da localização para WasteCollector
+            this.collectorAndMapStateService.startLocationMonitoring(this.user.id);
 
-            // Atualizar o estado global com a localização inicial
-            this.collectorStateService.setLocation(location);
+            // Inscreve-se no coletaStatus$ e atualiza a variável local
+            this.collectorAndMapStateService.coletaStatus$.subscribe(status => {
+                this.coletaStatus = status;
+            });
 
-            // Iniciar monitoramento se for WasteCollector
-            // if (this.user.role === UserRole.WASTE_COLLECTOR) {
-            //     this.collectorStateService.startCollection();
-            // }
-        });
+            // Observar a localização atual do usuário
+            this.collectorAndMapStateService.location$.subscribe(location => {
+                if (location) {
+                    // Atualiza a localização do catador centralizando o mapa
+                    this.collectorAndMapStateService.setMapCenter(location);
+
+                    // Chamar o serviço para obter as coletas não vinculadas com base na localização
+                    this.collectService.getUnlinkedCollects(location.lng, location.lat).subscribe((collects) => {
+
+                        // Atualiza o número total de coletas disponíveis
+                        this.totalAvailableCollects = collects.length;
+
+                        console.log('getUnlinkedCollects - home wastecolector>> collects: ', collects); // TODO REMOVER
+
+                        const markerPositions = new Set<string>(); // Para rastrear posições já usadas
+                        const markers = collects.map((c, index) => {
+                            let {latitude, longitude} = c;
+
+                            // Se já existe um marcador na mesma posição, aplica um deslocamento
+                            while (markerPositions.has(`${latitude},${longitude}`)) {
+                                latitude += 0.00001; // Pequeno deslocamento na latitude
+                                longitude += 0.00005; // Pequeno deslocamento na longitude
+                            }
+
+                            // Adiciona a nova posição ao conjunto
+                            markerPositions.add(`${latitude},${longitude}`);
+
+                            return {
+                                position: {lat: latitude, lng: longitude},
+                                title: `Coleta ${c.id}`,
+                            };
+                        });
+
+                        console.log('Marcadores gerados:', markers); // TODO REMOVER
+
+                        this.collectorAndMapStateService.setMapMarkers(markers);
+                    });
+                }
+            });
+        }
     }
 
-//     TODO talvez chamar a qui o service de location ??? inicia aqui e ja sta com a localização no mapa
-
+    ngOnDestroy(): void {
+        // Limpa o monitoramento da localização ao destruir o componente
+        this.collectorAndMapStateService.stopLocationMonitoring();
+    }
 }

@@ -37,7 +37,7 @@ export class NewCollectComponent implements OnInit {
         if (action === 'create') {
             console.log('componente page nova coleta Criar COleta', collect); //TODO apagar apos teste
             // Adiciona o ID do usuário ao corpo da requisição
-            collect.id_resident = Number(this.user.id);
+            collect.residentId = Number(this.user.id);
 
             this.createCollect(collect);
         }

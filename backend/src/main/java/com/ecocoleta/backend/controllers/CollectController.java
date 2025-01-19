@@ -92,6 +92,7 @@ public class CollectController {
 
     //    TODO rota de upodate de coleta??? ou é melhor fazer um cancelamento e criar uma nova coleta?
 
+    // retrona a lista de coletas atuais do usuario --- mudar o nome do endpoint
     @GetMapping("/active_collects")
     public ResponseEntity<Page<CollectDTO>> getActiveCollects(@RequestParam @Valid Long userId,
                                                               @PageableDefault(size = 10, sort = {"createTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
@@ -148,13 +149,139 @@ public class CollectController {
     }
 
     /**
-     * Endpoint para buscar as coletas disponíveis aos waste_collectors.
-     * Recebe um CollectSearchAvaibleListDTO com os parâmetros de busca.
-     * Retorna uma lista de CollectAddressAvaibleDTO com as coletas disponíveis.
+     * Endpoint para buscar as coletas disponíveis sem atrelar ao wasteCollector.
+     * <p>
+     * Este endpoint permite buscar todas as coletas disponíveis que correspondem aos critérios fornecidos,
+     * sem associá-las a um wasteCollector. É útil para exibir oportunidades de coleta
+     * disponíveis em uma região, sem registrar o interesse de um coletor específico.
+     * <p>
+     * ### Parâmetros de entrada:
+     * - `collectSearchAvaibleListDTO` (Body): Objeto contendo os critérios de busca. Campos esperados:
+     * - `currentLatitude` (Double): Latitude atual do ponto de referência para a busca.
+     * - `currentLongitude` (Double): Longitude atual do ponto de referência para a busca.
+     * - `radius` (QueryParam, Opcional): Raio de busca em metros. Caso não fornecido, o valor padrão é **10.000 metros (10 km)**.
+     * <p>
+     * ### Comportamento:
+     * - Retorna todas as coletas que estão disponíveis (status `PENDING`), sem limite de quantidade.
+     * - As coletas retornadas não estarão associadas a nenhum `wasteCollector`.
+     * <p>
+     * ### Valores padrão:
+     * - Raio padrão: 10.000 metros (10 km), se o parâmetro `radius` não for fornecido.
+     * <p>
+     * ### Resposta:
+     * - HTTP 200 OK: Lista de coletas disponíveis dentro do raio especificado.
+     * - `id` (Long): ID da coleta.
+     * - `amount` (Integer): Quantidade de material a ser coletado.
+     * - `status` (String): Status atual da coleta (geralmente `PENDING`).
+     * - `longitude` e `latitude` (Double): Localização geográfica da coleta.
+     * - HTTP 400 Bad Request: Caso os dados fornecidos estejam inválidos.
+     * - HTTP 500 Internal Server Error: Erro interno ao processar a solicitação.
+     * <p>
+     * ### Exemplo de uso:
+     * Requisição:
+     * ```
+     * POST /get_show_unlinked_collects?radius=5000
+     * Body:
+     * {
+     * "currentLatitude": -23.550520,
+     * "currentLongitude": -46.633308
+     * }
+     * ```
+     * Resposta:
+     * ```
+     * HTTP 200 OK
+     * [
+     * {
+     * "id": 1,
+     * "amount": 5,
+     * "status": "PENDING",
+     * "longitude": -46.632203,
+     * "latitude": -23.549540
+     * },
+     * ...
+     * ]
+     * ```
      */
-    @PostMapping("get_avaible_collects")
+    @PostMapping("get_show_unlinked_collects")
     @Transactional
-    public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollects(
+    public ResponseEntity<List<CollectAddressAvaibleDTO>> getUnlinkedCollects(
+            @RequestBody @Valid CollectSearchAvaibleListDTO collectSearchAvaibleListDTO,
+            @RequestParam(required = false) Double radius) {
+
+        // Configura valores padrão
+        double effectiveRadius = (radius != null) ? radius : 10000.0; // Raio padrão: 10 km
+
+        // Obter coletas disponíveis sem atrelar ao wasteCollector
+        List<CollectAddressAvaibleDTO> collects = collectService.getAvailableCollects(
+                collectSearchAvaibleListDTO, effectiveRadius, null, false); // Passa null como limite
+
+        return ResponseEntity.ok().body(collects);
+    }
+
+    /**
+     * Endpoint para buscar as coletas disponíveis e atrelar ao wasteCollector.
+     * <p>
+     * Este endpoint permite que um `wasteCollector` obtenha coletas disponíveis com base
+     * nos critérios fornecidos e as reserve para si. As coletas retornadas terão
+     * seu status atualizado para `IN_PROGRESS` e serão associadas ao `wasteCollector`.
+     * <p>
+     * ### Parâmetros de entrada:
+     * - `collectSearchAvaibleListDTO` (Body): Objeto contendo os critérios de busca. Campos esperados:
+     * - `idWasteCollector` (Long): ID do `wasteCollector` que está requisitando as coletas.
+     * - `currentLatitude` (Double): Latitude atual do ponto de referência para a busca.
+     * - `currentLongitude` (Double): Longitude atual do ponto de referência para a busca.
+     * - `radius` (QueryParam, Opcional): Raio de busca em metros. Caso não fornecido, o valor padrão é **3.000 metros (3 km)**.
+     * - `limit` (QueryParam, Opcional): Número máximo de coletas a serem retornadas. Caso não fornecido, o valor padrão é **3**.
+     * <p>
+     * ### Comportamento:
+     * - Retorna as coletas disponíveis (status `PENDING`) dentro do raio especificado e as reserva para o `wasteCollector`.
+     * - As coletas terão:
+     * - Status atualizado para `IN_PROGRESS`.
+     * - `idWasteCollector` atualizado com o ID do coletor.
+     * - `initTime` atualizado com a data/hora atual.
+     * <p>
+     * ### Valores padrão:
+     * - Raio padrão: 3.000 metros (3 km), se o parâmetro `radius` não for fornecido.
+     * - Limite padrão: 3 coletas, se o parâmetro `limit` não for fornecido.
+     * <p>
+     * ### Resposta:
+     * - HTTP 200 OK: Lista de coletas reservadas para o `wasteCollector`.
+     * - `id` (Long): ID da coleta.
+     * - `amount` (Integer): Quantidade de material a ser coletado.
+     * - `status` (String): Novo status da coleta (`IN_PROGRESS`).
+     * - `longitude` e `latitude` (Double): Localização geográfica da coleta.
+     * - HTTP 400 Bad Request: Caso os dados fornecidos estejam inválidos ou o `wasteCollector` não exista.
+     * - HTTP 500 Internal Server Error: Erro interno ao processar a solicitação.
+     * <p>
+     * ### Exemplo de uso:
+     * Requisição:
+     * ```
+     * POST /get_avaible_collects_reserved?radius=3000&limit=5
+     * Body:
+     * {
+     * "idWasteCollector": 101,
+     * "currentLatitude": -23.550520,
+     * "currentLongitude": -46.633308
+     * }
+     * ```
+     * Resposta:
+     * ```
+     * HTTP 200 OK
+     * [
+     * {
+     * "id": 1,
+     * "amount": 5,
+     * "status": "IN_PROGRESS",
+     * "longitude": -46.632203,
+     * "latitude": -23.549540
+     * },
+     * ...
+     * ]
+     * ```
+     */
+    @PostMapping("get_avaible_collects_reserved")
+    @Transactional
+    public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollectsReserved(
             @RequestBody @Valid CollectSearchAvaibleListDTO collectSearchAvaibleListDTO,
             @RequestParam(required = false) Double radius,
             @RequestParam(required = false) Integer limit) {
@@ -167,12 +294,12 @@ public class CollectController {
         double effectiveRadius = (radius != null) ? radius : 3000.0; // Raio padrão: 3 km
         int effectiveLimit = (limit != null) ? limit : 3;            // Limite padrão: 3 coletas
 
-        List<CollectAddressAvaibleDTO> collectAddressAvaibleDTOS = collectService.getCollectAvaibleList(
-                collectSearchAvaibleListDTO, effectiveRadius, effectiveLimit);
+        // Obter coletas disponíveis e atrelar ao wasteCollector
+        List<CollectAddressAvaibleDTO> collects = collectService.getAvailableCollects(
+                collectSearchAvaibleListDTO, effectiveRadius, effectiveLimit, true);
 
-        return ResponseEntity.ok().body(collectAddressAvaibleDTOS);
+        return ResponseEntity.ok().body(collects);
     }
-
 
     /**
      * Endpoint para finalizar coleta completa.

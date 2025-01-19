@@ -35,34 +35,99 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
     void updateAddressToNull(@Param("addressId") Long addressId);
 
     /**
-     * Buscar coletas disponíveis com parâmetros de raio e limite.
-     *
-     * @param longitude        Longitude do coletor.
-     * @param latitude         Latitude do coletor.
-     * @param wasteCollectorId ID do coletor.
-     * @param radius           Raio de busca em metros.
-     * @param limit            Limite de resultados.
-     * @return Lista de coletas disponíveis, Buscar coletas disponiveis onde calcula a distancia entre o coletor e a coleta em um raio de 3000 metros(ou parâmetro) limitando a 3 coletas(ou parâmetro) e ordenando pela localizacao, usando tupla para retornar os dados nomeados
+     * Busca coletas disponíveis com parâmetros de raio, limite e opção de atrelar ao wasteCollector.
+     * <p>
+     * Este método realiza uma consulta SQL nativa para buscar coletas disponíveis com base em:
+     * - Raio geográfico especificado (`radius`) em metros.
+     * - Limite máximo de registros (`limit`), definido pelo chamador.
+     * - Associação condicional a um `wasteCollector` com base no parâmetro `linkToWasteCollector`.
+     * <p>
+     * ### Parâmetros:
+     * - `longitude` (Double): Longitude do ponto de referência.
+     * - `latitude` (Double): Latitude do ponto de referência.
+     * - `wasteCollectorId` (Long): ID do wasteCollector que está realizando a busca (se aplicável).
+     * - `radius` (Double): Raio em metros para a busca.
+     * - `limit` (Integer): Limite máximo de registros retornados.
+     * - `linkToWasteCollector` (Boolean): Indica se as coletas devem ser filtradas/atreladas ao wasteCollector:
+     * - `true`: Retorna apenas coletas associadas ou disponíveis para o `wasteCollector`.
+     * - `false`: Retorna todas as coletas disponíveis no raio, sem considerar o `wasteCollector`.
+     * <p>
+     * ### Comportamento:
+     * - A consulta retorna as coletas disponíveis com o status `PENDING`.
+     * - A condição `linkToWasteCollector` controla se a consulta considera o ID do wasteCollector.
+     * - As coletas são ordenadas pela localização e limitadas pela quantidade especificada.
+     * <p>
+     * ### Retorno:
+     * - Uma lista de `Tuple` contendo os campos selecionados (como ID, localização e status da coleta).
+     * <p>
+     * ### Observação:
+     * - Este método aplica um limite explícito (`LIMIT :limit`) à consulta, adequado para cenários paginados.
      */
     @Query(value = "select c.id as id, c.amount as amount, " +
             "c.status as status, c.init_time as initTime, c.end_time as endTime, c.create_time as createTime, c.update_time as updateTime, " +
-            "c.address_id as addressId, c.resident_id as residentId, c.waste_collector_id as wasteCollectorId, " +
+            "c.address_id as addressId, c.resident_id as residentId, " +
             "a.longitude as longitude, a.latitude as latitude, ST_AsText(a.location) as location " +
             "from collects c " +
             "left join address a on c.address_id = a.id " +
             "and ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, :radius) " +
             "where c.status = 'PENDING' " +
-            "and (c.waste_collector_id = :wasteCollectorId or c.waste_collector_id is null) " +
+            "and (:linkToWasteCollector = false or c.waste_collector_id = :wasteCollectorId or c.waste_collector_id is null) " +
             "order by a.location " +
             "limit :limit",
             nativeQuery = true)
-    List<Tuple> findAvailableCollects(
+    List<Tuple> findAvailableCollectsWithLimit(
             @Param("longitude") Double longitude,
             @Param("latitude") Double latitude,
             @Param("wasteCollectorId") Long wasteCollectorId,
             @Param("radius") Double radius,
-            @Param("limit") Integer limit);
+            @Param("limit") Integer limit,
+            @Param("linkToWasteCollector") boolean linkToWasteCollector);
 
+    /**
+     * Busca coletas disponíveis com parâmetros de raio e opção de atrelar ao wasteCollector, sem limite de registros.
+     * <p>
+     * Este método realiza uma consulta SQL nativa para buscar coletas disponíveis com base em:
+     * - Raio geográfico especificado (`radius`) em metros.
+     * - Associação condicional a um `wasteCollector` com base no parâmetro `linkToWasteCollector`.
+     * <p>
+     * ### Parâmetros:
+     * - `longitude` (Double): Longitude do ponto de referência.
+     * - `latitude` (Double): Latitude do ponto de referência.
+     * - `wasteCollectorId` (Long): ID do wasteCollector que está realizando a busca (se aplicável).
+     * - `radius` (Double): Raio em metros para a busca.
+     * - `linkToWasteCollector` (Boolean): Indica se as coletas devem ser filtradas/atreladas ao wasteCollector:
+     * - `true`: Retorna apenas coletas associadas ou disponíveis para o `wasteCollector`.
+     * - `false`: Retorna todas as coletas disponíveis no raio, sem considerar o `wasteCollector`.
+     * <p>
+     * ### Comportamento:
+     * - A consulta retorna todas as coletas disponíveis com o status `PENDING` dentro do raio especificado.
+     * - A condição `linkToWasteCollector` controla se a consulta considera o ID do wasteCollector.
+     * - As coletas são ordenadas pela localização.
+     * <p>
+     * ### Retorno:
+     * - Uma lista de `Tuple` contendo os campos selecionados (como ID, localização e status da coleta).
+     * <p>
+     * ### Observação:
+     * - Este método **não aplica um limite explícito** (`LIMIT`) à consulta, retornando todos os registros correspondentes.
+     * - Adequado para cenários onde não há necessidade de paginação.
+     */
+    @Query(value = "select c.id as id, c.amount as amount, " +
+            "c.status as status, c.init_time as initTime, c.end_time as endTime, c.create_time as createTime, c.update_time as updateTime, " +
+            "c.address_id as addressId, c.resident_id as residentId, " +
+            "a.longitude as longitude, a.latitude as latitude, ST_AsText(a.location) as location " +
+            "from collects c " +
+            "left join address a on c.address_id = a.id " +
+            "and ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, :radius) " +
+            "where c.status = 'PENDING' " +
+            "and (:linkToWasteCollector = false or c.waste_collector_id = :wasteCollectorId or c.waste_collector_id is null) " +
+            "order by a.location",
+            nativeQuery = true)
+    List<Tuple> findAvailableCollectsWithoutLimit(
+            @Param("longitude") Double longitude,
+            @Param("latitude") Double latitude,
+            @Param("wasteCollectorId") Long wasteCollectorId,
+            @Param("radius") Double radius,
+            @Param("linkToWasteCollector") boolean linkToWasteCollector);
 
     // Pega todas as coletas pendentes que estão atrasadas
     @Query("SELECT c FROM Collect c WHERE (c.status = 'PENDING' or c.status = 'IN_PROGRESS') AND c.initTime < :sixHoursAgo")

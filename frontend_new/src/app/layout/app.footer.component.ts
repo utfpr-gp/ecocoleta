@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {LayoutService} from "./service/app.layout.service";
 import {User, UserService} from "../domains/user/user.service";
-import {CollectorStateService} from "../domains/collect/collector-state.service";
+import {CollectorAndMapStateService} from "../core/services/collector-and-map-state.service";
 
 @Component({
     selector: 'app-footer',
@@ -10,11 +10,12 @@ import {CollectorStateService} from "../domains/collect/collector-state.service"
 })
 export class AppFooterComponent implements OnInit {
     user: User | null = null;
-    startColetaFlag: boolean = false;
+    isCollectingFlag: boolean = false;
 
-    constructor(public layoutService: LayoutService,
-                private userService: UserService,
-                private collectorStateService: CollectorStateService
+    constructor(
+        public layoutService: LayoutService,
+        private userService: UserService,
+        private collectorAndMapStateService: CollectorAndMapStateService
     ) {
     }
 
@@ -25,11 +26,12 @@ export class AppFooterComponent implements OnInit {
     }
 
     toggleColeta(): void {
-        this.startColetaFlag = !this.startColetaFlag;
-        if (this.startColetaFlag) {
-            this.collectorStateService.startCollection();
+        this.isCollectingFlag = !this.isCollectingFlag;
+        if (this.isCollectingFlag) {
+            this.collectorAndMapStateService.startCollection(this.user?.id);
         } else {
-            this.collectorStateService.stopCollection();
+            // todo criar dialog de confirmação
+            this.collectorAndMapStateService.stopCollection();
         }
     }
 }
