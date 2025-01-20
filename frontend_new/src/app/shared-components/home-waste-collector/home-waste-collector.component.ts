@@ -28,8 +28,11 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
         private collectService: CollectService
     ) {
     }
-
+    // TODO verificar como deixar essa classse sempre ativa para não alterar o mapa etc
     ngOnInit(): void {
+
+        console.log('HomeWasteCollectorComponent initialized'); // todo remove
+
         this.userService.user$.subscribe(user => {
             this.user = user;
         });
@@ -46,6 +49,14 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
             // Observar a localização atual do usuário
             this.collectorAndMapStateService.location$.subscribe(location => {
                 if (location) {
+
+                    // Envia atualização de localização ao backend
+                    this.wasteCollectorService.updateWasteCollectorLocation({
+                        collectorId: this.user.id,
+                        latitude: location.lat,
+                        longitude: location.lng,
+                    }).subscribe();
+
                     // Atualiza a localização do catador centralizando o mapa
                     this.collectorAndMapStateService.setMapCenter(location);
 
@@ -83,6 +94,8 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
                 }
             });
         }
+        console.log('HomeWasteCollectorComponent initialized FIM'); // todo remove
+
     }
 
     ngOnDestroy(): void {

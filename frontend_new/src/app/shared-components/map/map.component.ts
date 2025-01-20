@@ -25,6 +25,9 @@ export class MapComponent implements OnInit {
     }
 
     ngOnInit(): void {
+
+        console.log('MapComponent initialized'); // todo remove
+
         // Observar o estado do centro do mapa
         this.collectorAndMapStateService.mapCenter$.subscribe((center) => {
             if (center) this.center = center;
@@ -34,5 +37,8 @@ export class MapComponent implements OnInit {
         this.collectorAndMapStateService.mapMarkers$.subscribe((markers) => {
             this.markers = markers;
         });
+
+        console.log('MapComponent initialized FIM'); // todo remove
+
     }
 }

@@ -26,6 +26,8 @@ export class HomeResidentComponent implements OnInit{
     ) {}
 
     ngOnInit(): void {
+        console.log('HomeResidentComponent initialized'); // todo remove
+
         this.locationService.getCurrentLocation().then((position) => {
             const location = { lat: position.coords.latitude, lng: position.coords.longitude };
             this.collectorAndMapStateService.setMapCenter(location);
@@ -40,5 +42,7 @@ export class HomeResidentComponent implements OnInit{
                 this.collectorAndMapStateService.setMapMarkers(markers);
             });
         });
+
+        console.log('HomeResidentComponent initialized FIM'); // todo remove
     }
 }

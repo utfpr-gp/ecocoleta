@@ -90,24 +90,7 @@ export class CollectorAndMapStateService {
 
                     // Gera a rota com os pontos de coleta
                     this.generateRoute();
-
-                    // // Inicia o monitoramento da localização
-                    // this.startLocationMonitoring(collectorId);
                 });
-                // this.setColetasData(coletas); // Atualiza a lista de coletas no estado global
-                // this.setColetaStatus(true); // Atualiza o status da coleta para ativo - true
-                //
-                // // Atualiza marcadores no mapa
-                // const markers = coletas.map((coleta) => ({
-                //     position: {lat: coleta.latitude, lng: coleta.longitude},
-                //     title: `Coleta ${coleta.id}`,
-                // }));
-                // this.setMapMarkers(markers);
-                //
-                // // Gera a rota com os pontos de coleta
-                // this.generateRoute();
-                // });
-
             }
         });
     }
@@ -129,13 +112,6 @@ export class CollectorAndMapStateService {
         this.locationService.watchLocation((position) => {
             const location = {lat: position.coords.latitude, lng: position.coords.longitude};
             this.location.next(location);
-
-            // Envia atualização de localização ao backend
-            this.wasteCollectorService.updateWasteCollectorLocation({
-                collectorId,
-                latitude: location.lat,
-                longitude: location.lng,
-            }).subscribe();
 
             // Verifica a proximidade com as coletas
             this.checkProximity(location);
