@@ -5,7 +5,7 @@ import {Observable, tap} from "rxjs";
 import {UserRole} from "../../domains/user/user.service";
 
 export interface WasteCollectorLocationDTO {
-    collectorId: string;
+    wasteCollectorId: string;
     latitude: number;
     longitude: number;
 }

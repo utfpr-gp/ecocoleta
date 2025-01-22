@@ -76,6 +76,16 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
             this.collectorAndMapStateService.setMapCenter(location);
             this.collectorAndMapStateService.setLocation(location);
 
+            console.log('HOME WASTE - initializeUnlinkedCollects - MARCANDO LOCAL USER - location: ', location); // todo remove
+            this.collectorAndMapStateService.updateUserLocationMarker(location);
+
+            //TODO localização do catador update
+            this.wasteCollectorService.updateWasteCollectorLocation({
+                wasteCollectorId: this.user.id,
+                latitude: location.lat,
+                longitude: location.lng,
+            }).subscribe();
+
             this.collectService.getUnlinkedCollects(location.lng, location.lat).subscribe(collects => {
                 this.totalAvailableCollects = collects.length;
                 const markers = this.generateMarkers(collects);

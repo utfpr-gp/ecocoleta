@@ -10,6 +10,6 @@
 <!--        [title]="marker.title">-->
 <!--    </map-marker>-->
     @for (marker of markers; track marker.position) {
-                <map-marker [position]="marker.position" [title]="marker.title"/>
+                <map-marker [position]="marker.position" [title]="marker.title" [icon]="marker.icon"/>
             }
 </google-map>

@@ -6,9 +6,6 @@ import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.repositories.WasteCollectorRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Coordinate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,7 +41,7 @@ public class WasteCollectorService {
 
     //    public void updateLocation(WasteCollectorLocationDTO locationDTO) {
 //        GeometryFactory geometryFactory = new GeometryFactory();
-//        WasteCollector collector = wasteCollectorRespository.findById(locationDTO.collectorId())
+//        WasteCollector collector = wasteCollectorRespository.findById(locationDTO.wasteCollectorId())
 //                .orElseThrow(() -> new ValidException("Catador não encontrado"));
 //
 //        // Criar o ponto com fábrica de geometria
@@ -53,7 +50,7 @@ public class WasteCollectorService {
 //        wasteCollectorRespository.save(collector);
 //    }
     public void updateLocation(WasteCollectorLocationDTO locationDTO) {
-        WasteCollector collector = wasteCollectorRespository.findById(locationDTO.collectorId())
+        WasteCollector collector = wasteCollectorRespository.findById(locationDTO.wasteCollectorId())
                 .orElseThrow(() -> new ValidException("Catador não encontrado"));
 
         // Chama o método da entidade para atualizar a localização

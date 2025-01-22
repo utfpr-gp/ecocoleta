@@ -4,6 +4,7 @@ import {LocationService} from './location.service';
 import {Collect, CollectService, CollectStatus} from '../../domains/collect/collect.service';
 import {WasteCollectorService} from "./waste-collector.service";
 import {MessageService} from "primeng/api";
+import {User, UserRole, UserService} from "../../domains/user/user.service";
 
 /*
 * fazer o footer se comunicar com o home-waste */
@@ -12,6 +13,8 @@ import {MessageService} from "primeng/api";
     providedIn: 'root',
 })
 export class CollectorAndMapStateService {
+    private currentUser = new BehaviorSubject<User | null>(null);
+    currentUser$ = this.currentUser.asObservable();
     // Estado das coletas e do mapa
     private coletaStatus = new BehaviorSubject<boolean>(false);
     coletaStatus$ = this.coletaStatus.asObservable().pipe(distinctUntilChanged());
@@ -23,7 +26,7 @@ export class CollectorAndMapStateService {
     private userLocationMarker = new BehaviorSubject<google.maps.MarkerOptions | null>(null);
     userLocationMarker$ = this.userLocationMarker.asObservable();
 
-    //sem uso ainda ...
+    //sem uso ainda ??...
     private location = new BehaviorSubject<{ lat: number; lng: number } | null>(null);
     private mapCenter = new BehaviorSubject<google.maps.LatLngLiteral | null>(null);
 
@@ -42,9 +45,14 @@ export class CollectorAndMapStateService {
     constructor(
         private locationService: LocationService,
         private collectService: CollectService,
+        private userService: UserService,
         private messageService: MessageService,
         private wasteCollectorService: WasteCollectorService
     ) {
+        // Observar o usuário atual do UserService
+        this.userService.user$.subscribe((user) => {
+            this.currentUser.next(user);
+        });
     }
 
     /**
@@ -82,6 +90,13 @@ export class CollectorAndMapStateService {
     }
 
     //*--------------------------- Gerenciar estados -----------------------------------*//
+    /**
+     * Obtém o usuário atual diretamente (sincronicamente).
+     */
+    getCurrentUser(): User | null {
+        return this.currentUser.getValue();
+    }
+
     getMapMarkers(): Observable<google.maps.MarkerOptions[]> {
         return this.mapMarkers.asObservable();
     }
@@ -161,7 +176,7 @@ export class CollectorAndMapStateService {
 
             // Para o monitoramento de localização
             this.stopLocationMonitoring();
-        //     TODO ao clicar em stop não esta parando de monitorar a localização
+            //     TODO ao clicar em stop não esta parando de monitorar a localização
         }
     }
 
@@ -177,7 +192,7 @@ export class CollectorAndMapStateService {
             this.location.next(location);
 
             // Atualiza o marcador da localização do usuário
-            // this.updateUserLocationMarker(location);
+            this.updateUserLocationMarker(location);
             // TODO continuar marcador de user!!
 
             console.log('Nova localização monitorada:', location); // TODO REMOVER
@@ -227,11 +242,12 @@ export class CollectorAndMapStateService {
                         next: (response) => {
                             // Atualiza o estado local para refletir a coleta como `COMPLETED`
                             const updatedColetas = coletas.map((c) =>
-                                c.id === coleta.id ? { ...c, status: 'COMPLETED' } : c
+                                c.id === coleta.id ? {...c, status: 'COMPLETED'} : c
                             );
                             this.setColetasData(updatedColetas as Collect[]);
                             this.processingCollects.delete(coleta.id!); // Libera a coleta após o sucesso
 
+                            //TODO chama metodo de atualizar localização catador
 
                             // Exibe mensagem de sucesso
                             this.messageService.add({
@@ -266,16 +282,35 @@ export class CollectorAndMapStateService {
      * Atualiza o marcador da localização do usuário.
      * @param location A localização atual do usuário.
      */
+    // updateUserLocationMarker(location: { lat: number; lng: number }): void {
+    //     const userMarker: google.maps.MarkerOptions = {
+    //         position: location,
+    //         title: 'Sua Localização',
+    //         icon: {
+    //             url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', // Ícone personalizado
+    //             scaledSize: new google.maps.Size(40, 40), // Ajusta o tamanho do ícone
+    //         },
+    //     };
+    //     this.userLocationMarker.next(userMarker);
+    // }
+
     updateUserLocationMarker(location: { lat: number; lng: number }): void {
-        const userMarker: google.maps.MarkerOptions = {
-            position: location,
-            title: 'Sua Localização',
-            icon: {
-                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', // Ícone personalizado
-                scaledSize: new google.maps.Size(40, 40), // Ajusta o tamanho do ícone
-            },
-        };
-        this.userLocationMarker.next(userMarker);
+        const user = this.getCurrentUser();
+        if (user?.role === UserRole.WASTE_COLLECTOR) {
+            const userMarker: google.maps.MarkerOptions = {
+                position: location,
+                title: 'Sua Localização',
+                icon: {
+                    url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                    scaledSize: new google.maps.Size(40, 40),
+                },
+            };
+            this.userLocationMarker.next(userMarker);
+            console.log('userLocationMarker: ', userMarker); // TODO REMOVER
+        } else {
+            console.log('Não exibe marcador de localização para usuário não WasteCollector.'); // TODO REMOVER
+            this.userLocationMarker.next(null); // Não exibe marcador se não for WasteCollector
+        }
     }
 
 
