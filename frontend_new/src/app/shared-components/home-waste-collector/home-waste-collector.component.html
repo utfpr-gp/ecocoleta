@@ -1,14 +1,18 @@
 <div class="waste-collector-container">
-    <!--TODO melhorar o numeor informativo par aum card etc-->
+    <!-- Mostrar coletas disponíveis apenas quando não estiver em coleta -->
+    <ng-container *ngIf="isCollectingFlag$ | async as isCollecting">
+        <h3 *ngIf="!isCollecting" class="text-3xl text-center">
+            Coletas Disponíveis: {{ totalAvailableCollects }}
+        </h3>
 
-    @if (!coletaStatus){
-        <h3 class="text-3xl text-center">Coletas Disponíveis {{ totalAvailableCollects }}</h3>
-    }
+        <!-- Mensagem para coleta em andamento -->
+        <h3 *ngIf="isCollecting" class="text-3xl text-center">
+            Coleta em andamento...
+        </h3>
+    </ng-container>
 
     <!-- Mapa Responsivo -->
     <div class="map-container">
         <app-map></app-map>
     </div>
 </div>
-
-

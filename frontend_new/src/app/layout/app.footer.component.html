@@ -39,7 +39,7 @@
         <span class="mt-2 w-full text-center">Coletas</span>
     </div>
     @if (user?.role === 'WASTE_COLLECTOR') {
-        @if (isCollectingFlag) {
+        @if (isCollectingFlag$ | async) {
             <div
                 class="flex flex-column align-items-center justify-content-center flex-1 bg-yellow-400 text-white border-round-3xl p-2"
                 style="text-align: center;">
