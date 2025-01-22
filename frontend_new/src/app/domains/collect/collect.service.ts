@@ -4,8 +4,7 @@ import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 
 export type Collect = {
-    id: string;
-    picture?: string | File;
+    id?: string;
     amount?: number;
     status?: CollectStatus;
     initTime?: string;
@@ -15,10 +14,10 @@ export type Collect = {
     addressId?: number;
     residentId?: number;
     wasteCollectorId?: number;
-    materials?: MateriaisReciclaveis[]; // Lista de materiais recicláveis
     longitude?: number;
     latitude?: number;
     location?: string;
+    materials?: MateriaisReciclaveis[]; // Lista de materiais recicláveis
 };
 
 export enum MateriaisReciclaveis {
@@ -62,6 +61,11 @@ export class CollectService {
     createCollect(collect: Collect): Observable<Collect> {
         return this.http.post<Collect>(`${this.apiUrl}/create_new_collect`, collect);
     }
+
+    finalizeColeta(coleta: Collect): Observable<any> {
+        return this.http.post(`${this.apiUrl}/finish_collect`, coleta);
+    }
+
 
     /**
      * Atualiza uma coleta existente.

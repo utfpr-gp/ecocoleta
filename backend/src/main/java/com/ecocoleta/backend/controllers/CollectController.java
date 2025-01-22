@@ -53,7 +53,7 @@ public class CollectController {
      * Para o cálculo e consulta pelo raio, utilizar o cálculo de Haversine.
      * <p>
      * Criar DTO que recebe:
-     * - waste_Collector_id
+     * - wasteCollectorId
      * - longitude
      * - latitude
      * - city

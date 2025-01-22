@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.NotNull;
 
 public record CollectSearchAvaibleListDTO(
-        @JsonAlias({"id_waste_collector", "id"})
+        @JsonAlias({"id_waste_collector", "id", "waste_collector_id"})
         Long idWasteCollector,
         @NotNull(message = "Latitude não pode ser vazio")
         @JsonAlias({"latitude"})

@@ -2,6 +2,7 @@ package com.ecocoleta.backend.services;
 
 import com.ecocoleta.backend.Utils.DataUtils;
 import com.ecocoleta.backend.domain.address.Address;
+import com.ecocoleta.backend.domain.collect.CollectMaterials;
 import com.ecocoleta.backend.domain.collect.dto.CollectSearchAvaibleListDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.domain.collect.mapper.CollectMapper;
@@ -28,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Objects;
 
 //import javax.transaction.Transactional;
@@ -157,7 +159,7 @@ public class CollectService {
         return tuples.stream().map(tuple -> new CollectAddressAvaibleDTO(
                 tuple.get("id", Long.class),
                 tuple.get("amount", Integer.class),
-                tuple.get("status", String.class),
+                linkToWasteCollector ? CollectStatus.IN_PROGRESS.name() : tuple.get("status", String.class), // Atualiza o status no retorno
                 DataUtils.convertToLocalDateTime(tuple.get("initTime", Timestamp.class)),
                 DataUtils.convertToLocalDateTime(tuple.get("endTime", Timestamp.class)),
                 DataUtils.convertToLocalDateTime(tuple.get("createTime", Timestamp.class)),
@@ -167,7 +169,8 @@ public class CollectService {
                 linkToWasteCollector ? wasteCollectorId : null,
                 tuple.get("longitude", Double.class),
                 tuple.get("latitude", Double.class),
-                tuple.get("location", String.class)
+                tuple.get("location", String.class),
+                parseMaterials(tuple.get("materials", String.class)) // Converte a string para uma lista de materiais
         )).toList();
     }
 
@@ -184,9 +187,9 @@ public class CollectService {
 
         // Buscar a coleta pelo ID e verificar se pertence ao wasteCollectorId fornecido
         Collect collect = collectRepository.findById(collectDTO.id()).orElseThrow(() -> new EntityNotFoundException("coleta não encontrada"));
-        if (collect.getWasteCollector() == null || !Objects.equals(collect.getWasteCollector().getId(), collectDTO.wasteCollector())) {
-            throw new ValidException("Coleta não encontrada ou não pertence ao usuario");
-        }
+//        if (collect.getWasteCollector() == null || !Objects.equals(collect.getWasteCollector().getId(), collectDTO.wasteCollector())) {
+//            throw new ValidException("Coleta não encontrada ou não pertence ao usuario");
+//        }
 
         // Verificar se a coleta já foi finalizada
         if (CollectStatus.COMPLETED.equals(collect.getStatus())) {
@@ -325,5 +328,14 @@ public class CollectService {
         } else {
             throw new ValidException("Usuário não tem permissão para essa coleta");
         }
+    }
+
+    private List<CollectMaterials> parseMaterials(String materials) {
+        if (materials == null || materials.isBlank()) {
+            return List.of();
+        }
+        return Arrays.stream(materials.split(","))
+                .map(CollectMaterials::valueOf)
+                .collect(Collectors.toList());
     }
 }

@@ -98,7 +98,7 @@ public class UserAddressService {
         Address address = addressService.getAddressById(addressId)
                 .orElseThrow(() -> new ValidException("Endereço não encontrado para o ID: " + addressId));
 
-        // Atualiza as coletas relacionadas para `address_id = NULL`
+        // Atualiza as coletas relacionadas para `addressId = NULL`
         // collectRepository.updateAddressToNull(addressId);
 
         UserAddress userAddress = userAddressRepository.findByUserAndAddress(user, address)

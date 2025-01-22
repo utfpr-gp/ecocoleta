@@ -17,14 +17,13 @@ public record CollectDTO(
         LocalDateTime createTime,
         LocalDateTime updateTime,
         @NotNull
-        @JsonAlias({"id_address"})
+        @JsonAlias({"addressId"})
         Long address,
         @NotNull
-        @JsonAlias({"id_resident"})
+        @JsonAlias({"residentId"})
         Long resident,
-        @JsonAlias({"id_waste_collector"})
+        @JsonAlias({"waste_collector_id"})
         Long wasteCollector,
-        @NotNull
 //        @Size(min = 1, message = "A coleta deve conter pelo menos um material")
         List<CollectMaterials> materials // Lista de materiais baseada no enum
 ) {

@@ -66,7 +66,8 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
     @Query(value = "select c.id as id, c.amount as amount, " +
             "c.status as status, c.init_time as initTime, c.end_time as endTime, c.create_time as createTime, c.update_time as updateTime, " +
             "c.address_id as addressId, c.resident_id as residentId, " +
-            "a.longitude as longitude, a.latitude as latitude, ST_AsText(a.location) as location " +
+            "a.longitude as longitude, a.latitude as latitude, ST_AsText(a.location) as location, " +
+            "c.materials as materials " +
             "from collects c " +
             "left join address a on c.address_id = a.id " +
             "and ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, :radius) " +
@@ -114,7 +115,8 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
     @Query(value = "select c.id as id, c.amount as amount, " +
             "c.status as status, c.init_time as initTime, c.end_time as endTime, c.create_time as createTime, c.update_time as updateTime, " +
             "c.address_id as addressId, c.resident_id as residentId, " +
-            "a.longitude as longitude, a.latitude as latitude, ST_AsText(a.location) as location " +
+            "a.longitude as longitude, a.latitude as latitude, ST_AsText(a.location) as location, " +
+            "c.materials as materials " +
             "from collects c " +
             "left join address a on c.address_id = a.id " +
             "and ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, :radius) " +

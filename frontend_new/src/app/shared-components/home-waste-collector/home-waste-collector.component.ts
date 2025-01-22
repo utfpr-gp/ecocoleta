@@ -51,14 +51,12 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
         this.isCollectingFlag$.pipe(
             takeUntil(this.destroy$),
             tap(isCollecting => {
-                if (isCollecting) {
-                    console.log('HOME WASTE - ONINIT - Coleta em andamento. Monitorando localização...');
-                    console.log('Coleta em andamento. Monitorando localização...');
-                    // this.startLocationMonitoring();
-                } else {
-                    console.log('HOME WASTE - ONINIT - Nenhuma coleta ativa. Buscando coletas disponíveis...');
-                    console.log('Nenhuma coleta ativa. Buscando coletas disponíveis...');
+                if (!isCollecting) {
+                    console.log('HOME WASTE - ONINIT - Nenhuma coleta ativa. Buscando coletas disponíveis...'); // todo remove
                     this.initializeUnlinkedCollects();
+                } else {
+                    console.log('HOME WASTE - ONINIT - Coleta em andamento. Monitorando localização...'); // todo remove
+                    this.collectorAndMapStateService.startLocationMonitoring();
                 }
             })
         ).subscribe();
