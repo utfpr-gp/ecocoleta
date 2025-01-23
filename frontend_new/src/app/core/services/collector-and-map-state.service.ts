@@ -21,31 +21,23 @@ export class CollectorAndMapStateService {
 
     private coletaData = new BehaviorSubject<Collect[]>([]);
     private mapMarkers = new BehaviorSubject<google.maps.MarkerOptions[]>([]);
+    mapMarkers$ = this.mapMarkers.asObservable();
 
     private directionsRenderer = new google.maps.DirectionsRenderer({
         suppressMarkers: false, // Permitir marcadores padrão
     });
-
     //Teste marcador user
     private userLocationMarker = new BehaviorSubject<google.maps.MarkerOptions | null>(null);
     userLocationMarker$ = this.userLocationMarker.asObservable();
 
-    //sem uso ainda ??...
     private location = new BehaviorSubject<{ lat: number; lng: number } | null>(null);
     private mapCenter = new BehaviorSubject<google.maps.LatLngLiteral | null>(null);
+    mapCenter$ = this.mapCenter.asObservable();
 
     private mapZoom = new BehaviorSubject<number>(15);
 
-    coletaData$ = this.coletaData.asObservable();
-    location$ = this.location.asObservable();
-    mapCenter$ = this.mapCenter.asObservable();
-    mapMarkers$ = this.mapMarkers.asObservable();
-    mapZoom$ = this.mapZoom.asObservable();
-
-    // Coletas em processamento
     private processingCollects: Set<string> = new Set();
 
-    // TOOD injetar user observable aqui...
     constructor(
         private locationService: LocationService,
         private collectService: CollectService,
@@ -175,7 +167,6 @@ export class CollectorAndMapStateService {
 
             // Atualiza o marcador da localização do usuário
             this.updateUserLocationMarker(location);
-            // TODO continuar marcador de user!!
 
             console.log('Nova localização monitorada:', location); // TODO REMOVER
 
@@ -188,7 +179,7 @@ export class CollectorAndMapStateService {
      * Para o monitoramento de localização.
      */
     stopLocationMonitoring(): void {
-        console.log('Parando monitoramento de localização...');
+        console.log('Parando monitoramento de localização...'); // TODO REMOVER
         this.locationService.clearWatch();
     }
 
@@ -229,7 +220,13 @@ export class CollectorAndMapStateService {
                             this.setColetasData(updatedColetas as Collect[]);
                             this.processingCollects.delete(coleta.id!); // Libera a coleta após o sucesso
 
-                            //TODO chama metodo de atualizar localização catador
+                            // Atualiza a localização do catador
+                            const user = this.getCurrentUser();
+                            this.wasteCollectorService.updateWasteCollectorLocation({
+                                wasteCollectorId: user.id,
+                                latitude: location.lat,
+                                longitude: location.lng,
+                            }).subscribe();
 
                             // Exibe mensagem de sucesso
                             this.messageService.add({
@@ -304,6 +301,8 @@ export class CollectorAndMapStateService {
             return;
         }
 
+        // TODO pegar lista de coletas e excluir as que ja foram coletadas com status completed
+
         const waypoints = coletas.map((coleta) => ({
             location: {lat: coleta.latitude!, lng: coleta.longitude!},
             stopover: true,
@@ -338,4 +337,5 @@ export class CollectorAndMapStateService {
         );
     }
 
+//     TODO quand oa rota ou a aproximação estiver na ultima coleta tem que finaliza e mandar para o back, zerar os pontos e parar de monitorar a localização
 }

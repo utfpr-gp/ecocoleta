@@ -39,6 +39,14 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+
+        //todo
+        // > ENGENHARIA DE ROTA {
+        //     > FINALIZAR COLETA E STATES NA ULTIMA PARADA PONTO
+        //     > AO SAIR DA PAGINA E VOLTAR, E STATUS COLETING TRUE, CHAMA STARTINGCOLETA E FAZ ROA ETC COM COLETAS INPROGRES
+        //     > AO PERDER CONEXÃO FECHAR PAGINA  VER NO BANC OSE TEM COLETA EM PROGRESS COM O ID CATADOR CHAMR STARTRCOLETA ETC REINICIAR ONDE PAROU A ROTA
+        //     > AO DESLIGAR STOP COLETAS RESETAR AS COLETAS NÃO COMPLETADAS
+        //     }
         //TODO AO INICIAR O COMPONENTE VERIFICAR SE TEM NO BANCO UMA COLETA EM ANDAMENTO E SE TIVER INICIAR O MONITORAMENTO DA LOCALIZAÇÃO E INSERE NO MAPA...
         console.log('HomeWasteCollectorComponent initialized'); // todo remove
         console.log('HOME WASTE - ONINIT - GET-coletaStatus:', this.isCollectingFlag$); // todo remove
@@ -70,16 +78,17 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
-        console.log('HomeWasteCollectorComponent destruído');
     }
 
     private initializeUnlinkedCollects(): void {
         this.locationService.getCurrentLocation().then(position => {
+            // Centraliza o mapa na localização do usuário
             const location = {lat: position.coords.latitude, lng: position.coords.longitude};
             this.collectorAndMapStateService.setMapCenter(location);
             this.collectorAndMapStateService.setLocation(location);
 
             console.log('HOME WASTE - initializeUnlinkedCollects - MARCANDO LOCAL USER - location: ', location); // todo remove
+            // Atualiza o marcador da localização do usuário
             this.collectorAndMapStateService.updateUserLocationMarker(location);
 
             this.wasteCollectorService.updateWasteCollectorLocation({
