@@ -1,16 +1,27 @@
-import {Component, OnInit} from '@angular/core';
-import {GoogleMap, MapMarker} from "@angular/google-maps";
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {GoogleMap, MapInfoWindow, MapMarker} from "@angular/google-maps";
 import {CollectorAndMapStateService} from "../../core/services/collector-and-map-state.service";
-import {NgForOf} from "@angular/common";
 import {combineLatest} from "rxjs";
+import {CommonModule, JsonPipe} from "@angular/common";
+
+interface MarkerInfo { // Interface para tipar as informações do marcador
+    position: google.maps.LatLngLiteral;
+    title: string;
+    icon?: string;
+    description: string; // Adicione uma descrição
+    id:number;
+    // Outras propriedades que você precisar
+}
 
 @Component({
     selector: 'app-map',
     standalone: true,
     imports: [
+        CommonModule,
         GoogleMap,
         MapMarker,
-        NgForOf
+        MapInfoWindow,
+        JsonPipe,
     ],
     templateUrl: './map.component.html',
     styleUrl: './map.component.scss'
@@ -19,6 +30,8 @@ export class MapComponent implements OnInit {
     center: google.maps.LatLngLiteral = {lat: 0, lng: 0};
     markers: google.maps.MarkerOptions[] = [];
     zoom = 15; // Nível de zoom inicial
+    // @ViewChild(MapInfoWindow) infoWindow!: MapInfoWindow; // Use ! para indicar que será inicializado
+
 
     constructor(
         private collectorAndMapStateService: CollectorAndMapStateService
@@ -34,12 +47,6 @@ export class MapComponent implements OnInit {
             if (center) this.center = center;
         });
 
-        // Observar os marcadores no mapa
-        // this.collectorAndMapStateService.mapMarkers$.subscribe((markers) => {
-        //     this.markers = markers;
-        // });
-
-        //teste com marcador do user>>>
         // Combinar marcadores do mapa e o marcador do usuário
         combineLatest([
             this.collectorAndMapStateService.mapMarkers$, // Marcadores gerais
@@ -51,29 +58,55 @@ export class MapComponent implements OnInit {
                 this.markers = mapMarkers;
             }
         });
+        // combineLatest([
+        //     this.collectorAndMapStateService.mapMarkers$,
+        //     this.collectorAndMapStateService.userLocationMarker$,
+        // ]).subscribe(([mapMarkers, userMarker]) => {
+        //     // Adapte os dados para o formato MarkerInfo
+        //     this.markers = mapMarkers.map((marker, index) => ({
+        //         position: marker.position,
+        //         title: marker.title,
+        //         icon: marker.icon,
+        //         description: `Descrição do Marcador ${index+1}`, // Adicione uma descrição dinâmica
+        //         id: index+1
+        //     }));
+        //     if(userMarker){
+        //         this.markers.push({
+        //             position: userMarker.position,
+        //             title: userMarker.title,
+        //             icon: userMarker.icon,
+        //             description: "Sua localização",
+        //             id: this.markers.length+1
+        //         })
+        //     }
+        // });
 
         console.log('MapComponent initialized FIM'); // todo remove
-
     }
 
-    // /**
-    //  * Atualiza os marcadores exibidos no mapa.
-    //  * @param markers Os marcadores a serem exibidos.
-    //  */
-    // private updateMapMarkers(markers: google.maps.MarkerOptions[]): void {
-    //     // Limpa marcadores anteriores
-    //     this.clearMarkers();
+    // openInfoWindow(marker: MapMarker, markerData: MarkerInfo) {
+    //     this.infoWindow.open(marker);
+    //     // Armazena os dados do marcador no infoWindow para serem usados no template
+    //     (this.infoWindow as any)._component.context = { marker: markerData };
     //
-    //     // Adiciona os novos marcadores ao mapa
-    //     markers.forEach((marker) => {
-    //         new google.maps.Marker({
-    //             ...marker,
-    //             map: this.map, // Referência ao objeto `google.maps.Map`
-    //         });
-    //     });
     // }
+
+    // openInfoWindow(marker: MapMarker) {
+    //     this.infoWindow.open(marker);
+    // }
+
+    // /**
+    //  * Ação ao clicar no marcador.
+    //  * @param mapMarker O elemento `MapMarker` clicado.
+    //  * @param infoWindow O elemento `MapInfoWindow` associado.
+    //  */
+    // onMarkerClick(mapMarker: MapMarker, infoWindow: MapInfoWindow): void {
+    //     console.log('Marcador clicado:', mapMarker); // TODO remover
     //
-    // private clearMarkers(): void {
-    //     // Lógica para remover marcadores antigos do mapa, se necessário
+    //     if (infoWindow) {
+    //         infoWindow.open(mapMarker); // Passa corretamente o MapMarker
+    //     } else {
+    //         console.error('InfoWindow não associado corretamente ao marcador.');
+    //     }
     // }
 }

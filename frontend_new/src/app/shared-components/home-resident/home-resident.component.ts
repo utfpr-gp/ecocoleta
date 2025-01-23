@@ -81,25 +81,3 @@ export class HomeResidentComponent implements OnInit {
         });
     }
 }
-
-//     ngOnInit(): void {
-//         console.log('HomeResidentComponent initialized'); // todo remove
-//
-//         this.locationService.getCurrentLocation().then((position) => {
-//             const location = { lat: position.coords.latitude, lng: position.coords.longitude };
-//             this.collectorAndMapStateService.setMapCenter(location);
-//
-//             // Buscar catadores ativos
-//             this.wasteCollectorService.getActiveCollectors().subscribe((collectors) => {
-//                 const markers = collectors.map((c) => ({
-//                     position: { lat: c.latitude, lng: c.longitude },
-//                     title: `Catador ${c.collectorId}`,
-//                 //     TODO mudar isso?? sem nada de info do catador
-//                 }));
-//                 this.collectorAndMapStateService.setMapMarkers(markers);
-//             });
-//         });
-//
-//         console.log('HomeResidentComponent initialized FIM'); // todo remove
-//     }
-// }

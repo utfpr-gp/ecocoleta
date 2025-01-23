@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {MapComponent} from "../map/map.component";
-import {User, UserRole, UserService} from "../../domains/user/user.service";
+import {User, UserService} from "../../domains/user/user.service";
 import {CollectorAndMapStateService} from "../../core/services/collector-and-map-state.service";
 import {WasteCollectorService} from "../../core/services/waste-collector.service";
 import {CollectService} from "../../domains/collect/collect.service";
@@ -79,7 +79,6 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
             console.log('HOME WASTE - initializeUnlinkedCollects - MARCANDO LOCAL USER - location: ', location); // todo remove
             this.collectorAndMapStateService.updateUserLocationMarker(location);
 
-            //TODO localização do catador update
             this.wasteCollectorService.updateWasteCollectorLocation({
                 wasteCollectorId: this.user.id,
                 latitude: location.lat,
@@ -88,8 +87,11 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
 
             this.collectService.getUnlinkedCollects(location.lng, location.lat).subscribe(collects => {
                 this.totalAvailableCollects = collects.length;
+
+                // TODO mudar para gerar os pontos dentro da service e aqui so chama a service, na service gero e salvo os pontos
                 const markers = this.generateMarkers(collects);
                 this.collectorAndMapStateService.setMapMarkers(markers);
+
                 console.log('Coletas disponíveis - PENDING: ', collects); // TODO: Remover
             });
         });
@@ -103,108 +105,21 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
                 latitude += 0.00001;
                 longitude += 0.00005;
             }
+            // TODO add mais info para a janela de info do marcador
             markerPositions.add(`${latitude},${longitude}`);
             return {
                 position: {lat: latitude, lng: longitude},
                 title: `Coleta ${c.id}`,
+                description: `Status: ${c.status}`, // Informações adicionais
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 10,
+                    fillColor: 'green',
+                    fillOpacity: 1,
+                    strokeWeight: 1,
+                    strokeColor: 'darkgreen'
+                }
             };
         });
     }
-
-
-    // //*--------------------------- Gerenciar localização -----------------------------------*//
-    // /**
-    //  * Inicia o monitoramento de localização para WasteCollector.
-    //  */
-    // startLocationMonitoring(): void {
-    //     this.locationService.watchLocation((position) => {
-    //         const location = {lat: position.coords.latitude, lng: position.coords.longitude};
-    //         this.location.next(location);
-    //
-    //         console.log('STATE-SERVICE - startLocationMonitoring - location: ', location); // TODO REMOVER
-    //         // Verifica a proximidade com as coletas
-    //         this.checkProximity(location);
-    //     });
-    // }
-    //
-    // /**
-    //  * Para o monitoramento de localização.
-    //  */
-    // stopLocationMonitoring(): void {
-    //     this.locationService.clearWatch();
-    // }
-    //
-    // // Verifica proximidade com as coletas
-    // private checkProximity(location: { lat: number; lng: number }): void {
-    //
-    //     console.log('checkProximity - location: ', location); // TODO REMOVER
-    //
-    //     const coletas = this.coletaData.getValue();
-    //     const threshold = 0.00030; // Aproximadamente 30 metros
-    //
-    //     coletas.forEach((coleta) => {
-    //         const distance =
-    //             Math.sqrt(
-    //                 Math.pow(location.lat - coleta.latitude, 2) +
-    //                 Math.pow(location.lng - coleta.longitude, 2)
-    //             );
-    //
-    //         if (distance <= threshold) {
-    //             console.log(`Coleta ${coleta.id} próxima!!!.`);
-    //             // Notifica o backend para marcar a coleta como concluída
-    //             // this.collectService.finalizeColeta(coleta.id).subscribe(() => {
-    //             //     console.log(`Coleta ${coleta.id} concluída.`);
-    //             //     // Remove a coleta da lista após concluída
-    //             //     this.setColetasData(coletas.filter((c) => c.id !== coleta.id));
-    //             // });
-    //         }
-    //     });
-    // }
-    //
-    //
-    // generateRoute(): void {
-    //     const coletas = this.coletaData.getValue(); // Obtem as coletas em andamento
-    //     if (coletas.length < 2) {
-    //         console.warn('Pontos insuficientes para gerar uma rota.');
-    //         return;
-    //     }
-    //
-    //     const waypoints = coletas.map((c) => ({
-    //         lat: c.latitude,
-    //         lng: c.longitude,
-    //     }));
-    //
-    //     const directionsService = new google.maps.DirectionsService();
-    //     const directionsRenderer = new google.maps.DirectionsRenderer();
-    //
-    //     // Referência ao mapa DOM
-    //     const mapElement = document.getElementById('home-map') as HTMLElement; // Atualize o ID conforme necessário
-    //     if (!mapElement) {
-    //         console.error('Elemento do mapa não encontrado.');
-    //         return;
-    //     }
-    //
-    //     const map = new google.maps.Map(mapElement, {
-    //         center: waypoints[0],
-    //         zoom: this.mapZoom.getValue(),
-    //     });
-    //
-    //     directionsRenderer.setMap(map);
-    //
-    //     directionsService.route(
-    //         {
-    //             origin: waypoints[0],
-    //             destination: waypoints[waypoints.length - 1],
-    //             waypoints: waypoints.slice(1, -1).map((point) => ({location: point})),
-    //             travelMode: google.maps.TravelMode.WALKING, // Modo de deslocamento
-    //         },
-    //         (result, status) => {
-    //             if (status === google.maps.DirectionsStatus.OK) {
-    //                 directionsRenderer.setDirections(result);
-    //             } else {
-    //                 console.error('Falha ao gerar rota:', status);
-    //             }
-    //         }
-    //     );
-    // }
 }

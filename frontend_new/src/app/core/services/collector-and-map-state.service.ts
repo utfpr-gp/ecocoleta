@@ -300,10 +300,18 @@ export class CollectorAndMapStateService {
             const userMarker: google.maps.MarkerOptions = {
                 position: location,
                 title: 'Sua Localização',
+                // icon: {
+                //     url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                //     scaledSize: new google.maps.Size(40, 40),
+                // },
                 icon: {
-                    url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                    scaledSize: new google.maps.Size(40, 40),
-                },
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 10, // Tamanho do círculo
+                    fillColor: 'blue', // Cor de preenchimento
+                    fillOpacity: 1, // Opacidade do preenchimento
+                    strokeWeight: 1, // Espessura do contorno
+                    strokeColor: 'darkblue' // Cor do contorno
+                }
             };
             this.userLocationMarker.next(userMarker);
             console.log('userLocationMarker: ', userMarker); // TODO REMOVER
@@ -313,52 +321,50 @@ export class CollectorAndMapStateService {
         }
     }
 
+    //TODO  fazer rota
+    generateRoute(): void {
+        const coletas = this.coletaData.getValue(); // Obtem as coletas em andamento
+        if (coletas.length < 2) {
+            console.warn('Pontos insuficientes para gerar uma rota.');
+            return;
+        }
 
-    //
-    //
-    // generateRoute(): void {
-    //     const coletas = this.coletaData.getValue(); // Obtem as coletas em andamento
-    //     if (coletas.length < 2) {
-    //         console.warn('Pontos insuficientes para gerar uma rota.');
-    //         return;
-    //     }
-    //
-    //     const waypoints = coletas.map((c) => ({
-    //         lat: c.latitude,
-    //         lng: c.longitude,
-    //     }));
-    //
-    //     const directionsService = new google.maps.DirectionsService();
-    //     const directionsRenderer = new google.maps.DirectionsRenderer();
-    //
-    //     // Referência ao mapa DOM
-    //     const mapElement = document.getElementById('home-map') as HTMLElement; // Atualize o ID conforme necessário
-    //     if (!mapElement) {
-    //         console.error('Elemento do mapa não encontrado.');
-    //         return;
-    //     }
-    //
-    //     const map = new google.maps.Map(mapElement, {
-    //         center: waypoints[0],
-    //         zoom: this.mapZoom.getValue(),
-    //     });
-    //
-    //     directionsRenderer.setMap(map);
-    //
-    //     directionsService.route(
-    //         {
-    //             origin: waypoints[0],
-    //             destination: waypoints[waypoints.length - 1],
-    //             waypoints: waypoints.slice(1, -1).map((point) => ({location: point})),
-    //             travelMode: google.maps.TravelMode.WALKING, // Modo de deslocamento
-    //         },
-    //         (result, status) => {
-    //             if (status === google.maps.DirectionsStatus.OK) {
-    //                 directionsRenderer.setDirections(result);
-    //             } else {
-    //                 console.error('Falha ao gerar rota:', status);
-    //             }
-    //         }
-    //     );
-    // }
+        const waypoints = coletas.map((c) => ({
+            lat: c.latitude,
+            lng: c.longitude,
+        }));
+
+        const directionsService = new google.maps.DirectionsService();
+        const directionsRenderer = new google.maps.DirectionsRenderer();
+
+        // Referência ao mapa DOM
+        const mapElement = document.getElementById('home-map') as HTMLElement; // Atualize o ID conforme necessário
+        if (!mapElement) {
+            console.error('Elemento do mapa não encontrado.');
+            return;
+        }
+
+        const map = new google.maps.Map(mapElement, {
+            center: waypoints[0],
+            zoom: this.mapZoom.getValue(),
+        });
+
+        directionsRenderer.setMap(map);
+
+        directionsService.route(
+            {
+                origin: waypoints[0],
+                destination: waypoints[waypoints.length - 1],
+                waypoints: waypoints.slice(1, -1).map((point) => ({location: point})),
+                travelMode: google.maps.TravelMode.WALKING, // Modo de deslocamento
+            },
+            (result, status) => {
+                if (status === google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(result);
+                } else {
+                    console.error('Falha ao gerar rota:', status);
+                }
+            }
+        );
+    }
 }

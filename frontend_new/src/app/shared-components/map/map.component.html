@@ -4,12 +4,58 @@
     width="100%"
     [center]="center"
     [zoom]="zoom">
+    @for (marker of markers; track marker.position) {
+        <map-marker [position]="marker.position" [title]="marker.title" [icon]="marker.icon"/>
+<!--        <map-info-window>Info Window content</map-info-window>-->
+        <!--            <map-info-window #infoWindow>-->
+<!--                <h4>{{ marker.title }}</h4>-->
+<!--                <p>Informações adicionais sobre o marcador.</p>-->
+<!--                <h5>{{marker | json}}</h5>-->
+<!--            </map-info-window>-->
+<!--        </map-marker>-->
+    }
+</google-map>
+
+
+<!--<google-map-->
+<!--    id="home-map"-->
+<!--    height="100%"-->
+<!--    width="100%"-->
+<!--    [center]="center"-->
+<!--    [zoom]="zoom">-->
 <!--    <map-marker-->
 <!--        *ngFor="let marker of markers"-->
 <!--        [position]="marker.position"-->
-<!--        [title]="marker.title">-->
+<!--        [title]="marker.title"-->
+<!--        [icon]="marker.icon"-->
+<!--        (mapClick)="onMarkerClick(marker)">-->
+<!--        <map-info-window>-->
+<!--            <h4>{{ marker.title }}</h4>-->
+<!--            <p>Informações adicionais sobre o marcador.</p>-->
+<!--            <h5>{{ marker | json }}</h5>-->
+<!--        </map-info-window>-->
 <!--    </map-marker>-->
-    @for (marker of markers; track marker.position) {
-                <map-marker [position]="marker.position" [title]="marker.title" [icon]="marker.icon"/>
-            }
-</google-map>
+<!--</google-map>-->
+
+
+<!--<google-map-->
+<!--    id="home-map"-->
+<!--    height="100%"-->
+<!--    width="100%"-->
+<!--    [center]="center"-->
+<!--    [zoom]="zoom">-->
+<!--    <map-marker-->
+<!--        *ngFor="let marker of markers"-->
+<!--        [position]="marker.position"-->
+<!--        [title]="marker.title"-->
+<!--        [icon]="marker.icon"-->
+<!--        #mapMarker="mapMarker"-->
+<!--        (mapClick)="onMarkerClick(mapMarker, infoWindow)">-->
+<!--        <map-info-window #infoWindow>-->
+<!--            <h4>{{ marker.title }}</h4>-->
+<!--            <p>Informações adicionais sobre o marcador.</p>-->
+<!--            <h5>{{ marker | json }}</h5>-->
+<!--        </map-info-window>-->
+<!--    </map-marker>-->
+<!--</google-map>-->
+
