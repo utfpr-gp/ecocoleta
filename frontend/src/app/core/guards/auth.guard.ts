@@ -1,23 +1,35 @@
-import { inject } from '@angular/core';
-import { UserService } from '../services/user.service';
-import { Router } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
+import {Observable} from 'rxjs';
+import {AuthenticateTokenService} from '../../domains/auth/authenticate-token.service';
 
-export const authGuard = () => {
-  const userService = inject(UserService);
-  const router = inject(Router);
+@Injectable({
+    providedIn: 'root'
+})
+export class AuthGuard implements CanActivate {
 
-  if (userService.isLogged()) {
-    return true;
-  } else {
-    router.navigate(['/login']);
-    return false;
-  }
-};
+    constructor(
+        private auth: AuthenticateTokenService,
+        private router: Router
+    ) {}
 
-//TODO fazer authGuard como admin
-// @Injectable()
-// export class AdminGuard implements CanActivate {
-//   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-//     return window.confirm('Você é um administrador?');
-//   }
-// }
+    canActivate(
+        next: ActivatedRouteSnapshot,
+        state: RouterStateSnapshot
+    ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+        const token = localStorage.getItem('token');
+
+        // Verifica se o token está ausente ou inválido
+        if (!token || this.auth.isAccessTokenInvalido()) {
+            if (state.url === '/') {
+                return this.router.parseUrl('/landing'); // Redireciona para /landing se acessar a raiz
+            } else {
+                localStorage.setItem('redirectUrl', state.url); // Salva a URL para redirecionamento pós-login
+                return this.router.parseUrl('/auth/login'); // Redireciona para /auth/login
+            }
+        }
+
+        // Token válido: permite o acesso
+        return true;
+    }
+}
