@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {GoogleMap, MapInfoWindow, MapMarker} from "@angular/google-maps";
 import {CollectorAndMapStateService} from "../../core/services/collector-and-map-state.service";
 import {combineLatest} from "rxjs";
@@ -26,10 +26,12 @@ interface MarkerInfo { // Interface para tipar as informações do marcador
     templateUrl: './map.component.html',
     styleUrl: './map.component.scss'
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, AfterViewInit {
     center: google.maps.LatLngLiteral = {lat: 0, lng: 0};
     markers: google.maps.MarkerOptions[] = [];
     zoom = 15; // Nível de zoom inicial
+    @ViewChild(GoogleMap, { static: false }) googleMap!: GoogleMap;
+
     // @ViewChild(MapInfoWindow) infoWindow!: MapInfoWindow; // Use ! para indicar que será inicializado
 
 
@@ -82,6 +84,12 @@ export class MapComponent implements OnInit {
         // });
 
         console.log('MapComponent initialized FIM'); // todo remove
+    }
+
+    ngAfterViewInit(): void {
+        if (this.googleMap && this.googleMap.googleMap) {
+            this.collectorAndMapStateService.setMapInstance(this.googleMap.googleMap);
+        }
     }
 
     // openInfoWindow(marker: MapMarker, markerData: MarkerInfo) {

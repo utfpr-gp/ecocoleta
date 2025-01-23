@@ -22,6 +22,10 @@ export class CollectorAndMapStateService {
     private coletaData = new BehaviorSubject<Collect[]>([]);
     private mapMarkers = new BehaviorSubject<google.maps.MarkerOptions[]>([]);
 
+    private directionsRenderer = new google.maps.DirectionsRenderer({
+        suppressMarkers: false, // Permitir marcadores padrão
+    });
+
     //Teste marcador user
     private userLocationMarker = new BehaviorSubject<google.maps.MarkerOptions | null>(null);
     userLocationMarker$ = this.userLocationMarker.asObservable();
@@ -55,46 +59,16 @@ export class CollectorAndMapStateService {
         });
     }
 
-    /**
-     * Restaura o estado do componente ao inicializar.
-     */
-    restoreState(): void {
-
-        console.log('CollectorAndMapStateService restoreState'); // TODO REMOVER
-
-        const currentLocation = this.location.getValue();
-        const currentMarkers = this.mapMarkers.getValue();
-        const currentCenter = this.mapCenter.getValue();
-        // const currentCollectData = this.coletaData.getValue();
-        // TODO pegar rota etc ...
-
-        if (currentLocation) {
-            console.log('CollectorAndMapStateService restoreState - currentLocation: ', currentLocation); // TODO REMOVER
-            this.setLocation(currentLocation);
-        }
-
-        if (currentMarkers.length > 0) {
-            console.log('CollectorAndMapStateService restoreState - currentMarkers: ', currentMarkers); // TODO REMOVER
-            this.setMapMarkers(currentMarkers);
-        }
-
-        if (currentCenter) {
-            console.log('CollectorAndMapStateService restoreState - currentCenter: ', currentCenter); // TODO REMOVER
-            this.setMapCenter(currentCenter);
-        }
-
-        // if (currentCollectData.length > 0) {
-        //     console.log('CollectorAndMapStateService restoreState - currentCollectData: ', currentCollectData); // TODO REMOVER
-        //     this.setColetasData(currentCollectData);
-        // }
-    }
-
     //*--------------------------- Gerenciar estados -----------------------------------*//
     /**
      * Obtém o usuário atual diretamente (sincronicamente).
      */
     getCurrentUser(): User | null {
         return this.currentUser.getValue();
+    }
+
+    setMapInstance(map: google.maps.Map): void {
+        this.directionsRenderer.setMap(map);
     }
 
     getMapMarkers(): Observable<google.maps.MarkerOptions[]> {
@@ -142,13 +116,21 @@ export class CollectorAndMapStateService {
                         return;
                     }
 
-                    // Atualiza o estado com as coletas e marcadores
+                    // Atualiza o estado com as coletas
                     this.coletaData.next(coletas);
-                    const markers = coletas.map((coleta) => ({
-                        position: {lat: coleta.latitude!, lng: coleta.longitude!},
-                        title: `Coleta ${coleta.id}`,
-                    }));
-                    this.mapMarkers.next(markers);
+
+                    // Define a localização do usuário
+                    this.setLocation(location);
+
+                    // Gera a rota com base nas coletas e na localização atual
+                    this.generateRoute();
+
+                    // comentado para testar gerar rota
+                    // const markers = coletas.map((coleta) => ({
+                    //     position: {lat: coleta.latitude!, lng: coleta.longitude!},
+                    //     title: `Coleta ${coleta.id}`,
+                    // }));
+                    // this.mapMarkers.next(markers);
 
                     // Define o status de coleta como ativo
                     this.coletaStatus.next(true);
@@ -282,18 +264,6 @@ export class CollectorAndMapStateService {
      * Atualiza o marcador da localização do usuário.
      * @param location A localização atual do usuário.
      */
-    // updateUserLocationMarker(location: { lat: number; lng: number }): void {
-    //     const userMarker: google.maps.MarkerOptions = {
-    //         position: location,
-    //         title: 'Sua Localização',
-    //         icon: {
-    //             url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', // Ícone personalizado
-    //             scaledSize: new google.maps.Size(40, 40), // Ajusta o tamanho do ícone
-    //         },
-    //     };
-    //     this.userLocationMarker.next(userMarker);
-    // }
-
     updateUserLocationMarker(location: { lat: number; lng: number }): void {
         const user = this.getCurrentUser();
         if (user?.role === UserRole.WASTE_COLLECTOR) {
@@ -321,50 +291,51 @@ export class CollectorAndMapStateService {
         }
     }
 
-    //TODO  fazer rota
     generateRoute(): void {
-        const coletas = this.coletaData.getValue(); // Obtem as coletas em andamento
-        if (coletas.length < 2) {
+        const userLocation = this.location.getValue();
+        if (!userLocation) {
+            console.error('Localização do usuário não disponível.');
+            return;
+        }
+
+        const coletas = this.coletaData.getValue();
+        if (coletas.length < 1) {
             console.warn('Pontos insuficientes para gerar uma rota.');
             return;
         }
 
-        const waypoints = coletas.map((c) => ({
-            lat: c.latitude,
-            lng: c.longitude,
+        const waypoints = coletas.map((coleta) => ({
+            location: {lat: coleta.latitude!, lng: coleta.longitude!},
+            stopover: true,
         }));
 
         const directionsService = new google.maps.DirectionsService();
-        const directionsRenderer = new google.maps.DirectionsRenderer();
-
-        // Referência ao mapa DOM
-        const mapElement = document.getElementById('home-map') as HTMLElement; // Atualize o ID conforme necessário
-        if (!mapElement) {
-            console.error('Elemento do mapa não encontrado.');
-            return;
-        }
-
-        const map = new google.maps.Map(mapElement, {
-            center: waypoints[0],
-            zoom: this.mapZoom.getValue(),
-        });
-
-        directionsRenderer.setMap(map);
-
         directionsService.route(
             {
-                origin: waypoints[0],
-                destination: waypoints[waypoints.length - 1],
-                waypoints: waypoints.slice(1, -1).map((point) => ({location: point})),
-                travelMode: google.maps.TravelMode.WALKING, // Modo de deslocamento
+                origin: userLocation,
+                destination: waypoints[waypoints.length - 1].location,
+                waypoints: waypoints.slice(0, -1),
+                travelMode: google.maps.TravelMode.WALKING,
+                optimizeWaypoints: true,
+                language: 'pt_BR', // Idioma da rota
             },
             (result, status) => {
                 if (status === google.maps.DirectionsStatus.OK) {
-                    directionsRenderer.setDirections(result);
+                    this.directionsRenderer.setDirections(result);
+
+                    // Ajustar o mapa para exibir toda a rota
+                    const bounds = new google.maps.LatLngBounds();
+                    result.routes[0].legs.forEach((leg) => {
+                        bounds.extend(leg.start_location);
+                        bounds.extend(leg.end_location);
+                    });
+                    this.directionsRenderer.getMap()?.fitBounds(bounds);
+                    console.log('Rota gerada com sucesso:', result);
                 } else {
-                    console.error('Falha ao gerar rota:', status);
+                    console.error('Falha ao gerar a rota:', status);
                 }
             }
         );
     }
+
 }

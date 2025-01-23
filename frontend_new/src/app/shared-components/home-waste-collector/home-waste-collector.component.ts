@@ -55,6 +55,9 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
                     console.log('HOME WASTE - ONINIT - Nenhuma coleta ativa. Buscando coletas disponíveis...'); // todo remove
                     this.initializeUnlinkedCollects();
                 } else {
+                    //TODO mudar aqui para chamar o startcollectin
+                    // dentro da startcollection validar a lista de coletas e iniciar onde parou...
+                    // também dentro dela ja pega e inicia o monitoramento da localização
                     console.log('HOME WASTE - ONINIT - Coleta em andamento. Monitorando localização...'); // todo remove
                     this.collectorAndMapStateService.startLocationMonitoring();
                 }
