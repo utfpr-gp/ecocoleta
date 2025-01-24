@@ -3,14 +3,7 @@ import {LocationStrategy, PathLocationStrategy} from '@angular/common';
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {AppLayoutModule} from './layout/app.layout.module';
-import {NotfoundComponent} from './demo_apagar/components/notfound/notfound.component';
-import {ProductService} from './demo_apagar/service/product.service';
-import {CountryService} from './demo_apagar/service/country.service';
-import {CustomerService} from './demo_apagar/service/customer.service';
-import {EventService} from './demo_apagar/service/event.service';
-import {IconService} from './demo_apagar/service/icon.service';
-import {NodeService} from './demo_apagar/service/node.service';
-import {PhotoService} from './demo_apagar/service/photo.service';
+import {NotfoundComponent} from './shared-components/notfound/notfound.component';
 import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from "@angular/common/http";
 import {TokenInterceptor} from "./core/interceptors/token.interceptor";
 import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
@@ -61,9 +54,7 @@ export function tokenGetter(): string {
             useClass: TokenInterceptor,
             multi: true
         },
-        {provide: LocationStrategy, useClass: PathLocationStrategy},
-        CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService, MessageService
+        {provide: LocationStrategy, useClass: PathLocationStrategy}, MessageService
     ],
     bootstrap: [AppComponent],
 })
