@@ -64,7 +64,6 @@ export class LoginComponent {
         }
 
         if (this.loginForm.valid) {
-            // Chama o método login diretamente dentro do componente
             this.loginApi(this.loginForm.value.email, this.loginForm.value.password)
                 .subscribe({
                     next: (response) => {
@@ -100,7 +99,7 @@ export class LoginComponent {
         }
     }
 
-    // Método para chamar a API de login
+    // API de login
     private loginApi(email: string, password: string): Observable<any> {
         return this.http
             .post<any>(this.apiUrl + '/login', {email, password})
@@ -110,7 +109,7 @@ export class LoginComponent {
                         //setando token no sessionStorage
                         this.auth.armazenarToken(value.token);
 
-                        // Você pode chamar um método para atualizar o estado do usuário aqui, se necessário
+                        //atualizar o estado do usuário
                         this.userService.loadUserFromToken();
                     }
                 }),

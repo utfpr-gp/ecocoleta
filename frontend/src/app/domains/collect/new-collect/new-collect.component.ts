@@ -35,7 +35,6 @@ export class NewCollectComponent implements OnInit {
         const {collect, action} = event;
 
         if (action === 'create') {
-            console.log('componente page nova coleta Criar COleta', collect); //TODO apagar apos teste
             // Adiciona o ID do usuário ao corpo da requisição
             collect.residentId = Number(this.user.id);
 
@@ -52,8 +51,6 @@ export class NewCollectComponent implements OnInit {
 
         this.collectService.createCollect(collect).subscribe({
             next: (response) => {
-                console.log('Coleta criada com sucesso:', response); //todo apagar apos teste
-
                 // Exibe mensagem de sucesso
                 this.messageService.add({
                     severity: 'success',
@@ -63,11 +60,8 @@ export class NewCollectComponent implements OnInit {
                 });
 
                 this.router.navigate(['/home']);
-            //     todo routr para coleta lista
             },
             error: (error) => {
-                console.error('Erro ao criar coleta:', error); //todo apagar apos teste
-
                 // Exibe mensagem de erro
                 this.messageService.add({
                     severity: 'error',

@@ -41,8 +41,6 @@ export class UserRegisterComponent {
     selectUserType(type: UserRole) {
         this.userType = type;
         this.showModal = false;
-
-        console.log("tipo de user :: " + type) //todo remover
     }
 
     handleFormSubmission(event: { user: User, action: 'create' | 'update' }) {

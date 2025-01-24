@@ -5,6 +5,7 @@ import {RouterLink} from "@angular/router";
 import {LocationService} from "../../core/services/location.service";
 import {CollectorAndMapStateService} from "../../core/services/collector-and-map-state.service";
 import {WasteCollectorService} from "../../core/services/waste-collector.service";
+import {MessageService} from "primeng/api";
 
 @Component({
     selector: 'app-home-resident',
@@ -22,13 +23,12 @@ export class HomeResidentComponent implements OnInit {
     constructor(
         private locationService: LocationService,
         private collectorAndMapStateService: CollectorAndMapStateService,
-        private wasteCollectorService: WasteCollectorService
+        private wasteCollectorService: WasteCollectorService,
+        private messageService: MessageService
     ) {
     }
 
     ngOnInit(): void {
-        console.log('HomeResidentComponent initialized'); // TODO remover
-
         // Obtém a localização atual do residente
         this.locationService.getCurrentLocation().then((position) => {
             const location = {lat: position.coords.latitude, lng: position.coords.longitude};
@@ -39,8 +39,6 @@ export class HomeResidentComponent implements OnInit {
             // Busca os catadores ativos e atualiza os marcadores no mapa
             this.loadActiveCollectors();
         });
-
-        console.log('HomeResidentComponent initialized FIM'); // TODO remover
     }
 
     /**
@@ -49,7 +47,6 @@ export class HomeResidentComponent implements OnInit {
     private loadActiveCollectors(): void {
         this.wasteCollectorService.getActiveCollectors().subscribe({
             next: (collectors) => {
-                console.log('Catadores ativos:', collectors); // TODO remover
                 const markers = collectors.map((collector) => ({
                     position: {lat: collector.latitude, lng: collector.longitude},
                     title: `Catador ${collector.wasteCollectorId}`, // Título genérico para o marcador
@@ -66,17 +63,18 @@ export class HomeResidentComponent implements OnInit {
                         strokeWeight: 1, // Espessura do contorno
                         strokeColor: 'darkgreen' // Cor do contorno
                     }
-                //     TODO mudar icon para imagem do catador
-
                 }));
 
                 // Atualiza os marcadores no mapa
                 this.collectorAndMapStateService.setMapMarkers(markers);
-                console.log('Marcadores de catador atualizados:', markers); // TODO remover
             },
             error: (error) => {
-                // TODO Tratar erro ou msg service
-                console.error('Erro ao buscar catadores ativos:', error);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erro ao buscar catadores ativos',
+                    detail: 'Não foi possível buscar os catadores ativos.',
+                    life: 3000
+                });
             }
         });
     }

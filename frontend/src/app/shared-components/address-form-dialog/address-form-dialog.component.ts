@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DialogModule} from "primeng/dialog";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {PanelModule} from "primeng/panel";
@@ -40,10 +40,8 @@ export class AddressFormDialogComponent implements OnInit {
     submitted: boolean = false;
 
     addressForm!: FormGroup;
-    address: Address = {}; // Variável para armazenar a credencial
 
     constructor(
-        private router: Router,
         private formBuilder: FormBuilder,
         private messageService: MessageService,
         private addressService: AddressService,
@@ -53,15 +51,10 @@ export class AddressFormDialogComponent implements OnInit {
 
     ngOnInit(): void {
         this.configAddressForm();
-
-        console.log('form address - userId', this.userId); //TODO apagar apos teste
-        console.log('form address - address_id', this.address_id); //TODO apagar apos teste
     }
 
     showDialog() {
         if (this.address_id) {
-
-            console.log('form address - iniciando a busca endereço - address_id', this.address_id); //TODO apagar apos teste
 
             this.loading = true;
             this.addressService.getOneAddressByUserIdAndAddressId(this.userId, this.address_id).subscribe({
@@ -76,7 +69,6 @@ export class AddressFormDialogComponent implements OnInit {
                         detail: error?.error?.message || 'Não foi possível carregar os dados do endereço.',
                         life: 3000,
                     });
-                    console.error('Erro ao carregar endereço:', error); // TODO remover após teste
                     this.loading = false;
                 },
             });
@@ -121,9 +113,6 @@ export class AddressFormDialogComponent implements OnInit {
     }
 
     onCepChange(cep: string): void {
-
-        console.log('CEP:', cep); // TODO remover após teste
-
         if (cep.length === 8) {
             this.viacepApiService.buscarCep(cep).subscribe({
                 next: (dados) => {
@@ -154,12 +143,10 @@ export class AddressFormDialogComponent implements OnInit {
                         detail: error?.message || 'Não foi possível buscar o CEP.',
                         life: 2000,
                     });
-                    console.error('Erro ao buscar CEP:', error); // TODO remover após teste
                 },
             });
         }
     }
-    // TODO implementar - pegar longitute lat do user????
 
     salveAddress() {
         this.submitted = true;
@@ -184,7 +171,6 @@ export class AddressFormDialogComponent implements OnInit {
                             detail: error?.error?.message || 'Não foi possível atualizar o endereço.',
                             life: 3000,
                         });
-                        console.error('Erro ao atualizar endereço:', error); // TODO remover após teste
                     },
                 });
             } else {
@@ -205,7 +191,6 @@ export class AddressFormDialogComponent implements OnInit {
                             detail: error?.error?.message || 'Não foi possível salvar o endereço.',
                             life: 3000,
                         });
-                        console.error('Erro ao salvar endereço:', error); // TODO remover após teste
                     },
                 });
             }
@@ -237,7 +222,6 @@ export class AddressFormDialogComponent implements OnInit {
                         detail: error?.error?.message || 'Não foi possível excluir o endereço.',
                         life: 3000,
                     });
-                    console.error('Erro ao excluir endereço:', error); // TODO remover após teste
                 },
             });
         }

@@ -36,9 +36,6 @@ export class WasteCollectorService {
      * @returns Observable de resposta.
      */
     updateWasteCollectorLocation(locationDTO: WasteCollectorLocationDTO): Observable<void> {
-
-        console.log('updateWasteCollectorLocation atualizou localização catador wasteService: ', locationDTO); // TODO REMOVER
-
         return this.http.post<void>(`${this.apiUrl}/update_location`, locationDTO);
     }
 
@@ -48,11 +45,11 @@ export class WasteCollectorService {
      */
     getActiveCollectors(): Observable<WasteCollectorLocationDTO[]> {
         return this.http.get<WasteCollectorLocationDTO[]>(`${this.apiUrl}/recent_locations`)
-            .pipe(
-                tap((collectors) => {
-                    console.log('getActiveCollectors collectors: ', collectors); // TODO REMOVER
-                })
-            );
+            // .pipe(
+            //     tap((collectors) => {
+            //         console.log('getActiveCollectors collectors: ', collectors);
+            //     })
+            // );
     }
 
     /**

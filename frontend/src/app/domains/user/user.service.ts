@@ -110,10 +110,7 @@ export class UserService {
     }
 
     getUserById(userId: string): Observable<User> {
-        return this.http.get<User>(`${this.apiUrlUser}/${userId}`)
-            .pipe( // TODO apagar apos teste
-                tap((user) => console.log('User fetched:', user))
-            );
+        return this.http.get<User>(`${this.apiUrlUser}/${userId}`);
     }
 
     //MÉTODOS DE CRUD
@@ -121,17 +118,11 @@ export class UserService {
         try {
             if (user.id) {
                 // Atualizando o usuário existente
-                console.log('Atualizando usuário ::', user.id); // TODO: Remover após teste
-
                 const updatedUser = await this.http
                     .put<User>(`${this.apiUrlUser}/${user.id}`, user)
                     .toPromise();
-
-                console.log('Usuário atualizado com sucesso:', updatedUser); // TODO: Remover após teste
             } else {
                 // Criando um novo usuário
-                console.log('Criando novo usuário ::', user); // TODO: Remover após teste
-
                 // Limpa o token do usuário antes de criar um novo
                 this.authService.limparToken();
 
@@ -144,18 +135,13 @@ export class UserService {
                 }
 
                 const endpoint = this.getUserCreationUrl(user.role);
-
                 const newUser = await this.http.post<User>(endpoint, user).toPromise();
-
-                console.log('Novo usuário criado com sucesso:', newUser); // TODO: Remover após teste
 
                 if (newUser.token) {
                     this.handleLoginRedirection(newUser.token);
                 }
             }
         } catch (error) {
-            console.error('Erro ao criar/atualizar usuário:', error); // TODO: Remover após teste
-
             // Exibe mensagem de erro detalhada
             this.messageService.add({
                 severity: 'error',

@@ -6,7 +6,7 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {FormValidations} from '../../core/utils/form-validation';
 import {ButtonModule} from "primeng/button";
@@ -14,7 +14,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {MessageComponent} from "../message.component";
 import {PanelModule} from "primeng/panel";
 import {PasswordModule} from "primeng/password";
-import {User, UserRole, UserService} from "../../domains/user/user.service";
+import {User} from "../../domains/user/user.service";
 import {RippleModule} from "primeng/ripple";
 import {MessageService} from "primeng/api";
 import {FileUploadModule} from "primeng/fileupload";
@@ -52,28 +52,20 @@ export class UserFormComponent implements OnInit {
 
     constructor(
         private formBuilder: FormBuilder,
-        private userService: UserService,
-        private route: ActivatedRoute,
         private router: Router,
         private messageService: MessageService
     ) {
     }
 
     ngOnInit() {
-        console.log('oninit form-user'); //TODO apagar apos teste
-
         // Inicializar formulário
         this.initForm();
 
         // Caso seja modo de edição, carregar os dados do usuário no formulário
         if (this.formData) {
-
-            console.log('iniciando formData user-form: ', this.formData); //TODO apagar apos teste
-
             this.userRole = this.formData.role;
             this.formUser.patchValue(this.formData);
         }
-
     }
 
     initForm() {
@@ -184,7 +176,6 @@ export class UserFormComponent implements OnInit {
 
     onCancel(): void {
         // Lógica para voltar ou cancelar ação
-        console.log('Cancel action');
         this.router.navigate(['/landing']);
     }
 }
