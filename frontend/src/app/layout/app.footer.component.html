@@ -54,7 +54,10 @@
                 class="flex flex-column align-items-center justify-content-center flex-1 bg-primary text-white border-round-3xl p-2"
                 style="text-align: center;">
                 <button
-                    class="p-link layout-footer-button flex justify-content-center align-items-center text-white border-none" (click)="toggleColeta()">
+                    class="p-link layout-footer-button flex justify-content-center align-items-center text-white border-none"
+                    [disabled]="loading$ | async"
+                    [ngClass]="{'button-disabled': loading$ | async}"
+                    (click)="toggleColeta()">
                     <i class="pi pi-play text-2xl"></i>
                 </button>
                 <span class="mt-2 w-full text-2xl text-center">Iniciar coleta</span>

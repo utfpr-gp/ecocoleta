@@ -8,6 +8,7 @@ import {CollectService} from "../../domains/collect/collect.service";
 import {LocationService} from "../../core/services/location.service";
 import {Observable, Subject, takeUntil, tap} from "rxjs";
 import {CommonModule} from '@angular/common';
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 
 @Component({
@@ -17,6 +18,7 @@ import {CommonModule} from '@angular/common';
         CommonModule,
         ButtonModule,
         MapComponent,
+        ProgressSpinnerModule,
     ],
     templateUrl: './home-waste-collector.component.html',
     styleUrl: './home-waste-collector.component.scss'
@@ -26,6 +28,7 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
     user: User | null = null;
     isCollectingFlag$: Observable<boolean>;
     totalAvailableCollects = 0;
+    loading$: Observable<boolean>;
 
     constructor(
         private userService: UserService,
@@ -36,6 +39,7 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
     ) {
         // Obtém o estado reativo do serviço
         this.isCollectingFlag$ = this.collectorAndMapStateService.coletaStatus$;
+        this.loading$ = this.collectorAndMapStateService.loading$;
     }
 
     ngOnInit(): void {
@@ -43,11 +47,10 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
         //todo
         // > ENGENHARIA DE ROTA {
         //     > FINALIZAR COLETA E STATES NA ULTIMA PARADA PONTO
-        //     > AO SAIR DA PAGINA E VOLTAR, E STATUS COLETING TRUE, CHAMA STARTINGCOLETA E FAZ ROA ETC COM COLETAS INPROGRES
-        //     > AO PERDER CONEXÃO FECHAR PAGINA  VER NO BANC OSE TEM COLETA EM PROGRESS COM O ID CATADOR CHAMR STARTRCOLETA ETC REINICIAR ONDE PAROU A ROTA
-        //     > AO DESLIGAR STOP COLETAS RESETAR AS COLETAS NÃO COMPLETADAS
+        //     > AO SAIR DA PAGINA E VOLTAR, E STATUS COLETING TRUE, CHAMA STARTINGCOLETA E FAZ ROTA COM COLETAS STATUS:INPROGRES
+        //     > AO PERDER CONEXÃO FECHAR PAGINA  VER NO BANCO SE TEM COLETA EM PROGRESS COM O ID CATADOR CHAMAR STARTRCOLETA ETC REINICIAR ONDE PAROU A ROTA
+        //     OK> AO DESLIGAR STOP COLETAS RESETAR AS COLETAS NÃO COMPLETADAS
         //     }
-        //TODO AO INICIAR O COMPONENTE VERIFICAR SE TEM NO BANCO UMA COLETA EM ANDAMENTO E SE TIVER INICIAR O MONITORAMENTO DA LOCALIZAÇÃO E INSERE NO MAPA...
         console.log('HomeWasteCollectorComponent initialized'); // todo remove
         console.log('HOME WASTE - ONINIT - GET-coletaStatus:', this.isCollectingFlag$); // todo remove
 

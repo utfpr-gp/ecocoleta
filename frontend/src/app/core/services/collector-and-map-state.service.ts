@@ -13,30 +13,32 @@ import {User, UserRole, UserService} from "../../domains/user/user.service";
     providedIn: 'root',
 })
 export class CollectorAndMapStateService {
+    // Usuário atual
     private currentUser = new BehaviorSubject<User | null>(null);
     currentUser$ = this.currentUser.asObservable();
-    // Estado das coletas e do mapa
+
+    // Estado das coletas
     private coletaStatus = new BehaviorSubject<boolean>(false);
     coletaStatus$ = this.coletaStatus.asObservable().pipe(distinctUntilChanged());
-
     private coletaData = new BehaviorSubject<Collect[]>([]);
+    private processingCollects: Set<string> = new Set();
+
+    // Localização e marcadores do mapa
+    private location = new BehaviorSubject<{ lat: number; lng: number } | null>(null);
     private mapMarkers = new BehaviorSubject<google.maps.MarkerOptions[]>([]);
     mapMarkers$ = this.mapMarkers.asObservable();
-
     private directionsRenderer = new google.maps.DirectionsRenderer({
         suppressMarkers: false, // Permitir marcadores padrão
     });
-    //Teste marcador user
     private userLocationMarker = new BehaviorSubject<google.maps.MarkerOptions | null>(null);
     userLocationMarker$ = this.userLocationMarker.asObservable();
-
-    private location = new BehaviorSubject<{ lat: number; lng: number } | null>(null);
     private mapCenter = new BehaviorSubject<google.maps.LatLngLiteral | null>(null);
     mapCenter$ = this.mapCenter.asObservable();
-
     private mapZoom = new BehaviorSubject<number>(15);
 
-    private processingCollects: Set<string> = new Set();
+    // Loading
+    private loading = new BehaviorSubject<boolean>(false);
+    loading$ = this.loading.asObservable();
 
     constructor(
         private locationService: LocationService,
@@ -57,6 +59,13 @@ export class CollectorAndMapStateService {
      */
     getCurrentUser(): User | null {
         return this.currentUser.getValue();
+    }
+
+    /**
+     * Ativa o estado de carregamento.
+     */
+    setLoading(isLoading: boolean): void {
+        this.loading.next(isLoading);
     }
 
     setMapInstance(map: google.maps.Map): void {
@@ -98,39 +107,50 @@ export class CollectorAndMapStateService {
      */
     startCollection(collectorId: string): void {
         if (!this.coletaStatus.getValue()) {
-            console.log('Iniciando coleta...'); // TODO REMOVER
-            // this.coletaStatus.next(true);
+            this.setLoading(true); // Ativar o spinner
+
             this.locationService.getCurrentLocation().then((position) => {
                 const location = {lat: position.coords.latitude, lng: position.coords.longitude};
-                this.collectService.getReservedCollects(collectorId, location.lng, location.lat).subscribe((coletas) => {
-                    if (coletas.length === 0) {
-                        console.warn('Nenhuma coleta disponível.');
-                        return;
-                    }
+                this.collectService.getReservedCollects(collectorId, location.lng, location.lat).subscribe({
+                    next: (coletas) => {
+                        if (coletas.length === 0) {
+                            this.messageService.add({
+                                severity: 'info',
+                                summary: 'Nenhuma Coleta Disponível',
+                                detail: 'Não há coletas disponíveis para iniciar.',
+                                life: 5000,
+                            });
+                            this.setLoading(false); // Desativar o spinner
+                            return;
+                        }
 
-                    // Atualiza o estado com as coletas
-                    this.coletaData.next(coletas);
+                        // Atualiza o estado com as coletas
+                        this.coletaData.next(coletas);
 
-                    // Define a localização do usuário
-                    this.setLocation(location);
+                        // Define a localização do usuário
+                        this.setLocation(location);
 
-                    // Gera a rota com base nas coletas e na localização atual
-                    this.generateRoute();
+                        // Gera a rota com base nas coletas e na localização atual
+                        this.generateRoute();
 
-                    // comentado para testar gerar rota
-                    // const markers = coletas.map((coleta) => ({
-                    //     position: {lat: coleta.latitude!, lng: coleta.longitude!},
-                    //     title: `Coleta ${coleta.id}`,
-                    // }));
-                    // this.mapMarkers.next(markers);
+                        // Define o status de coleta como ativo
+                        this.coletaStatus.next(true);
 
-                    // Define o status de coleta como ativo
-                    this.coletaStatus.next(true);
+                        // Inicia o monitoramento de localização
+                        this.startLocationMonitoring();
 
-                    // Inicia o monitoramento de localização
-                    this.startLocationMonitoring();
-
-                    console.log('Coleta iniciada com sucesso!'); //todo remover, add menssaage service
+                        console.log('Coleta iniciada com sucesso!');
+                        this.setLoading(false); // Desativar o spinner
+                    },
+                    error: (err) => {
+                        console.error('Erro ao iniciar coleta:', err);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erro',
+                            detail: 'Erro ao iniciar a coleta. Tente novamente.',
+                        });
+                        this.setLoading(false); // Desativar o spinner
+                    },
                 });
             });
         }
@@ -141,16 +161,58 @@ export class CollectorAndMapStateService {
      */
     stopCollection(): void {
         if (this.coletaStatus.getValue()) {
-            console.log('Parando coleta...'); //todo remover
-            this.coletaStatus.next(false);
-            this.coletaData.next([]);
-            this.mapMarkers.next([]);
+            const user = this.getCurrentUser();
 
-            // TODO mandar para o back que a coleta foi parada rota  reset_collects
+            this.coletaStatus.next(false);
+            this.coletaData.next([]); // Limpa os dados de coleta
+
+            // Verifica se há uma rota ativa no mapa e cancela
+            if (this.directionsRenderer.getDirections()) {
+                this.cancelRoute();
+            }
 
             // Para o monitoramento de localização
             this.stopLocationMonitoring();
-            //     TODO ao clicar em stop não esta parando de monitorar a localização
+
+            // Resetar as coletas associadas ao catador no backend
+            if (user?.id) {
+                this.collectService.resetCollects(user.id).subscribe({
+                    next: () => {
+                        // this.messageService.add({
+                        //     severity: 'success',
+                        //     summary: 'Coletas Resetadas',
+                        //     detail: 'As coletas associadas foram resetadas com sucesso.',
+                        // });
+                    },
+                    error: (err) => {
+                        console.error('Erro ao resetar coletas:', err);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erro ao Resetar Coletas',
+                            detail: 'Não foi possível resetar as coletas. Por favor, tente novamente.',
+                        });
+                    },
+                });
+            } else {
+                this.messageService.add({
+                    severity: 'warn',
+                    summary: 'Usuário Não Identificado',
+                    detail: 'Não foi possível identificar o usuário para resetar as coletas.',
+                });
+            }
+
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Coleta Finalizada',
+                detail: 'Todas as operações de coleta foram encerradas com sucesso.',
+            });
+        } else {
+            // Mensagem para quando não há coleta ativa
+            this.messageService.add({
+                severity: 'info',
+                summary: 'Nenhuma Coleta Ativa',
+                detail: 'Não há nenhuma coleta em andamento para ser finalizada.',
+            });
         }
     }
 
@@ -336,6 +398,55 @@ export class CollectorAndMapStateService {
             }
         );
     }
+
+    /**
+     * Cancela a rota atual e reseta o estado do mapa.
+     */
+
+    // cancelRoute(): void {
+    //     console.log('CANCELANDO ROTA....');
+    //     const directions = this.directionsRenderer.getDirections();
+    //     if (directions) {
+    //         console.log('Tem diretions Removendo rota:', directions);
+    //     }
+    //
+    //     // Verificar se há um mapa vinculado
+    //     if (this.directionsRenderer.getMap()) {
+    //         this.directionsRenderer.setDirections(null); // Remove a rota
+    //         console.log('Rota removida do mapa com sucesso.');
+    //     } else {
+    //         console.warn('Nenhum mapa vinculado ao DirectionsRenderer.');
+    //     }
+    //
+    //     // Resetar marcadores e estado do mapa
+    //     this.clearMapMarkers();
+    //     this.setMapZoom(15);
+    //     this.setMapCenter(null);
+    //
+    //     console.log('Mapa redefinido com sucesso.');
+    // }
+
+    cancelRoute(): void {
+        // Verificar se há um mapa vinculado antes de limpar as direções
+        if (this.directionsRenderer.getMap()) {
+            try {
+                this.directionsRenderer.setDirections({ routes: [] } as google.maps.DirectionsResult); // Remove as rotas
+                console.log('Rota removida do mapa com sucesso.'); //todo remover
+            } catch (error) {
+                console.error('Erro ao remover rota:', error); //todo remover
+            }
+        } else {
+            console.warn('Nenhum mapa vinculado ao DirectionsRenderer.');
+        }
+
+        // Resetar marcadores e estado do mapa
+        this.clearMapMarkers();
+        // this.setMapZoom(15);
+        // this.setMapCenter(null);
+    }
+
+
+
 
 //     TODO quand oa rota ou a aproximação estiver na ultima coleta tem que finaliza e mandar para o back, zerar os pontos e parar de monitorar a localização
 }

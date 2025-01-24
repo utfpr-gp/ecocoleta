@@ -1,4 +1,7 @@
 <div class="waste-collector-container">
+    <div *ngIf="loading$ | async" class="loading-overlay-component">
+        <p-progressSpinner></p-progressSpinner>
+    </div>
     <!-- Mostrar coletas disponíveis apenas quando não estiver em coleta -->
     <ng-container *ngIf="isCollectingFlag$ | async as isCollecting">
         <h3 *ngIf="!isCollecting" class="text-3xl text-center">
@@ -7,7 +10,7 @@
 
         <!-- Mensagem para coleta em andamento -->
         <h3 *ngIf="isCollecting" class="text-3xl text-center">
-            Coleta em andamento...
+            Coleta em andamento
         </h3>
     </ng-container>
 

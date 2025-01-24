@@ -12,6 +12,7 @@ import {Observable, take, tap} from "rxjs";
 export class AppFooterComponent implements OnInit {
     user: User | null = null;
     isCollectingFlag$: Observable<boolean>;
+    loading$: Observable<boolean>;
 
     constructor(
         public layoutService: LayoutService,
@@ -20,6 +21,7 @@ export class AppFooterComponent implements OnInit {
     ) {
         // Obtém o estado reativo
         this.isCollectingFlag$ = this.collectorAndMapStateService.coletaStatus$;
+        this.loading$ = this.collectorAndMapStateService.loading$;
     }
 
     ngOnInit(): void {

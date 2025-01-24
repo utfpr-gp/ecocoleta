@@ -213,9 +213,9 @@ public class CollectService {
     @Transactional
     public Boolean resetAllCollects(Long wasteCollectorId) {
         // Buscar todas as coletas em andamento para o catador especificado
-        List<Collect> ongoingCollects = collectRepository.findAllOngoingCollectsByWasteCollectorId(wasteCollectorId, CollectStatus.IN_PROGRESS.name());
+        List<Collect> ongoingCollects = collectRepository.findAllOngoingCollectsByWasteCollectorId(wasteCollectorId, CollectStatus.IN_PROGRESS);
         if (ongoingCollects.isEmpty()) {
-            return false;
+            return true;
         }
 
         for (Collect collect : ongoingCollects) {

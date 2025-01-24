@@ -62,10 +62,31 @@ export class CollectService {
         return this.http.post<Collect>(`${this.apiUrl}/create_new_collect`, collect);
     }
 
+    /**
+     * Finaliza uma coleta.
+     *
+     * Este método faz uma requisição HTTP para o endpoint `/finish_collect`
+     *
+     * @param coleta
+     * @returns Observable contendo a resposta do backend.
+     */
     finalizeColeta(coleta: Collect): Observable<any> {
         return this.http.post(`${this.apiUrl}/finish_collect`, coleta);
     }
 
+    /**
+     * Reseta todas as coletas atreladas a um WasteCollector.
+     *
+     * Este método faz uma requisição HTTP DELETE para o endpoint `/reset_collects`
+     * enviando o ID do WasteCollector para resetar as coletas associadas.
+     *
+     * @param wasteCollectorId - ID do WasteCollector cujas coletas serão resetadas.
+     * @returns Observable contendo a resposta do backend.
+     */
+    resetCollects(wasteCollectorId: string): Observable<void> {
+        const params = new HttpParams().set('wasteCollectorId', wasteCollectorId.toString());
+        return this.http.delete<void>(`${this.apiUrl}/reset_collects`, {params});
+    }
 
     /**
      * Atualiza uma coleta existente.
@@ -217,6 +238,6 @@ export class CollectService {
             .set('radius', radius.toString())
             .set('limit', limit.toString());
 
-        return this.http.post<Collect[]>(`${this.apiUrl}/get_avaible_collects_reserved`, body, { params });
+        return this.http.post<Collect[]>(`${this.apiUrl}/get_avaible_collects_reserved`, body, {params});
     }
 }

@@ -146,6 +146,6 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
     //Cancela todas as coletas em andamento para um catador
     @Query("SELECT c FROM Collect c WHERE c.wasteCollector.id = :wasteCollectorId AND c.status = :status")
     List<Collect> findAllOngoingCollectsByWasteCollectorId(@Param("wasteCollectorId") Long wasteCollectorId,
-                                                           @Param("status") String status);
+                                                           @Param("status") CollectStatus status);
 
 }

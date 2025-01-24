@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {GoogleMap, MapInfoWindow, MapMarker} from "@angular/google-maps";
+import {GoogleMap, MapMarker} from "@angular/google-maps";
 import {CollectorAndMapStateService} from "../../core/services/collector-and-map-state.service";
 import {combineLatest} from "rxjs";
-import {CommonModule, JsonPipe} from "@angular/common";
+import {CommonModule} from "@angular/common";
 
 interface MarkerInfo { // Interface para tipar as informações do marcador
     position: google.maps.LatLngLiteral;
@@ -10,7 +10,6 @@ interface MarkerInfo { // Interface para tipar as informações do marcador
     icon?: string;
     description: string; // Adicione uma descrição
     id:number;
-    // Outras propriedades que você precisar
 }
 
 @Component({
@@ -19,9 +18,7 @@ interface MarkerInfo { // Interface para tipar as informações do marcador
     imports: [
         CommonModule,
         GoogleMap,
-        MapMarker,
-        MapInfoWindow,
-        JsonPipe,
+        MapMarker
     ],
     templateUrl: './map.component.html',
     styleUrl: './map.component.scss'
@@ -31,9 +28,6 @@ export class MapComponent implements OnInit, AfterViewInit {
     markers: google.maps.MarkerOptions[] = [];
     zoom = 15; // Nível de zoom inicial
     @ViewChild(GoogleMap, { static: false }) googleMap!: GoogleMap;
-
-    // @ViewChild(MapInfoWindow) infoWindow!: MapInfoWindow; // Use ! para indicar que será inicializado
-
 
     constructor(
         private collectorAndMapStateService: CollectorAndMapStateService
@@ -60,28 +54,6 @@ export class MapComponent implements OnInit, AfterViewInit {
                 this.markers = mapMarkers;
             }
         });
-        // combineLatest([
-        //     this.collectorAndMapStateService.mapMarkers$,
-        //     this.collectorAndMapStateService.userLocationMarker$,
-        // ]).subscribe(([mapMarkers, userMarker]) => {
-        //     // Adapte os dados para o formato MarkerInfo
-        //     this.markers = mapMarkers.map((marker, index) => ({
-        //         position: marker.position,
-        //         title: marker.title,
-        //         icon: marker.icon,
-        //         description: `Descrição do Marcador ${index+1}`, // Adicione uma descrição dinâmica
-        //         id: index+1
-        //     }));
-        //     if(userMarker){
-        //         this.markers.push({
-        //             position: userMarker.position,
-        //             title: userMarker.title,
-        //             icon: userMarker.icon,
-        //             description: "Sua localização",
-        //             id: this.markers.length+1
-        //         })
-        //     }
-        // });
 
         console.log('MapComponent initialized FIM'); // todo remove
     }
