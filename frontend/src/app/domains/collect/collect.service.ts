@@ -117,7 +117,7 @@ export class CollectService {
      * @param size - Quantidade de registros por página (padrão: 10).
      * @returns Observable contendo a lista de coletas.
      */
-    getCollectsByStatus(userId: number, collectStatus: CollectStatus, page: number = 0, size: number = 10): Observable<Collect[]> {
+    getCollectsByStatus(userId: string, collectStatus: CollectStatus, page: number = 0, size: number = 10): Observable<Collect[]> {
         const params = new HttpParams()
             .set('userId', userId)
             .set('collectStatus', collectStatus)

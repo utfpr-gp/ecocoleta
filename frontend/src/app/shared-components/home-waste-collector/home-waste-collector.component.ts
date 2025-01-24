@@ -44,13 +44,6 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
 
-        //todo
-        // > ENGENHARIA DE ROTA {
-        //     > FINALIZAR COLETA E STATES NA ULTIMA PARADA PONTO
-        //     > AO SAIR DA PAGINA E VOLTAR, E STATUS COLETING TRUE, CHAMA STARTINGCOLETA E FAZ ROTA COM COLETAS STATUS:INPROGRES
-        //     > AO PERDER CONEXÃO FECHAR PAGINA  VER NO BANCO SE TEM COLETA EM PROGRESS COM O ID CATADOR CHAMAR STARTRCOLETA ETC REINICIAR ONDE PAROU A ROTA
-        //     OK> AO DESLIGAR STOP COLETAS RESETAR AS COLETAS NÃO COMPLETADAS
-        //     }
         console.log('HomeWasteCollectorComponent initialized'); // todo remove
         console.log('HOME WASTE - ONINIT - GET-coletaStatus:', this.isCollectingFlag$); // todo remove
 
@@ -65,12 +58,11 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
                 if (!isCollecting) {
                     console.log('HOME WASTE - ONINIT - Nenhuma coleta ativa. Buscando coletas disponíveis...'); // todo remove
                     this.initializeUnlinkedCollects();
+                //     todo ao iniciar verificar se tem coletas em progresso no banco e mostrar modal se quer inicialas ou não, caso não resetar as coletas caso sim chamar startCollection ou o resumeinprogress
                 } else {
-                    //TODO mudar aqui para chamar o startcollectin
-                    // dentro da startcollection validar a lista de coletas e iniciar onde parou...
-                    // também dentro dela ja pega e inicia o monitoramento da localização
                     console.log('HOME WASTE - ONINIT - Coleta em andamento. Monitorando localização...'); // todo remove
-                    this.collectorAndMapStateService.startLocationMonitoring();
+                    // this.collectorAndMapStateService.startLocationMonitoring();
+                    this.collectorAndMapStateService.resumeInProgressCollects();
                 }
             })
         ).subscribe();
