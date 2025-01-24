@@ -50,7 +50,7 @@ export class NewCollectComponent implements OnInit {
         console.log('Criando nova coleta:', collect);
 
         this.collectService.createCollect(collect).subscribe({
-            next: (response) => {
+            next: () => {
                 // Exibe mensagem de sucesso
                 this.messageService.add({
                     severity: 'success',

@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, tap} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {AuthenticateTokenService} from "../auth/authenticate-token.service";
 import {Router} from "@angular/router";
@@ -118,9 +118,10 @@ export class UserService {
         try {
             if (user.id) {
                 // Atualizando o usuário existente
-                const updatedUser = await this.http
-                    .put<User>(`${this.apiUrlUser}/${user.id}`, user)
-                    .toPromise();
+                // const updatedUser = await this.http
+                //     .put<User>(`${this.apiUrlUser}/${user.id}`, user)
+                //     .toPromise();
+                await this.http.put<User>(`${this.apiUrlUser}/${user.id}`, user).toPromise();
             } else {
                 // Criando um novo usuário
                 // Limpa o token do usuário antes de criar um novo
@@ -130,8 +131,7 @@ export class UserService {
                     const file: File = user.picture as File;
 
                     // Faz o upload da imagem e atualiza o campo `picture` do usuário
-                    const imageUrl = await this.cloudinaryUploadImgService.uploadImage(file);
-                    user.picture = imageUrl;
+                    user.picture = await this.cloudinaryUploadImgService.uploadImage(file);
                 }
 
                 const endpoint = this.getUserCreationUrl(user.role);

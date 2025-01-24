@@ -72,7 +72,7 @@ export class HomeResidentComponent implements OnInit {
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Erro ao buscar catadores ativos',
-                    detail: 'Não foi possível buscar os catadores ativos.',
+                    detail: 'Não foi possível buscar os catadores ativos., Error: ' + error?.message,
                     life: 3000
                 });
             }

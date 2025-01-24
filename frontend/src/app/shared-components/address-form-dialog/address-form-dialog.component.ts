@@ -1,11 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DialogModule} from "primeng/dialog";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {PanelModule} from "primeng/panel";
 import {MessageComponent} from "../message.component";
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Address} from "../../core/types/address.type";
-import {Router} from "@angular/router";
 import {ViacepApiService} from "../../core/services/viacep-api.service";
 import {MessageService} from "primeng/api";
 import {InputTextModule} from "primeng/inputtext";

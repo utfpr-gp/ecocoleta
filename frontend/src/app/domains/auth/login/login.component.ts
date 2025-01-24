@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {LayoutService} from 'src/app/layout/service/app.layout.service';
 import {MessageService} from "primeng/api";
-import {AuthenticateTokenService, LoginResponse} from "../authenticate-token.service";
+import {AuthenticateTokenService} from "../authenticate-token.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {CookieService} from "ngx-cookie-service";
 import {catchError, Observable, tap, throwError} from "rxjs";
@@ -66,7 +66,7 @@ export class LoginComponent {
         if (this.loginForm.valid) {
             this.loginApi(this.loginForm.value.email, this.loginForm.value.password)
                 .subscribe({
-                    next: (response) => {
+                    next: () => {
                         this.messageService.add({
                             severity: 'success',
                             summary: 'Login realizado com sucesso',
