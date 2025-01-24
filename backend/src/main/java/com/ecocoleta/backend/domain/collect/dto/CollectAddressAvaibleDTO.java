@@ -1,16 +1,16 @@
 package com.ecocoleta.backend.domain.collect.dto;
 
+import com.ecocoleta.backend.domain.collect.CollectMaterials;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.NotNull;
 
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record CollectAddressAvaibleDTO(
         @NotNull
         long id,
-        boolean isIntern,
-        LocalDateTime schedule,
-        String picture,
         Integer amount,
         @NotNull
         String status,
@@ -19,13 +19,17 @@ public record CollectAddressAvaibleDTO(
         LocalDateTime createTime,
         LocalDateTime updateTime,
         @NotNull
-        Long address_id,
+        @JsonAlias({"addressId", "address_id"})
+        Long addressId,
         @NotNull
-        Long resident_id,
-        Long waste_Collector_id,
+        @JsonAlias({"residentId", "resident_id"})
+        Long residentId,
+        @JsonAlias({"id_waste_collector", "id", "waste_collector_id", "wasteCollectorId"})
+        Long wasteCollectorId,
         Double longitude,
         Double latitude,
         //Pode ser retornado com o tipo Point - Point location, porém tem que ser feito a conversão de byte wkt para Point...
-        String location
+        String location,
+        List<CollectMaterials> materials
 ) {
 }

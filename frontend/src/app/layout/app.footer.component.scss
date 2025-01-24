@@ -1,0 +1,36 @@
+// SCSS
+.layout-footer {
+    display: none; // Oculta ambos inicialmente
+
+    &.desktop-footer {
+        display: flex; // Mostra apenas para telas grandes
+    }
+
+    &.mobile-footer {
+        display: flex; // Mostra apenas para telas pequenas
+    }
+}
+
+// Media Queries para alternar entre desktop e mobile
+@media screen and (min-width: 768px) {
+    .desktop-footer {
+        display: flex !important;
+    }
+    .mobile-footer {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .desktop-footer {
+        display: none !important;
+    }
+    .mobile-footer {
+        display: flex !important;
+    }
+}
+
+
+.layout-footer-button {
+    width: 100%; /* Faz com que os botões ocupem 100% da largura disponível */
+}

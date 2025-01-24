@@ -1,0 +1,76 @@
+<!--TODO botões e tela para user admin e company e suas listagens etc...-->
+<!-- mudar os botões historico e coletas para o dash de admin e company ??-->
+
+<!--Rodapé para Desktop-->
+<div class="layout-footer desktop-footer text-black-alpha-70">
+    by
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 400 100"
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label="EcoColeta"
+        style="width: 100%; max-width: 150px; height: auto; max-height: 20px"
+    >
+        <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color: #66ff99; stop-opacity: 1;"/>
+                <stop offset="100%" style="stop-color: #33cc66; stop-opacity: 1;"/>
+            </linearGradient>
+        </defs>
+        <text x="20" y="70" font-family="'Poppins', sans-serif" font-size="50" fill="url(#gradient)" font-weight="bold">
+            EcoColeta
+        </text>
+    </svg>
+</div>
+
+<!-- Rodapé para Mobile -->
+<div class="layout-footer mobile-footer p-3 flex justify-between text-black-alpha-70">
+    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;" [routerLink]="'/home'">
+        <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+            <i class="pi pi-home text-2xl"></i>
+        </button>
+        <span class="mt-2 w-full text-center">Home</span>
+    </div>
+    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;" [routerLink]="'/coletas/em-andamento'">
+        <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+            <i class="pi pi-table text-2xl"></i>
+        </button>
+        <span class="mt-2 w-full text-center">Coletas</span>
+    </div>
+    @if (user?.role === 'WASTE_COLLECTOR') {
+        @if (isCollectingFlag$ | async) {
+            <div
+                class="flex flex-column align-items-center justify-content-center flex-1 bg-yellow-400 text-white border-round-3xl p-2"
+                style="text-align: center;">
+                <button
+                    class="p-link layout-footer-button flex justify-content-center align-items-center text-white border-none" (click)="toggleColeta()">
+                    <i class="pi pi-stop text-2xl"></i>
+                </button>
+                <span class="mt-2 w-full text-2xl text-center">Parar coleta</span>
+            </div>
+        } @else {
+            <div
+                class="flex flex-column align-items-center justify-content-center flex-1 bg-primary text-white border-round-3xl p-2"
+                style="text-align: center;">
+                <button
+                    class="p-link layout-footer-button flex justify-content-center align-items-center text-white border-none" (click)="toggleColeta()">
+                    <i class="pi pi-play text-2xl"></i>
+                </button>
+                <span class="mt-2 w-full text-2xl text-center">Iniciar coleta</span>
+            </div>
+        }
+    }
+    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;" [routerLink]="'/coletas/historico'">
+        <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+            <i class="pi pi-history text-2xl"></i>
+        </button>
+        <span class="mt-2 w-full text-center">Histórico</span>
+    </div>
+    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;" [routerLink]="['/user/perfil', user?.id]">
+        <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+            <i class="pi pi-user text-2xl"></i>
+        </button>
+        <span class="mt-2 w-full text-center">Perfil</span>
+    </div>
+</div>

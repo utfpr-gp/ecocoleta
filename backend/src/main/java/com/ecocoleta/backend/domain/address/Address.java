@@ -28,6 +28,7 @@ public class Address implements Serializable {
     private String number;
     private String neighborhood;
     private String cep;
+    private String state;
     private Double latitude;
     private Double longitude;
     @Column(columnDefinition = "geography(Point, 4326)")
@@ -37,20 +38,21 @@ public class Address implements Serializable {
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 
-    public Address(String name, String city, String street, String number, String neighborhood, String cep, Double latitude, Double longitude) {
+    public Address(String name, String city, String street, String number, String neighborhood, String cep, String state, Double latitude, Double longitude) {
         this.name = name;
         this.city = city;
         this.street = street;
         this.number = number;
         this.neighborhood = neighborhood;
         this.cep = cep;
+        this.state = state;
         this.latitude = latitude;
         this.longitude = longitude;
         this.createTime = LocalDateTime.now();
         this.setLocationFromCoordinates(); // Define o Point automaticamente
     }
 
-    public Address(Long id, String name, String city, String street, String number, String neighborhood, String cep, Double latitude, Double longitude) {
+    public Address(Long id, String name, String city, String street, String number, String neighborhood, String cep, String state, Double latitude, Double longitude) {
         this.id = id;
         this.name = name;
         this.city = city;
@@ -58,6 +60,7 @@ public class Address implements Serializable {
         this.number = number;
         this.neighborhood = neighborhood;
         this.cep = cep;
+        this.state = state;
         this.latitude = latitude;
         this.longitude = longitude;
         this.createTime = LocalDateTime.now();
@@ -89,6 +92,7 @@ public class Address implements Serializable {
                 ", number='" + number + '\'' +
                 ", neighborhood='" + neighborhood + '\'' +
                 ", cep='" + cep + '\'' +
+                ", state='" + state + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", location=" + location +

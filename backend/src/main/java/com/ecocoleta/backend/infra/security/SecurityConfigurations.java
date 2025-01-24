@@ -42,17 +42,17 @@ public class SecurityConfigurations {
                                 .requestMatchers(HttpMethod.PUT, "/myaccount/**").authenticated()
                                 .requestMatchers(HttpMethod.DELETE, "/myaccount/**").authenticated()
 
-                                //MATERIAL
-                                .requestMatchers(HttpMethod.POST, "/material/**").authenticated()
-                                .requestMatchers(HttpMethod.GET, "/material/**").authenticated()
-                                .requestMatchers(HttpMethod.PUT, "/material/**").authenticated()
-                                .requestMatchers(HttpMethod.DELETE, "/material/**").authenticated()
-
                                 //COLLECT
                                 .requestMatchers(HttpMethod.POST, "/collect/**").authenticated()
                                 .requestMatchers(HttpMethod.GET, "/collect/**").authenticated()
                                 .requestMatchers(HttpMethod.PUT, "/collect/**").authenticated()
                                 .requestMatchers(HttpMethod.DELETE, "/collect/**").authenticated()
+
+                                //WASTE_COLLECTOR
+                                .requestMatchers(HttpMethod.POST, "/waste_collector/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/waste_collector/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/waste_collector/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/waste_collector/**").authenticated()
 
                                 //OTHER ROUTES
                                 .requestMatchers(HttpMethod.GET, "/hello").permitAll() //todos user -- teste

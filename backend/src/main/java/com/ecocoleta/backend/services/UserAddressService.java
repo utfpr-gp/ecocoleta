@@ -4,14 +4,16 @@ import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.userAddress.UserAddress;
-import com.ecocoleta.backend.domain.userAddress.UserAddressPK;
 import com.ecocoleta.backend.domain.user.UserRole;
+import com.ecocoleta.backend.infra.exception.ValidException;
+import com.ecocoleta.backend.repositories.CollectRepository;
 import com.ecocoleta.backend.repositories.UserAddressRepository;
+import com.google.maps.model.GeocodingResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserAddressService {
@@ -25,79 +27,151 @@ public class UserAddressService {
     @Autowired
     private AddressService addressService;
 
-    public Optional<UserAddress> findByUserAndAddress(User user, Address address) {
-        return this.userAddressRepository.findByUserAndAddress(user, address);
+    @Autowired
+    private GeocodingService geocodingService;
+
+    @Autowired
+    private CollectRepository collectRepository;
+
+    public List<AddressDTO> getAddressList(Long userId) {
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new ValidException("Usuário não encontrado para o ID: " + userId));
+
+        return userAddressRepository.findByUser(user).stream()
+                .map(userAddress -> convertToDTO(userAddress.getAddress()))
+                .collect(Collectors.toList());
     }
 
-    public List<UserAddress> findByUser(User user) {
-        return this.userAddressRepository.findByUser(user);
+    public AddressDTO getSpecificAddress(Long userId, Long addressId) {
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new ValidException("Usuário não encontrado para o ID: " + userId));
+
+        Address address = addressService.getAddressById(addressId)
+                .orElseThrow(() -> new ValidException("Endereço não encontrado para o ID: " + addressId));
+
+        userAddressRepository.findByUserAndAddress(user, address)
+                .orElseThrow(() -> new ValidException("Relacionamento entre usuário e endereço não encontrado."));
+
+        return convertToDTO(address);
     }
 
-    public UserAddress save(UserAddress userAddress) {
-        return this.userAddressRepository.save(userAddress);
-    }
+    public void createAddress(Long userId, AddressDTO addressDTO) {
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new ValidException("Usuário não encontrado para o ID: " + userId));
 
-    public void deleteAddress(UserAddressPK userAddressPK) {
-        userAddressRepository.deleteById(userAddressPK);
-    }
+        Address address = convertFromDTO(addressDTO);
 
-    //metodo para edição de endereço
-    public boolean editAddress(Long userId, AddressDTO addressDTO) {
-        System.out.println("ENTROU NO EDIT ADDRESS SERVICE");
+        // Busca coordenadas a partir do endereço
+        setCoordinates(address);
 
-//         Busca o usuário por ID
-        Optional<User> optionalUser = userService.getUserById(userId);
-        Optional<Address> optionalAddress = addressService.getAddressById(addressDTO.id());
+        UserAddress userAddress = new UserAddress(user, address);
 
-        if (optionalUser.isPresent() && optionalAddress.isPresent()) {
-            UserAddressPK userAddressPK = new UserAddressPK(optionalUser.get().getId(), optionalAddress.get().getId());
-            UserAddress userAddress = userAddressRepository.getReferenceById(userAddressPK);
-
-//            Address address = new Address(addressDTO.city(), addressDTO.street(), addressDTO.number(), addressDTO.neighborhood(), addressDTO.cep());
-            //TODO mapper adress|DTO para address
-//            userAddress.setAddress(addressDTO.city(), addressDTO.street(), addressDTO.number(), addressDTO.neighborhood(), addressDTO.cep()));
-
-            // Obter o Address existente do UserAddress
-            Address existingAddress = userAddress.getAddress();
-
-            // Atualizar os dados do Address existente com os dados do AddressDTO
-            existingAddress.setCity(addressDTO.city());
-            existingAddress.setStreet(addressDTO.street());
-            existingAddress.setNumber(addressDTO.number());
-            existingAddress.setNeighborhood(addressDTO.neighborhood());
-            existingAddress.setCep(addressDTO.cep());
-            existingAddress.setLatitude(addressDTO.latitude());
-            existingAddress.setLongitude(addressDTO.longitude());
-
-//            // Salvar o UserAddress (não é necessário, a menos que haja algo específico a ser feito)
-            save(userAddress);
-            System.out.println("Endereço editado com sucesso!!!!");
-            return true;
+        if (isAddressCreationAllowed(user, userAddress)) {
+            userAddressRepository.save(userAddress);
         } else {
-            System.err.println("Endereço não encontrado!!!!");
-            return false;
+            throw new ValidException("Erro ao criar endereço. Usuário já possui endereço cadastrado.");
         }
     }
 
-    public boolean createAddress(UserAddress userAddress) {
-        System.out.println("ENTROU NO CREATE ADDRESS SERVICE");
+    public void updateAddress(Long userId, AddressDTO addressDTO) {
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new ValidException("Usuário não encontrado para o ID: " + userId));
 
-        //identifica o tipo de usuário
-        User user = userAddress.getUser();
-        UserRole userType = userService.getUserRole(userAddress.getUser());
+        Address address = addressService.getAddressById(addressDTO.id())
+                .orElseThrow(() -> new ValidException("Endereço não encontrado para o ID: " + addressDTO.id()));
+
+        UserAddress userAddress = userAddressRepository.findByUserAndAddress(user, address)
+                .orElseThrow(() -> new ValidException("Relacionamento entre usuário e endereço não encontrado."));
+
+        updateAddressFromDTO(userAddress.getAddress(), addressDTO);
+
+        // Atualiza coordenadas caso o endereço tenha sido modificado
+        setCoordinates(address);
+
+        userAddressRepository.save(userAddress);
+    }
+
+    public void deleteAddress(Long userId, Long addressId) {
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new ValidException("Usuário não encontrado para o ID: " + userId));
+
+        Address address = addressService.getAddressById(addressId)
+                .orElseThrow(() -> new ValidException("Endereço não encontrado para o ID: " + addressId));
+
+        // Atualiza as coletas relacionadas para `addressId = NULL`
+        // collectRepository.updateAddressToNull(addressId);
+
+        UserAddress userAddress = userAddressRepository.findByUserAndAddress(user, address)
+                .orElseThrow(() -> new ValidException("Relacionamento entre usuário e endereço não encontrado."));
+
+        userAddressRepository.delete(userAddress);
+    }
+
+    private boolean isAddressCreationAllowed(User user, UserAddress userAddress) {
+        UserRole userType = userService.getUserRole(user);
 
         if (userType.equals(UserRole.RESIDENT)) {
-            System.out.println("User instancia de RESIDENT, criando endereço.");
-            save(userAddress);
-            return true;
+            return true; // Residentes podem ter vários endereços
         } else {
-            System.out.println("User instancia de WASTE_COLLECTOR, COMPANY, criando endereço.");
-            if (userAddressRepository.findByUser(user).isEmpty()) {
-                save(userAddress);
-                return true;
-            }
-            System.err.println("User já possui endereço cadastrado.");
-            return false;
+            return userAddressRepository.findByUser(user).isEmpty();
         }
+    }
+
+    private void updateAddressFromDTO(Address address, AddressDTO addressDTO) {
+        address.setName(addressDTO.name());
+        address.setCity(addressDTO.city());
+        address.setStreet(addressDTO.street());
+        address.setNumber(addressDTO.number());
+        address.setNeighborhood(addressDTO.neighborhood());
+        address.setCep(addressDTO.cep());
+        address.setLatitude(addressDTO.latitude());
+        address.setLongitude(addressDTO.longitude());
+    }
+
+    private void setCoordinates(Address address) {
+        String fullAddress = String.format("%s, %s, %s, %s, %s",
+                address.getStreet(),
+                address.getNumber(),
+                address.getCity(),
+                address.getState(),
+                address.getCep());
+
+        GeocodingResult[] results = geocodingService.getCoordinates(fullAddress);
+        if (results != null && results.length > 0) {
+            address.setLatitude(results[0].geometry.location.lat);
+            address.setLongitude(results[0].geometry.location.lng);
+            address.setLocationFromCoordinates(); // Atualiza o Point na entidade
+        } else {
+            throw new ValidException("Não foi possível obter coordenadas para o endereço fornecido.");
+        }
+    }
+
+    private Address convertFromDTO(AddressDTO dto) {
+        return new Address(
+                dto.name(),
+                dto.city(),
+                dto.street(),
+                dto.number(),
+                dto.neighborhood(),
+                dto.cep(),
+                dto.state(),
+                dto.latitude(),
+                dto.longitude()
+        );
+    }
+
+    private AddressDTO convertToDTO(Address address) {
+        return new AddressDTO(
+                address.getId(),
+                address.getName(),
+                address.getCity(),
+                address.getStreet(),
+                address.getNumber(),
+                address.getNeighborhood(),
+                address.getCep(),
+                address.getState(),
+                address.getLatitude(),
+                address.getLongitude()
+        );
     }
 }

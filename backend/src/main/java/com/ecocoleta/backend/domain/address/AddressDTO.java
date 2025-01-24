@@ -18,9 +18,8 @@ public record AddressDTO(
         @NotBlank
         @Pattern(regexp = "\\d{8}")
         String cep,
-        @NotBlank
+        String state,
         Double latitude,
-        @NotBlank
         Double longitude
 ) {
 }

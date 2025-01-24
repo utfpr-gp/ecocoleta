@@ -13,7 +13,9 @@ import com.ecocoleta.backend.services.UserService;
 import com.ecocoleta.backend.services.WasteCollectorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,19 +33,13 @@ public class CollectController {
     @Autowired
     private CollectService collectService;
 
-
     @Autowired
     UserService userService;
 
     @Autowired
     WasteCollectorService wasteCollectorService;
 
-    @Autowired
-    private WasteCollectorRespository wasteCollectorRespository;
-    @Autowired
-    private AutorizationService autorizationService;
-
-
+//TODO remover essa explicação - documentar docstring....
     /**
      * Usando a API Geolocation do HTML5, o dispositivo envia a localização em longitude e latitude,
      * que serão utilizadas nos métodos para consulta e retorno de um array JSON com as 10 coletas
@@ -57,7 +53,7 @@ public class CollectController {
      * Para o cálculo e consulta pelo raio, utilizar o cálculo de Haversine.
      * <p>
      * Criar DTO que recebe:
-     * - waste_Collector_id
+     * - wasteCollectorId
      * - longitude
      * - latitude
      * - city
@@ -90,10 +86,36 @@ public class CollectController {
     @PostMapping("create_new_collect")
     @Transactional
     public ResponseEntity createNewCollect(@RequestBody @Valid CollectDTO collectDTO) {
-
         var dto = collectService.createCollect(collectDTO);
-
         return ResponseEntity.ok().body(dto);
+    }
+
+    //    TODO rota de upodate de coleta??? ou é melhor fazer um cancelamento e criar uma nova coleta?
+
+    // retrona a lista de coletas atuais do usuario --- mudar o nome do endpoint
+    @GetMapping("/active_collects")
+    public ResponseEntity<Page<CollectDTO>> getActiveCollects(@RequestParam @Valid Long userId,
+                                                              @PageableDefault(size = 10, sort = {"createTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        List<CollectStatus> statuses = List.of(
+                CollectStatus.PENDING, CollectStatus.PAUSED, CollectStatus.IN_PROGRESS, CollectStatus.COMPLETED
+        );
+
+        Page<CollectDTO> collects = collectService.getCollectsByStatusesAndEvaluation(userId, statuses, false, pageable);
+
+        return ResponseEntity.ok(collects); // Retorna o objeto paginado diretamente
+    }
+
+    @GetMapping("/history_collects")
+    public ResponseEntity<Page<CollectDTO>> getHistoryCollects(@RequestParam @Valid Long userId,
+                                                               @RequestParam(required = false) CollectStatus collectStatus,
+                                                               @PageableDefault(size = 10, sort = {"createTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        // Se nenhum status for informado, buscar "COMPLETED" e "CANCELLED"
+        List<CollectStatus> statuses = (collectStatus != null) ?
+                List.of(collectStatus) : List.of(CollectStatus.COMPLETED, CollectStatus.CANCELLED);
+
+        Page<CollectDTO> collects = collectService.getCollectsByStatusesAndEvaluation(userId, statuses, null, pageable);
+
+        return ResponseEntity.ok(collects);
     }
 
     /**
@@ -103,43 +125,180 @@ public class CollectController {
      */
     @GetMapping("get_collects")
     @Transactional
-    public ResponseEntity<List<CollectDTO>> getCollectsByStatus(@RequestParam @Valid Long userId, @RequestParam @Valid CollectStatus collectStatus, @PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
+    public ResponseEntity<List<CollectDTO>> getCollectsByStatus(@RequestParam @Valid Long userId,
+                                                                @RequestParam @Valid CollectStatus collectStatus,
+                                                                @PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
         try {
-            // Busca o usuário por ID
             if (!userService.existsByid(userId)) {
                 throw new ValidException("Usuário não encontrado!");
             }
 
-            // verifica se o status é válido
-            if (!collectStatus.equals(CollectStatus.PENDING) && !collectStatus.equals(CollectStatus.IN_PROGRESS) && !collectStatus.equals(CollectStatus.COMPLETED) && !collectStatus.equals(CollectStatus.CANCELLED)) {
+            if (!isValidCollectStatus(collectStatus)) {
                 throw new ValidException("Status inválido!");
             }
 
             List<CollectDTO> collects = collectService.getCollectsByStatusAndUserId(userId, collectStatus, pageable);
             return ResponseEntity.ok().body(collects);
+        } catch (ValidException e) {
+            // Retorna erro de validação com lista vazia em vez de String
+            return ResponseEntity.badRequest().body(List.of()); // Retorna lista vazia ao invés de String
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            // Retorna erro genérico com lista vazia
+            return ResponseEntity.internalServerError().body(List.of()); // Retorna lista vazia ao invés de String
         }
     }
 
     /**
-     * Endpoint para buscar as coletas disponíveis.
-     * Recebe um CollectSearchAvaibleListDTO com os parâmetros de busca.
-     * Retorna uma lista de CollectAddressAvaibleDTO com as coletas disponíveis.
+     * Endpoint para buscar as coletas disponíveis sem atrelar ao wasteCollector.
+     * <p>
+     * Este endpoint permite buscar todas as coletas disponíveis que correspondem aos critérios fornecidos,
+     * sem associá-las a um wasteCollector. É útil para exibir oportunidades de coleta
+     * disponíveis em uma região, sem registrar o interesse de um coletor específico.
+     * <p>
+     * ### Parâmetros de entrada:
+     * - `collectSearchAvaibleListDTO` (Body): Objeto contendo os critérios de busca. Campos esperados:
+     * - `currentLatitude` (Double): Latitude atual do ponto de referência para a busca.
+     * - `currentLongitude` (Double): Longitude atual do ponto de referência para a busca.
+     * - `radius` (QueryParam, Opcional): Raio de busca em metros. Caso não fornecido, o valor padrão é **10.000 metros (10 km)**.
+     * <p>
+     * ### Comportamento:
+     * - Retorna todas as coletas que estão disponíveis (status `PENDING`), sem limite de quantidade.
+     * - As coletas retornadas não estarão associadas a nenhum `wasteCollector`.
+     * <p>
+     * ### Valores padrão:
+     * - Raio padrão: 10.000 metros (10 km), se o parâmetro `radius` não for fornecido.
+     * <p>
+     * ### Resposta:
+     * - HTTP 200 OK: Lista de coletas disponíveis dentro do raio especificado.
+     * - `id` (Long): ID da coleta.
+     * - `amount` (Integer): Quantidade de material a ser coletado.
+     * - `status` (String): Status atual da coleta (geralmente `PENDING`).
+     * - `longitude` e `latitude` (Double): Localização geográfica da coleta.
+     * - HTTP 400 Bad Request: Caso os dados fornecidos estejam inválidos.
+     * - HTTP 500 Internal Server Error: Erro interno ao processar a solicitação.
+     * <p>
+     * ### Exemplo de uso:
+     * Requisição:
+     * ```
+     * POST /get_show_unlinked_collects?radius=5000
+     * Body:
+     * {
+     * "currentLatitude": -23.550520,
+     * "currentLongitude": -46.633308
+     * }
+     * ```
+     * Resposta:
+     * ```
+     * HTTP 200 OK
+     * [
+     * {
+     * "id": 1,
+     * "amount": 5,
+     * "status": "PENDING",
+     * "longitude": -46.632203,
+     * "latitude": -23.549540
+     * },
+     * ...
+     * ]
+     * ```
      */
-    @PostMapping("get_avaible_collects")
+    @PostMapping("get_show_unlinked_collects")
     @Transactional
-    public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollects(@RequestBody @Valid CollectSearchAvaibleListDTO collectSearchAvaibleListDTO) {
+    public ResponseEntity<List<CollectAddressAvaibleDTO>> getUnlinkedCollects(
+            @RequestBody @Valid CollectSearchAvaibleListDTO collectSearchAvaibleListDTO,
+            @RequestParam(required = false) Double radius) {
 
+        // Configura valores padrão
+        double effectiveRadius = (radius != null) ? radius : 10000.0; // Raio padrão: 10 km
 
-        // Busca o Catador por ID
+        // Obter coletas disponíveis sem atrelar ao wasteCollector
+        List<CollectAddressAvaibleDTO> collects = collectService.getAvailableCollects(
+                collectSearchAvaibleListDTO, effectiveRadius, null, false); // Passa null como limite
+
+        return ResponseEntity.ok().body(collects);
+    }
+
+    /**
+     * Endpoint para buscar as coletas disponíveis e atrelar ao wasteCollector.
+     * <p>
+     * Este endpoint permite que um `wasteCollector` obtenha coletas disponíveis com base
+     * nos critérios fornecidos e as reserve para si. As coletas retornadas terão
+     * seu status atualizado para `IN_PROGRESS` e serão associadas ao `wasteCollector`.
+     * <p>
+     * ### Parâmetros de entrada:
+     * - `collectSearchAvaibleListDTO` (Body): Objeto contendo os critérios de busca. Campos esperados:
+     * - `idWasteCollector` (Long): ID do `wasteCollector` que está requisitando as coletas.
+     * - `currentLatitude` (Double): Latitude atual do ponto de referência para a busca.
+     * - `currentLongitude` (Double): Longitude atual do ponto de referência para a busca.
+     * - `radius` (QueryParam, Opcional): Raio de busca em metros. Caso não fornecido, o valor padrão é **3.000 metros (3 km)**.
+     * - `limit` (QueryParam, Opcional): Número máximo de coletas a serem retornadas. Caso não fornecido, o valor padrão é **3**.
+     * <p>
+     * ### Comportamento:
+     * - Retorna as coletas disponíveis (status `PENDING`) dentro do raio especificado e as reserva para o `wasteCollector`.
+     * - As coletas terão:
+     * - Status atualizado para `IN_PROGRESS`.
+     * - `idWasteCollector` atualizado com o ID do coletor.
+     * - `initTime` atualizado com a data/hora atual.
+     * <p>
+     * ### Valores padrão:
+     * - Raio padrão: 3.000 metros (3 km), se o parâmetro `radius` não for fornecido.
+     * - Limite padrão: 3 coletas, se o parâmetro `limit` não for fornecido.
+     * <p>
+     * ### Resposta:
+     * - HTTP 200 OK: Lista de coletas reservadas para o `wasteCollector`.
+     * - `id` (Long): ID da coleta.
+     * - `amount` (Integer): Quantidade de material a ser coletado.
+     * - `status` (String): Novo status da coleta (`IN_PROGRESS`).
+     * - `longitude` e `latitude` (Double): Localização geográfica da coleta.
+     * - HTTP 400 Bad Request: Caso os dados fornecidos estejam inválidos ou o `wasteCollector` não exista.
+     * - HTTP 500 Internal Server Error: Erro interno ao processar a solicitação.
+     * <p>
+     * ### Exemplo de uso:
+     * Requisição:
+     * ```
+     * POST /get_avaible_collects_reserved?radius=3000&limit=5
+     * Body:
+     * {
+     * "idWasteCollector": 101,
+     * "currentLatitude": -23.550520,
+     * "currentLongitude": -46.633308
+     * }
+     * ```
+     * Resposta:
+     * ```
+     * HTTP 200 OK
+     * [
+     * {
+     * "id": 1,
+     * "amount": 5,
+     * "status": "IN_PROGRESS",
+     * "longitude": -46.632203,
+     * "latitude": -23.549540
+     * },
+     * ...
+     * ]
+     * ```
+     */
+    @PostMapping("get_avaible_collects_reserved")
+    @Transactional
+    public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollectsReserved(
+            @RequestBody @Valid CollectSearchAvaibleListDTO collectSearchAvaibleListDTO,
+            @RequestParam(required = false) Double radius,
+            @RequestParam(required = false) Integer limit) {
+
         if (!wasteCollectorService.existsWasteCollectorById(collectSearchAvaibleListDTO.idWasteCollector())) {
             throw new ValidException("Catador não encontrado!");
         }
 
-        List<CollectAddressAvaibleDTO> collectAddressAvaibleDTOS = collectService.getCollectAvaibleList(collectSearchAvaibleListDTO);
+        // Configura valores padrão
+        double effectiveRadius = (radius != null) ? radius : 3000.0; // Raio padrão: 3 km
+        int effectiveLimit = (limit != null) ? limit : 3;            // Limite padrão: 3 coletas
 
-        return ResponseEntity.ok().body(collectAddressAvaibleDTOS);
+        // Obter coletas disponíveis e atrelar ao wasteCollector
+        List<CollectAddressAvaibleDTO> collects = collectService.getAvailableCollects(
+                collectSearchAvaibleListDTO, effectiveRadius, effectiveLimit, true);
+
+        return ResponseEntity.ok().body(collects);
     }
 
     /**
@@ -156,11 +315,12 @@ public class CollectController {
             if (collectService.completedCollect(collectDTO)) {
                 return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity.badRequest().body("Coleta não finalizada!");
+                throw new ValidException("Coleta não finalizada!");
             }
-        } catch (Exception e) {
+        } catch (ValidException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-//            throw new ValidException("WasteCollector not found");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro inesperado: " + e.getMessage());
         }
     }
 
@@ -172,15 +332,16 @@ public class CollectController {
     @DeleteMapping("reset_collects")
     @Transactional
     public ResponseEntity resetCollects(@RequestParam @Valid Long wasteCollectorId) {
-        //TODo fazer para desistir de todas ou de uma coleta especifica recendno o id da coleta'
         try {
             if (collectService.resetAllCollects(wasteCollectorId)) {
                 return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity.badRequest().body("Coletas não resetadas!");
+                throw new ValidException("Coletas não resetadas!");
             }
-        } catch (Exception e) {
+        } catch (ValidException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro inesperado: " + e.getMessage());
         }
     }
 
@@ -198,10 +359,12 @@ public class CollectController {
             if (collectService.cancelCollect(collectId, user)) {
                 return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity.badRequest().body("Coleta não cancelada!");
+                throw new ValidException("Coleta não cancelada!");
             }
-        } catch (Exception e) {
+        } catch (ValidException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro inesperado: " + e.getMessage());
         }
     }
 
@@ -219,10 +382,19 @@ public class CollectController {
             User user = userService.getUserByUserEmail(userDetails.getUsername());
 
             CollectDTO collectDTO = collectService.pausedCollect(collectId, user);
-
             return ResponseEntity.ok().body(collectDTO);
-        } catch (Exception e) {
+        } catch (ValidException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro inesperado: " + e.getMessage());
         }
+    }
+
+    // Método auxiliar para validação do status
+    private boolean isValidCollectStatus(CollectStatus collectStatus) {
+        return collectStatus.equals(CollectStatus.PENDING) ||
+                collectStatus.equals(CollectStatus.IN_PROGRESS) ||
+                collectStatus.equals(CollectStatus.COMPLETED) ||
+                collectStatus.equals(CollectStatus.CANCELLED);
     }
 }

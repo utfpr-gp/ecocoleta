@@ -1,80 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 
-/* importando variáveis de cores */
-@import '../src/styles/variables.scss';
+$gutter: 1rem; //for primeflex grid system
+/* PrimeNG Theme */
+@import "../node_modules/primeng/resources/themes/saga-green/theme.css";
 
-// regular style toast
-@import 'ngx-toastr/toastr';
+@import "assets/layout/styles/layout/layout.scss";
 
-/* importando bootstrap css */
-@import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-@import '../node_modules/bootstrap-icons/font/bootstrap-icons.min.css';
+/* PrimeNG */
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/primeflex/primeflex.scss";
+@import "../node_modules/primeicons/primeicons.css";
 
-
-/* my styles global */
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html, body{
-    height: 100%;
-    width: 100%;
-    background-color: $secondary-gray-color;
-}
-
-.full-tam{
-    height: 100%;
-    width: 100%;
-}
-
-/* sobrescrevendo classes padrão do Bootstrap */
-/* a marcação !important dá um peso maior a regra, sobrescrevendo regras prévias */
-.bg-primary, .btn-primary{
-    background-color: $primary-green-color !important;
-    border-color: $primary-green-color !important;
-}
-
-.btn-outline-primary{
-    font-weight: 500;
-    padding: 10px 24px; 
-    border-color: $primary-green-color !important;
-    color: $primary-green-color !important;
-}
-.btn-outline-primary:hover{
-    font-weight: 500;
-    padding: 10px 24px;
-    background-color: $primary-green-color !important;
-    border-color: $primary-green-color !important;
-    color: $white-color !important;
-}
-.bg-secondary, .btn-secondary{
-    background-color: var(--secondary) !important;
-} 
-.bg-tertiary, .btn-tertiary{
-    background-color: var(--tertiary) !important;
-}
-/*
-.bg-success, .btn-success{
-    background-color: var(--success) !important;
-}
-.bg-info, .btn-info{
-    background-color: var(--info) !important;
-}
-.bg-warning, .btn-warning{
-    background-color: var(--warning) !important;
-}
-.bg-danger .btn-danger{
-    background-color: var(--danger) !important;
-}
-.nav-link {
-    color: var(--primary) !important ;
-}
-.nav-link:hover{
-    color: var(--warning) !important ; 
-} */
-
-.text-green{
-    color: $primary-green-color;
-}
+/* Demos */
+@import "assets/demo/styles/flags/flags.css";
+@import "assets/demo/styles/badges.scss";
+@import "assets/demo/styles/code.scss";

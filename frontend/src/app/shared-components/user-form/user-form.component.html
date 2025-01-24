@@ -1,0 +1,159 @@
+<p-panel class="col-12" header="{{ formModeUpdate ? 'Editar Usuário' : 'Cadastrar Usuário' }}">
+    <form [formGroup]="formUser" (ngSubmit)="onSubmit()">
+        <div class="p-grid p-justify-center">
+            <div class="field col-12 md:col-6">
+                <label for="name">Nome</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="name" id="name" required maxlength="255" pInputText type="text"
+                           placeholder="Nome completo">
+                </div>
+                <app-message [control]="formUser.get('name')" error="required"
+                             text="É necessário preencher o Nome."></app-message>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label for="phone">Telefone</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="phone" id="phone" required maxlength="15" pInputText type="tel"
+                           placeholder="(XX) XXXXX-XXXX">
+                </div>
+                <app-message [control]="formUser.get('phone')" error="required"
+                             text="É necessário preencher o número."></app-message>
+            </div>
+
+            <div class="field col-12 md:col-6">
+                <label for="email">E-mail</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="email" id="email" required maxlength="255" pInputText type="email"
+                           placeholder="email@exemplo.com">
+                </div>
+                <app-message [control]="formUser.get('email')" error="required"
+                             text="É necessário preencher o e-mail."></app-message>
+            </div>
+
+            <div class="field col-12 md:col-6" *ngIf="!formModeUpdate">
+                <label for="emailCheck">Confirme o E-mail</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="emailCheck" id="emailCheck" required maxlength="255" pInputText type="email"
+                           placeholder="Confirme o e-mail">
+                </div>
+                <app-message [control]="formUser.get('emailCheck')" error="required"
+                             text="É necessário preencher o e-mail."></app-message>
+            </div>
+
+            <div class="field col-12 md:col-6" *ngIf="!formModeUpdate">
+                <label for="password">Senha</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <p-password
+                        formControlName="password"
+                        id="password"
+                        [required]="!formModeUpdate"
+                        maxlength="255"
+                        [feedback]="true"
+                        toggleMask="true"
+                        styleClass="w-full"
+                        weakLabel="Fraca"
+                        mediumLabel="Média"
+                        strongLabel="Forte">
+                    </p-password>
+                </div>
+                <app-message [control]="formUser.get('password')" error="required"
+                             text="É necessário preencher a senha."></app-message>
+            </div>
+
+            <div class="field col-12 md:col-6" *ngIf="!formModeUpdate">
+                <label for="passwordCheck">Confirme a Senha</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <p-password
+                        formControlName="passwordCheck"
+                        id="passwordCheck"
+                        [required]="!formModeUpdate"
+                        maxlength="255"
+                        toggleMask="true"
+                        styleClass="w-full"
+                        weakLabel="Fraca"
+                        mediumLabel="Média"
+                        strongLabel="Forte">
+                    </p-password>
+                </div>
+                <app-message [control]="formUser.get('passwordCheck')" error="required"
+                             text="É necessário preencher a senha."></app-message>
+            </div>
+
+            <div class="field col-12 md:col-6" *ngIf="userRole === 'WASTE_COLLECTOR'">
+                <label for="cpf">CPF</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="cpf" id="cpf" required pInputText type="text" maxlength="11"
+                           placeholder="Somente números">
+                </div>
+                <app-message [control]="formUser.get('cpf')" error="required"
+                             text="É necessário preencher o cpf."></app-message>
+            </div>
+
+            <div class="field col-12 md:col-6" *ngIf="userRole === 'COMPANY'">
+                <label for="cnpj">CNPJ</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="cnpj" id="cnpj" required pInputText type="text" maxlength="14"
+                           placeholder="Somente números">
+                </div>
+                <app-message [control]="formUser.get('cnpj')" error="required"
+                             text="É necessário preencher o cnpj."></app-message>
+            </div>
+
+            <div class="field col-12 md:col-6" *ngIf="userRole === 'WASTE_COLLECTOR' && !formModeUpdate">
+                <label for="picture">Foto</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <p-fileUpload
+                        mode="basic"
+                        id="picture"
+                        name="picture"
+                        chooseLabel="Escolher Foto"
+                        chooseIcon="pi pi-upload"
+                        accept="image/*"
+                        maxFileSize="1000000"
+                        customUpload="true"
+                        (onSelect)="onSelectImg($event)"/>
+                </div>
+                <!-- Miniatura de imagem -->
+                <div class="field col-12 md:col-6" *ngIf="previewImg">
+                    <div class="image-preview">
+                        <p-avatar
+                            [image]="previewImg"
+                            styleClass="mr-2"
+                            size="xlarge"
+                            shape="circle">
+                        </p-avatar>
+                        <!--                        <p-image [src]="previewImg" alt="Pré-visualização" class="responsive-img"></p-image>-->
+                    </div>
+                </div>
+                <!-- Mensagem de validação -->
+                <app-message [control]="formUser.get('picture')" error="required"
+                             text="É necessário carregar a foto."></app-message>
+            </div>
+            <!--            TODO em modo de update e wateCollector trazer a img ???-->
+        </div>
+
+        <div class="w-full flex flex-column md:flex-row align-items-center justify-content-center gap-2 mt-4">
+            <div *ngIf="!formModeUpdate" class="col-12 md:col-3">
+                <button
+                    pButton
+                    pRipple
+                    label="Voltar"
+                    (click)="onCancel()"
+                    class="w-full p-3 text-xl p-button-rounded p-button-outlined"
+                    type="button">
+                </button>
+            </div>
+            <div class="col-12 md:col-3">
+                <button
+                    pButton
+                    pRipple
+                    label="{{formModeUpdate ? 'Atualizar' : 'Salvar' }}"
+                    type="submit"
+                    class="w-full p-3 text-xl p-button-rounded"
+                    [disabled]="formUser.invalid">
+                </button>
+            </div>
+        </div>
+    </form>
+</p-panel>

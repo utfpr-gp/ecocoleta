@@ -1,21 +1,22 @@
 package com.ecocoleta.backend.services;
 
 import com.ecocoleta.backend.Utils.DataUtils;
+import com.ecocoleta.backend.domain.address.Address;
+import com.ecocoleta.backend.domain.collect.CollectMaterials;
 import com.ecocoleta.backend.domain.collect.dto.CollectSearchAvaibleListDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.domain.collect.mapper.CollectMapper;
-import com.ecocoleta.backend.domain.collectMaterial.CollectMaterial;
-import com.ecocoleta.backend.domain.material.Material;
-import com.ecocoleta.backend.domain.material.MaterialIdDTO;
+//import com.ecocoleta.backend.domain.collectMaterial.CollectMaterial;
+//import com.ecocoleta.backend.domain.material.Material;
+//import com.ecocoleta.backend.domain.material.MaterialIdDTO;
+import com.ecocoleta.backend.domain.resident.Resident;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.domain.collect.Collect;
 import com.ecocoleta.backend.domain.collect.CollectStatus;
 import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
-import com.ecocoleta.backend.domain.collect.dto.CollectNewResponseDTO;
 import com.ecocoleta.backend.repositories.AddressRepository;
-import com.ecocoleta.backend.repositories.CollectMaterialRepository;
 import com.ecocoleta.backend.repositories.CollectRepository;
 import com.ecocoleta.backend.repositories.ResidentRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,10 +24,12 @@ import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Objects;
 
 //import javax.transaction.Transactional;
@@ -47,8 +50,8 @@ public class CollectService {
     @Autowired
     private ResidentRepository residentRepository;
 
-    @Autowired
-    private CollectMaterialRepository collectMaterialRepository;
+//    @Autowired
+//    private CollectMaterialRepository collectMaterialRepository;
 
     @Autowired
     private AddressService addressService;
@@ -59,8 +62,6 @@ public class CollectService {
     @Autowired
     private WasteCollectorService wasteCollectorService;
 
-    @Autowired
-    private MaterialService materialService;
 
     @Autowired
     private UserService userService;
@@ -77,27 +78,26 @@ public class CollectService {
      */
     public CollectDTO createCollect(CollectDTO collectDTO) {
 
-        if (!addressRepository.existsById(collectDTO.address()) && !residentRepository.existsById(collectDTO.resident())) {
-            throw new ValidException("Id Address ou Resident informado não existe");
+        // Validação do endereço
+        Address address = addressRepository.findById(collectDTO.address())
+                .orElseThrow(() -> new ValidException("Endereço informado não existe: " + collectDTO.address()));
+
+        // Validação do residente
+        Resident resident = residentRepository.findById(collectDTO.resident())
+                .orElseThrow(() -> new ValidException("Residente informado não existe: " + collectDTO.resident()));
+
+        // Validação dos materiais
+        if (collectDTO.materials() == null || collectDTO.materials().isEmpty()) {
+            throw new ValidException("A lista de materiais não pode estar vazia.");
         }
+
+        // Mapeamento de DTO para entidade
         Collect collect = collectMapper.toEntity(collectDTO);
 
+        // Salvar no banco
         collectRepository.save(collect);
 
-//        TODO mudar para embbeded o materials em vez de relação nxn, assim fica uma lista dentro de collect e não precisa de relação direta com materials
-//        /*criação de relação entre coleta e materiais*/
-//        if (!collectDTO.materials().isEmpty()) {
-//            for (MaterialIdDTO materialId : collectDTO.materials()) {
-//                Material material = materialService.getMaterialById(materialId.id()).orElseThrow(() -> new ValidException("Material not found"));
-//                CollectMaterial collectMaterial = new CollectMaterial(collect, material);
-//                collectMaterialRepository.save(collectMaterial);
-//            }
-//        }
-
-
-//        return new CollectNewResponseDTO(collect);
-
-        //TODO collectMapper de retorno para DTO
+        // Retornar DTO
         return collectMapper.toDto(collect);
     }
 
@@ -110,52 +110,67 @@ public class CollectService {
     }
 
     /**
-     * Obtém uma lista de coletas disponíveis com base nos critérios fornecidos.
+     * Obtém uma lista de coletas disponíveis, opcionalmente atrelando ao wasteCollector.
      *
-     * @param collectSearchAvaibleListDTO Dados de busca para coletas disponíveis.
+     * @param collectSearchAvaibleListDTO Dados de busca para coletas.
+     * @param radius                      Raio de busca em metros.
+     * @param limit                       Limite de resultados.
+     * @param linkToWasteCollector        Indica se as coletas devem ser atreladas ao wasteCollector.
      * @return Lista de coletas disponíveis.
      */
     @Transactional
-    public List<CollectAddressAvaibleDTO> getCollectAvaibleList(CollectSearchAvaibleListDTO collectSearchAvaibleListDTO) {
+    public List<CollectAddressAvaibleDTO> getAvailableCollects(
+            CollectSearchAvaibleListDTO collectSearchAvaibleListDTO,
+            double radius,
+            Integer limit,
+            boolean linkToWasteCollector) {
+
         Double currentLatitude = collectSearchAvaibleListDTO.currentLatitude();
         Double currentLongitude = collectSearchAvaibleListDTO.currentLongitude();
         Long wasteCollectorId = collectSearchAvaibleListDTO.idWasteCollector();
 
-        // Chamar o repositório para fazer a consulta
-        List<Tuple> tuples = collectRepository.findAvailableCollects(currentLongitude, currentLatitude, wasteCollectorId);
+        if (linkToWasteCollector && !wasteCollectorService.existsWasteCollectorById(wasteCollectorId)) {
+            throw new ValidException("Catador não encontrado!");
+        }
+
+        List<Tuple> tuples;
+        if (limit != null) {
+            tuples = collectRepository.findAvailableCollectsWithLimit(
+                    currentLongitude, currentLatitude, wasteCollectorId, radius, limit, linkToWasteCollector);
+        } else {
+            tuples = collectRepository.findAvailableCollectsWithoutLimit(
+                    currentLongitude, currentLatitude, wasteCollectorId, radius, linkToWasteCollector);
+        }
 
         LocalDateTime now = LocalDateTime.now();
 
-        // Marcar as coletas com o wasteCollectorId, status e initTime
-        tuples.forEach(tuple -> {
-            Collect collect = collectRepository.findById(tuple.get("id", Long.class)).orElseThrow(() -> new EntityNotFoundException("Collect not found"));
-            /*if (collect.getWasteCollector() != null && !Objects.equals(collect.getWasteCollector().getId(), wasteCollectorId)) {
-                throw new ValidException("Collect already reserved");
-            }*/
-            collect.setWasteCollector(wasteCollectorService.getWasteCollectorById(wasteCollectorId).orElseThrow(() -> new EntityNotFoundException("WasteCollector not found")));
-            collect.setInitTime(now);
-            collect.setStatus(CollectStatus.IN_PROGRESS);
-            collectRepository.save(collect);
-        });
+        if (linkToWasteCollector) {
+            tuples.forEach(tuple -> {
+                Collect collect = collectRepository.findById(tuple.get("id", Long.class))
+                        .orElseThrow(() -> new EntityNotFoundException("Collect not found"));
+                collect.setWasteCollector(wasteCollectorService.getWasteCollectorById(wasteCollectorId)
+                        .orElseThrow(() -> new EntityNotFoundException("WasteCollector not found")));
+                collect.setInitTime(now);
+                collect.setStatus(CollectStatus.IN_PROGRESS);
+                collectRepository.save(collect);
+            });
+        }
 
-        // Retono da lista de Tuple para a lista de CollectAddressAvaibleDTO
         return tuples.stream().map(tuple -> new CollectAddressAvaibleDTO(
                 tuple.get("id", Long.class),
-                tuple.get("isIntern", Boolean.class),
-                DataUtils.convertToLocalDateTime(tuple.get("schedule", Timestamp.class)),
-                tuple.get("picture", String.class),
                 tuple.get("amount", Integer.class),
-                tuple.get("status", String.class),
+                linkToWasteCollector ? CollectStatus.IN_PROGRESS.name() : tuple.get("status", String.class), // Atualiza o status no retorno
                 DataUtils.convertToLocalDateTime(tuple.get("initTime", Timestamp.class)),
                 DataUtils.convertToLocalDateTime(tuple.get("endTime", Timestamp.class)),
                 DataUtils.convertToLocalDateTime(tuple.get("createTime", Timestamp.class)),
                 DataUtils.convertToLocalDateTime(tuple.get("updateTime", Timestamp.class)),
                 tuple.get("addressId", Long.class),
                 tuple.get("residentId", Long.class),
-                tuple.get("wasteCollectorId", Long.class),
+                linkToWasteCollector ? wasteCollectorId : null,
                 tuple.get("longitude", Double.class),
                 tuple.get("latitude", Double.class),
-                tuple.get("location", String.class)
+                tuple.get("location", String.class),
+                parseMaterials(tuple.get("materials", String.class)) // Converte a string para uma lista de materiais
         )).toList();
     }
 
@@ -172,9 +187,9 @@ public class CollectService {
 
         // Buscar a coleta pelo ID e verificar se pertence ao wasteCollectorId fornecido
         Collect collect = collectRepository.findById(collectDTO.id()).orElseThrow(() -> new EntityNotFoundException("coleta não encontrada"));
-        if (collect.getWasteCollector() == null || !Objects.equals(collect.getWasteCollector().getId(), collectDTO.wasteCollector())) {
-            throw new ValidException("Coleta não encontrada ou não pertence ao usuario");
-        }
+//        if (collect.getWasteCollector() == null || !Objects.equals(collect.getWasteCollector().getId(), collectDTO.wasteCollector())) {
+//            throw new ValidException("Coleta não encontrada ou não pertence ao usuario");
+//        }
 
         // Verificar se a coleta já foi finalizada
         if (CollectStatus.COMPLETED.equals(collect.getStatus())) {
@@ -214,6 +229,14 @@ public class CollectService {
         collectRepository.saveAll(ongoingCollects);
 
         return true;
+    }
+
+    public Page<CollectDTO> getCollectsByStatusesAndEvaluation(Long userId, List<CollectStatus> statuses, Boolean isEvaluated, Pageable pageable) {
+        // Consulta com paginação
+        Page<Collect> collects = collectRepository.findByStatusesAndEvaluation(userId, statuses, isEvaluated, pageable);
+
+        // Converte cada entidade Collect em CollectDTO
+        return collects.map(collectMapper::toDto);
     }
 
     /**
@@ -282,6 +305,7 @@ public class CollectService {
      * @return DTO da coleta atualizados.
      * @throws ValidException Se o usuário não tiver permissão para cancelar a coleta.
      */
+//    TODO mudar para receber o user id e não o user
     public CollectDTO pausedCollect(@Valid Long collectId, User user) {
 
         if (user.getRole().equals(UserRole.WASTE_COLLECTOR)) {
@@ -304,5 +328,14 @@ public class CollectService {
         } else {
             throw new ValidException("Usuário não tem permissão para essa coleta");
         }
+    }
+
+    private List<CollectMaterials> parseMaterials(String materials) {
+        if (materials == null || materials.isBlank()) {
+            return List.of();
+        }
+        return Arrays.stream(materials.split(","))
+                .map(CollectMaterials::valueOf)
+                .collect(Collectors.toList());
     }
 }

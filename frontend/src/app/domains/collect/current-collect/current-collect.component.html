@@ -1,0 +1,102 @@
+<p-panel class="col-12" header="Coletas Ativas e Avaliação">
+    <p-table
+        [value]="collects"
+        [paginator]="true"
+        [rows]="5"
+        [loading]="loading"
+        [totalRecords]="totalRecords"
+        [lazy]="true"
+        (onLazyLoad)="loadCollects($event.first, $event.rows)"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th>ID</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th class="fixed-column" style="min-width:8rem;">Ações</th>
+
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-collect>
+            <tr>
+                <td>{{ collect.id }}</td>
+                <td>{{ collect.status | statusTranslate }}</td>
+                <td>{{ collect.createTime | date:'dd/MM/yy, hh:mm a' }}</td>
+                <td class="fixed-column">
+                    <!--TODO fazer bootão para abrir modal detalhes da coleta??-->
+                    <!--TODO fazer botões funcionarem-->
+                    <!-- Botão de Continuar -->
+                    <button
+                        *ngIf="collect.status === 'PAUSED'"
+                        pButton
+                        class="p-button-rounded p-button-success p-button-sm mr-1"
+                        icon="pi pi-play"
+                        (click)="continueCollect(collect)"
+                        title="Continuar Coleta"
+                    ></button>
+
+                    <!-- Botão de Pausar -->
+                    <button
+                        *ngIf="collect.status === 'PENDING' || collect.status === 'IN_PROGRESS'"
+                        pButton
+                        class="p-button-rounded p-button-warning p-button-sm mr-1"
+                        icon="pi pi-pause"
+                        (click)="pauseCollect(collect)"
+                        pTooltip="Pausar Coleta"
+                    ></button>
+
+                    <!-- Botão de Avaliar -->
+                    <button
+                        *ngIf="collect.status === 'COMPLETED' && !collect.isEvaluated"
+                        pButton
+                        class="p-button-rounded p-button-info p-button-sm mr-1"
+                        icon="pi pi-star"
+                        (click)="evaluateCollect(collect)"
+                        pTooltip="Avaliar Coleta"
+                    ></button>
+
+                    <!-- Botão de Cancelar -->
+                    <button
+                        *ngIf="collect.status !== 'COMPLETED'"
+                        pButton
+                        class="p-button-rounded p-button-danger p-button-sm mr-1"
+                        icon="pi pi-times"
+                        (click)="deleteCollect(collect)"
+                        pTooltip="Cancelar Coleta"
+                    ></button>
+                </td>
+                <!--                <td>-->
+                <!--                    @if (collect.status === CollectStatus.PAUSED) {-->
+                <!--                        <button pButton label="Continuar"></button>-->
+                <!--                    } @else if (collect.status === CollectStatus.PENDING || collect.status === CollectStatus.IN_PROGRESS) {-->
+                <!--                        <button pButton label="Pausar" (click)="pauseCollect(collect)"></button>-->
+                <!--                    } @else if (collect.status === CollectStatus.COMPLETED && !collect.isEvaluated) {-->
+                <!--                        <button pButton label="Avaliar" (click)="evaluateCollect(collect)"></button>-->
+                <!--                    }-->
+                <!--                    @if (collect.status != CollectStatus.COMPLETED) {-->
+                <!--                        <button pButton label="Cancelar" (click)="deleteCollect(collect)"></button>-->
+                <!--                    }-->
+                <!--                </td>-->
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+<!--TODO TELA DAS COLETAS ATUAIS, LISTA AS COLETAS-->
+<!-- ok lista em tabela as coletas, com coluna id, descrição = (data dd/mm/aaaa e hora), pausar coleta = (botão swap), ação (avaliar, deletar)-->
+<!-- ok fazer pagina das atuais onde tras todas exeto cancelado e concluida ? modificar o ucriar metodo no back para trazer isso -->
+<!-- ok pagina historico pode trazer todos os status e com filtragem por status e listagem-->
+<!-- fazer botão de avaliar coleta, que abre um modal com um form de avaliação, com estrelas e comentario-->
+<!-- Fluxo Geral
+Tela 1: Coletas Ativas
+
+Lista coletas com status PENDING, PAUSED, IN_PROGRESS e COMPLETED (não avaliadas).
+Ações disponíveis: Continuar, Pausar, Avaliar, Cancelar.
+Tela 2: Histórico
+
+Lista coletas com status COMPLETED (avaliadas) e CANCELLED.
+Permite filtrar por status e período.
+Campos Adicionados:
+
+isEvaluated: Identifica se a coleta foi avaliada.
+rating: Armazena a pontuação (1-5 estrelas).-->
