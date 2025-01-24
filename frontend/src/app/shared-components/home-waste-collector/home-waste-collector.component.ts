@@ -4,11 +4,13 @@ import {MapComponent} from "../map/map.component";
 import {User, UserService} from "../../domains/user/user.service";
 import {CollectorAndMapStateService} from "../../core/services/collector-and-map-state.service";
 import {WasteCollectorService} from "../../core/services/waste-collector.service";
-import {CollectService} from "../../domains/collect/collect.service";
+import {Collect, CollectService, CollectStatus} from "../../domains/collect/collect.service";
 import {LocationService} from "../../core/services/location.service";
 import {Observable, Subject, takeUntil, tap} from "rxjs";
 import {CommonModule} from '@angular/common';
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {DialogModule} from "primeng/dialog";
+import {MessageService} from "primeng/api";
 
 
 @Component({
@@ -19,6 +21,7 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
         ButtonModule,
         MapComponent,
         ProgressSpinnerModule,
+        DialogModule,
     ],
     templateUrl: './home-waste-collector.component.html',
     styleUrl: './home-waste-collector.component.scss'
@@ -30,12 +33,17 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
     totalAvailableCollects = 0;
     loading$: Observable<boolean>;
 
+    showModal: boolean = false; // Estado do modal
+    progressCollects: Collect[] = []; // Coletas em progresso
+
+
     constructor(
         private userService: UserService,
         private collectorAndMapStateService: CollectorAndMapStateService,
         private wasteCollectorService: WasteCollectorService,
         private locationService: LocationService,
-        private collectService: CollectService
+        private collectService: CollectService,
+        private messageService: MessageService
     ) {
         // Obtém o estado reativo do serviço
         this.isCollectingFlag$ = this.collectorAndMapStateService.coletaStatus$;
@@ -43,9 +51,6 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-
-        console.log('HomeWasteCollectorComponent initialized'); // todo remove
-        console.log('HOME WASTE - ONINIT - GET-coletaStatus:', this.isCollectingFlag$); // todo remove
 
         // Inscrição ao usuário
         this.userService.user$
@@ -56,9 +61,17 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
             takeUntil(this.destroy$),
             tap(isCollecting => {
                 if (!isCollecting) {
-                    console.log('HOME WASTE - ONINIT - Nenhuma coleta ativa. Buscando coletas disponíveis...'); // todo remove
-                    this.initializeUnlinkedCollects();
-                //     todo ao iniciar verificar se tem coletas em progresso no banco e mostrar modal se quer inicialas ou não, caso não resetar as coletas caso sim chamar startCollection ou o resumeinprogress
+
+                    console.log('Verificando coletas em progresso...');
+                    this.collectorAndMapStateService.checkProgressCollects().subscribe((progressCollects) => {
+                        if (progressCollects.length > 0) {
+                            this.progressCollects = progressCollects;
+                            this.showModal = true; // Exibe o modal
+                        } else {
+                            this.initializeUnlinkedCollects(); // Nenhuma coleta em progresso
+                        }
+                    });
+
                 } else {
                     console.log('HOME WASTE - ONINIT - Coleta em andamento. Monitorando localização...'); // todo remove
                     // this.collectorAndMapStateService.startLocationMonitoring();
@@ -66,8 +79,6 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
                 }
             })
         ).subscribe();
-
-        console.log('HomeWasteCollectorComponent initialized FIM'); // todo remove
     }
 
     ngOnDestroy(): void {
@@ -82,7 +93,6 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
             this.collectorAndMapStateService.setMapCenter(location);
             this.collectorAndMapStateService.setLocation(location);
 
-            console.log('HOME WASTE - initializeUnlinkedCollects - MARCANDO LOCAL USER - location: ', location); // todo remove
             // Atualiza o marcador da localização do usuário
             this.collectorAndMapStateService.updateUserLocationMarker(location);
 
@@ -95,11 +105,8 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
             this.collectService.getUnlinkedCollects(location.lng, location.lat).subscribe(collects => {
                 this.totalAvailableCollects = collects.length;
 
-                // TODO mudar para gerar os pontos dentro da service e aqui so chama a service, na service gero e salvo os pontos
                 const markers = this.generateMarkers(collects);
                 this.collectorAndMapStateService.setMapMarkers(markers);
-
-                console.log('Coletas disponíveis - PENDING: ', collects); // TODO: Remover
             });
         });
     }
@@ -112,7 +119,6 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
                 latitude += 0.00001;
                 longitude += 0.00005;
             }
-            // TODO add mais info para a janela de info do marcador
             markerPositions.add(`${latitude},${longitude}`);
             return {
                 position: {lat: latitude, lng: longitude},
@@ -129,4 +135,38 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
             };
         });
     }
+
+    handleModalAction(action: 'resume' | 'reset'): void {
+        this.showModal = false; // Fecha o modal
+
+        if (action === 'resume') {
+            console.log('Retomando coletas em progresso...');
+            this.collectorAndMapStateService.resumeInProgressCollects();
+            // this.progressCollects = [];
+        } else if (action === 'reset') {
+            console.log('Resetando coletas em progresso...');
+            const user = this.collectorAndMapStateService.getCurrentUser();
+            if (user?.id) {
+                this.collectService.resetCollects(user.id).subscribe({
+                    next: () => {
+                        this.collectorAndMapStateService.setColetasData([]);
+                        console.log('Coletas resetadas com sucesso.');
+                    },
+                    error: (err) => {
+                        console.error('Erro ao resetar coletas:', err);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Erro',
+                            detail: 'Não foi possível resetar as coletas. Por favor, tente novamente.',
+                            life: 3000
+                        });
+                    },
+                });
+            }
+            // TOOD colocar spiiner aqui ou dentro do initializeunliunk...
+            this.initializeUnlinkedCollects();
+        }
+    }
+
+
 }

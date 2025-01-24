@@ -166,39 +166,84 @@ export class CollectorAndMapStateService {
             return;
         }
 
-        this.collectService.getCollectsByStatus(user.id, CollectStatus.IN_PROGRESS).subscribe({
-            next: (inProgressCollects) => {
-                if (inProgressCollects.length > 0) {
-                    console.log('Coletas em andamento encontradas:', inProgressCollects);
+        this.setLoading(true); // Ativar spinner
 
-                    // Atualiza os dados de coleta e reinicia a rota
-                    this.setColetasData(inProgressCollects);
-                    this.generateRoute();
+        this.locationService.getCurrentLocation().then((position) => {
+            const location = {lat: position.coords.latitude, lng: position.coords.longitude};
 
-                    // Define o estado de coleta como ativo
-                    this.coletaStatus.next(true);
+            // Centraliza o mapa na localização do usuário
+            this.setMapCenter(location);
+            this.setLocation(location);
+            this.updateUserLocationMarker(location);
 
-                    // Reinicia o monitoramento de localização
-                    this.startLocationMonitoring();
+            // Atualiza a localização no backend
+            this.wasteCollectorService.updateWasteCollectorLocation({
+                wasteCollectorId: user.id,
+                latitude: location.lat,
+                longitude: location.lng,
+            }).subscribe({
+                next: () => {
+                    console.log('Localização do usuário atualizada no backend.');
 
-                    this.messageService.add({
-                        severity: 'info',
-                        summary: 'Coleta Retomada',
-                        detail: 'As coletas em andamento foram retomadas.',
+                    // Busca coletas em progresso
+                    this.collectService.getCollectsByStatus(user.id, CollectStatus.IN_PROGRESS).subscribe({
+                        next: (inProgressCollects) => {
+                            if (inProgressCollects.length > 0) {
+                                console.log('Coletas em andamento encontradas:', inProgressCollects);
+
+                                // Atualiza os dados de coleta e reinicia a rota
+                                this.setColetasData(inProgressCollects);
+                                this.generateRoute();
+                                // TODO aqui não esta gerando rota
+
+                                // Define o estado de coleta como ativo
+                                this.coletaStatus.next(true);
+
+                                // Reinicia o monitoramento de localização
+                                this.startLocationMonitoring();
+
+                                this.messageService.add({
+                                    severity: 'info',
+                                    summary: 'Coleta Retomada',
+                                    detail: 'As coletas em andamento foram retomadas.',
+                                });
+                            } else {
+                                console.log('Nenhuma coleta em andamento encontrada para o usuário.');
+                            }
+                            this.setLoading(false); // Desativar spinner
+                        },
+                        error: (err) => {
+                            console.error('Erro ao buscar coletas em andamento:', err);
+                            this.messageService.add({
+                                severity: 'error',
+                                summary: 'Erro',
+                                detail: 'Erro ao verificar coletas em andamento. Tente novamente.',
+                            });
+                            this.setLoading(false); // Desativar spinner
+                        },
                     });
-                } else {
-                    console.log('Nenhuma coleta em andamento encontrada para o usuário.');
-                }
-            },
-            error: (err) => {
-                console.error('Erro ao buscar coletas em andamento:', err);
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Erro',
-                    detail: 'Erro ao verificar coletas em andamento. Tente novamente.',
-                });
-            },
+                },
+                error: (err) => {
+                    console.error('Erro ao atualizar localização no backend:', err);
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Erro',
+                        detail: 'Erro ao atualizar localização. Tente novamente.',
+                    });
+                    this.setLoading(false); // Desativar spinner
+                },
+            });
         });
+    }
+
+
+    checkProgressCollects(): Observable<Collect[]> {
+        const user = this.getCurrentUser();
+        if (!user?.id) {
+            return new Observable<Collect[]>(); // Retorna vazio
+        }
+
+        return this.collectService.getCollectsByStatus(user.id, CollectStatus.IN_PROGRESS);
     }
 
 
@@ -206,19 +251,9 @@ export class CollectorAndMapStateService {
      * Para a coleta e o monitoramento de localização.
      */
     stopCollection(): void {
+        // TODO add spinner loading
         if (this.coletaStatus.getValue()) {
             const user = this.getCurrentUser();
-
-            this.coletaStatus.next(false);
-            this.coletaData.next([]); // Limpa os dados de coleta
-
-            // Verifica se há uma rota ativa no mapa e cancela
-            if (this.directionsRenderer.getDirections()) {
-                this.cancelRoute();
-            }
-
-            // Para o monitoramento de localização
-            this.stopLocationMonitoring();
 
             // Resetar as coletas associadas ao catador no backend
             if (user?.id) {
@@ -239,6 +274,23 @@ export class CollectorAndMapStateService {
                         });
                     },
                 });
+
+                this.coletaStatus.next(false);
+                this.coletaData.next([]); // Limpa os dados de coleta
+
+                // Verifica se há uma rota ativa no mapa e cancela
+                if (this.directionsRenderer.getDirections()) {
+                    this.cancelRoute();
+                }
+
+                // Para o monitoramento de localização
+                this.stopLocationMonitoring();
+
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Coleta Finalizada',
+                    detail: 'Todas as operações de coleta foram encerradas com sucesso.',
+                });
             } else {
                 this.messageService.add({
                     severity: 'warn',
@@ -246,12 +298,6 @@ export class CollectorAndMapStateService {
                     detail: 'Não foi possível identificar o usuário para resetar as coletas.',
                 });
             }
-
-            this.messageService.add({
-                severity: 'success',
-                summary: 'Coleta Finalizada',
-                detail: 'Todas as operações de coleta foram encerradas com sucesso.',
-            });
         } else {
             // Mensagem para quando não há coleta ativa
             this.messageService.add({

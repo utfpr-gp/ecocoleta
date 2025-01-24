@@ -19,3 +19,12 @@
         <app-map></app-map>
     </div>
 </div>
+
+
+<p-dialog [(visible)]="showModal" header="Coletas em Progresso" [modal]="true" [closable]="false">
+    <p class="text-center">Você tem coletas em progresso. Deseja retomá-las ou resetá-las?</p>
+    <div class="flex justify-content-around mt-4">
+        <button pButton label="Retomar" (click)="handleModalAction('resume')" class="p-button-success"></button>
+        <button pButton label="Resetar" (click)="handleModalAction('reset')" class="p-button-danger"></button> <!--// class="p-button-secondary">-->
+    </div>
+</p-dialog>

@@ -4,13 +4,13 @@ import {CollectorAndMapStateService} from "../../core/services/collector-and-map
 import {combineLatest} from "rxjs";
 import {CommonModule} from "@angular/common";
 
-interface MarkerInfo { // Interface para tipar as informações do marcador
-    position: google.maps.LatLngLiteral;
-    title: string;
-    icon?: string;
-    description: string; // Adicione uma descrição
-    id:number;
-}
+// interface MarkerInfo { // Interface para tipar as informações do marcador
+//     position: google.maps.LatLngLiteral;
+//     title: string;
+//     icon?: string;
+//     description: string; // Adicione uma descrição
+//     id:number;
+// }
 
 @Component({
     selector: 'app-map',
@@ -35,9 +35,6 @@ export class MapComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-
-        console.log('MapComponent initialized'); // todo remove
-
         // Observar o estado do centro do mapa
         this.collectorAndMapStateService.mapCenter$.subscribe((center) => {
             if (center) this.center = center;
@@ -54,8 +51,6 @@ export class MapComponent implements OnInit, AfterViewInit {
                 this.markers = mapMarkers;
             }
         });
-
-        console.log('MapComponent initialized FIM'); // todo remove
     }
 
     ngAfterViewInit(): void {
@@ -81,7 +76,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     //  * @param infoWindow O elemento `MapInfoWindow` associado.
     //  */
     // onMarkerClick(mapMarker: MapMarker, infoWindow: MapInfoWindow): void {
-    //     console.log('Marcador clicado:', mapMarker); // TODO remover
+    //     console.log('Marcador clicado:', mapMarker);
     //
     //     if (infoWindow) {
     //         infoWindow.open(mapMarker); // Passa corretamente o MapMarker
