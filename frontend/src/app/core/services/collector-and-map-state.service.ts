@@ -108,6 +108,9 @@ export class CollectorAndMapStateService {
     startCollection(collectorId: string): void {
         /// se status de coleta for false inicia coleta
         if (!this.coletaStatus.getValue()) {
+            // Define o status de coleta como ativo
+            this.coletaStatus.next(true);
+            
             this.setLoading(true); // Ativar o spinner
 
             // Obter a localização atual do usuário
@@ -140,9 +143,6 @@ export class CollectorAndMapStateService {
 
                         // Inicia o monitoramento de localização
                         this.startLocationMonitoring();
-
-                        // Define o status de coleta como ativo
-                        this.coletaStatus.next(true);
 
                         console.log('Coleta iniciada com sucesso!');
                         this.setLoading(false); // Desativar o spinner
