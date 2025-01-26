@@ -1,6 +1,3 @@
-<!--TODO botões e tela para user admin e company e suas listagens etc...-->
-<!-- mudar os botões historico e coletas para o dash de admin e company ??-->
-
 <!--Rodapé para Desktop-->
 <div class="layout-footer desktop-footer text-black-alpha-70">
     by
@@ -26,25 +23,34 @@
 
 <!-- Rodapé para Mobile -->
 <div class="layout-footer mobile-footer p-3 flex justify-between text-black-alpha-70">
-    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;" [routerLink]="'/home'">
+    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;"
+         [routerLink]="'/home'">
         <button class="p-link layout-footer-button flex justify-content-center align-items-center">
-            <i class="pi pi-home text-2xl"></i>
+            @if (user?.role === 'WASTE_COLLECTOR' || user?.role === 'RESIDENT') {
+                <i class="pi pi-map text-2xl"></i>
+            } @else {
+                <i class="pi pi-home text-2xl"></i>
+            }
         </button>
         <span class="mt-2 w-full text-center">Home</span>
     </div>
-    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;" [routerLink]="'/coletas/em-andamento'">
-        <button class="p-link layout-footer-button flex justify-content-center align-items-center">
-            <i class="pi pi-table text-2xl"></i>
-        </button>
-        <span class="mt-2 w-full text-center">Coletas</span>
-    </div>
+    @if (user?.role === 'RESIDENT') {
+        <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;"
+             [routerLink]="'/coletas/em-andamento'">
+            <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+                <i class="pi pi-table text-2xl"></i>
+            </button>
+            <span class="mt-2 w-full text-center">Coletas</span>
+        </div>
+    }
     @if (user?.role === 'WASTE_COLLECTOR') {
         @if (isCollectingFlag$ | async) {
             <div
-                class="flex flex-column align-items-center justify-content-center flex-1 bg-yellow-400 text-white border-round-3xl p-2"
+                class="flex flex-column align-items-center justify-content-center flex-1 bg-red-400 text-white border-round-3xl p-2"
                 style="text-align: center;">
                 <button
-                    class="p-link layout-footer-button flex justify-content-center align-items-center text-white border-none" (click)="toggleColeta()">
+                    class="p-link layout-footer-button flex justify-content-center align-items-center text-white border-none"
+                    (click)="toggleColeta()">
                     <i class="pi pi-stop text-2xl"></i>
                 </button>
                 <span class="mt-2 w-full text-2xl text-center">Parar coleta</span>
@@ -64,16 +70,28 @@
             </div>
         }
     }
-    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;" [routerLink]="'/coletas/historico'">
-        <button class="p-link layout-footer-button flex justify-content-center align-items-center">
-            <i class="pi pi-history text-2xl"></i>
-        </button>
-        <span class="mt-2 w-full text-center">Histórico</span>
-    </div>
-    <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;" [routerLink]="['/user/perfil', user?.id]">
-        <button class="p-link layout-footer-button flex justify-content-center align-items-center">
-            <i class="pi pi-user text-2xl"></i>
-        </button>
-        <span class="mt-2 w-full text-center">Perfil</span>
-    </div>
+    @if (user?.role === 'RESIDENT') {
+        <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;"
+             [routerLink]="'/coletas/historico'">
+            <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+                <i class="pi pi-history text-2xl"></i>
+            </button>
+            <span class="mt-2 w-full text-center">Histórico</span>
+        </div>
+        <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;"
+             [routerLink]="['/user/perfil', user?.id]">
+            <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+                <i class="pi pi-user text-2xl"></i>
+            </button>
+            <span class="mt-2 w-full text-center">Perfil</span>
+        </div>
+    } @else if (user?.role === 'WASTE_COLLECTOR') {
+        <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;"
+             [routerLink]="'/coletas/em-andamento'">
+            <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+                <i class="pi pi-table text-2xl"></i>
+            </button>
+            <span class="mt-2 w-full text-center">Coletas</span>
+        </div>
+    }
 </div>

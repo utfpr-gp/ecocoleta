@@ -110,7 +110,7 @@ export class CollectorAndMapStateService {
         if (!this.coletaStatus.getValue()) {
             // Define o status de coleta como ativo
             this.coletaStatus.next(true);
-            
+
             this.setLoading(true); // Ativar o spinner
 
             // Obter a localização atual do usuário
@@ -131,6 +131,8 @@ export class CollectorAndMapStateService {
                                 detail: 'Não há coletas disponíveis para iniciar.',
                                 life: 5000,
                             });
+                            // Define o status de coleta como false
+                            this.coletaStatus.next(false);
                             this.setLoading(false); // Desativar o spinner
                             return;
                         }

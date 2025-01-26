@@ -6,8 +6,7 @@
         [loading]="loading"
         [totalRecords]="totalRecords"
         [lazy]="true"
-        (onLazyLoad)="loadCollects($event.first, $event.rows)"
-    >
+        (onLazyLoad)="loadCollects($event.first, $event.rows)">
         <ng-template pTemplate="header">
             <tr>
                 <th>ID</th>
