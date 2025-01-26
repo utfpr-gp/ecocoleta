@@ -125,9 +125,9 @@ public class CollectController {
      */
     @GetMapping("get_collects")
     @Transactional
-    public ResponseEntity<List<CollectDTO>> getCollectsByStatus(@RequestParam @Valid Long userId,
-                                                                @RequestParam @Valid CollectStatus collectStatus,
-                                                                @PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
+    public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollectsByStatus(@RequestParam @Valid Long userId,
+                                                                              @RequestParam @Valid CollectStatus collectStatus,
+                                                                              @PageableDefault(size = 10, sort = {"id"}) Pageable pageable) {
         try {
             if (!userService.existsByid(userId)) {
                 throw new ValidException("Usuário não encontrado!");
@@ -137,14 +137,12 @@ public class CollectController {
                 throw new ValidException("Status inválido!");
             }
 
-            List<CollectDTO> collects = collectService.getCollectsByStatusAndUserId(userId, collectStatus, pageable);
+            List<CollectAddressAvaibleDTO> collects = collectService.getCollectsByStatusAndUserId(userId, collectStatus, pageable);
             return ResponseEntity.ok().body(collects);
         } catch (ValidException e) {
-            // Retorna erro de validação com lista vazia em vez de String
-            return ResponseEntity.badRequest().body(List.of()); // Retorna lista vazia ao invés de String
+            return ResponseEntity.badRequest().body(List.of());
         } catch (Exception e) {
-            // Retorna erro genérico com lista vazia
-            return ResponseEntity.internalServerError().body(List.of()); // Retorna lista vazia ao invés de String
+            return ResponseEntity.internalServerError().body(List.of());
         }
     }
 
@@ -241,7 +239,7 @@ public class CollectController {
      * - `initTime` atualizado com a data/hora atual.
      * <p>
      * ### Valores padrão:
-     * - Raio padrão: 3.000 metros (3 km), se o parâmetro `radius` não for fornecido.
+     * - Raio padrão: 5.000 metros (5 km), se o parâmetro `radius` não for fornecido.
      * - Limite padrão: 3 coletas, se o parâmetro `limit` não for fornecido.
      * <p>
      * ### Resposta:
@@ -291,8 +289,8 @@ public class CollectController {
         }
 
         // Configura valores padrão
-        double effectiveRadius = (radius != null) ? radius : 3000.0; // Raio padrão: 3 km
-        int effectiveLimit = (limit != null) ? limit : 3;            // Limite padrão: 3 coletas
+        Double effectiveRadius = (radius != null) ? radius : 5000.0; // Raio padrão: 5 km
+        Integer effectiveLimit = (limit != null) ? limit : 3;            // Limite padrão: 3 coletas
 
         // Obter coletas disponíveis e atrelar ao wasteCollector
         List<CollectAddressAvaibleDTO> collects = collectService.getAvailableCollects(

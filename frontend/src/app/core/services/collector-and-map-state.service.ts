@@ -120,6 +120,7 @@ export class CollectorAndMapStateService {
                 // Obter as coletas e reservar para o coletor
                 this.collectService.getReservedCollects(collectorId, location.lng, location.lat).subscribe({
                     next: (coletas) => {
+                        console.log('START COLETAS --- Coletas disponíveis:', coletas);
                         if (coletas.length === 0) {
                             this.messageService.add({
                                 severity: 'info',
@@ -131,9 +132,6 @@ export class CollectorAndMapStateService {
                             return;
                         }
 
-                        // Define o status de coleta como ativo
-                        this.coletaStatus.next(true);
-
                         // Atualiza o estado com as coletas
                         this.coletaData.next(coletas);
 
@@ -142,6 +140,9 @@ export class CollectorAndMapStateService {
 
                         // Inicia o monitoramento de localização
                         this.startLocationMonitoring();
+
+                        // Define o status de coleta como ativo
+                        this.coletaStatus.next(true);
 
                         console.log('Coleta iniciada com sucesso!');
                         this.setLoading(false); // Desativar o spinner
@@ -358,7 +359,9 @@ export class CollectorAndMapStateService {
         console.log('Verificando proximidade...', location);
 
         const coletas = this.coletaData.getValue(); // Obtem o array atual de coletas
-        const threshold = 0.00030; // Aproximadamente 30 metros
+        console.log('checkProximity Coletas array coletasData: ', coletas); // TODO REMOVER
+
+        const threshold = 30; // Distância limite em metros (30 metros)
 
         let todasConcluidas = true;
 
@@ -367,7 +370,8 @@ export class CollectorAndMapStateService {
 
             const distance = this.calculateHaversineDistance(location, {lat: coleta.latitude, lng: coleta.longitude});
             console.log('foreach Coleta:', coleta); // TODO REMOVER
-            console.log('foreach distance:', distance); // TODO REMOVER
+
+            console.log(`Coleta ID ${coleta.id}: distância calculada = ${distance} metros`); // TODO REMOVER
 
             // TODO verificar distancia não esta correto !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -458,134 +462,6 @@ export class CollectorAndMapStateService {
             detail: messages[reason].detail,
         });
     }
-
-
-    // funcionando +-
-    // private checkProximity(location: { lat: number; lng: number }): void {
-    //     console.log('checkProximity - location: ', location); // TODO REMOVER
-    //
-    //     const coletas = this.coletaData.getValue(); // Obtem o array atual de coletas
-    //     const threshold = 0.00030; // Aproximadamente 30 metros
-    //
-    //     coletas.forEach((coleta) => {
-    //         const distance =
-    //             Math.sqrt(
-    //                 Math.pow(location.lat - coleta.latitude, 2) +
-    //                 Math.pow(location.lng - coleta.longitude, 2)
-    //             );
-    //
-    //         if (distance <= threshold && !this.processingCollects.has(coleta.id!)) {
-    //             this.processingCollects.add(coleta.id!); // Marca a coleta como em processamento
-    //
-    //             console.log(`Coleta ${coleta.id} próxima!!!.`);
-    //             console.log('COLETADOOOOOOOO!!!: ', coleta); // TODO REMOVER
-    //
-    //             // Verifica se a coleta está em `PENDING` ou `IN_PROGRESS`
-    //             if (coleta.status === CollectStatus.PENDING || coleta.status === CollectStatus.IN_PROGRESS) {
-    //
-    //                 console.log(' entrou no if de status coleta '); // TODO REMOVER
-    //                 if (this.isLastCollect(coleta)) {
-    //                     this.finalizeLastCollect(); // Finaliza automaticamente a última coleta
-    //                     this.stopLocationMonitoring();
-    //                     this.messageService.add({
-    //                         severity: 'success',
-    //                         summary: 'Coleta Completa',
-    //                         detail: 'Todas as coletas foram concluídas.',
-    //                     });
-    //                 } else {
-    //
-    //                     this.collectService.finalizeColeta(coleta).subscribe({
-    //                         next: (response) => {
-    //                             // Atualiza o estado local para refletir a coleta como `COMPLETED`
-    //                             const updatedColetas = coletas.map((c) =>
-    //                                 c.id === coleta.id ? {...c, status: 'COMPLETED'} : c
-    //                             );
-    //                             this.setColetasData(updatedColetas as Collect[]);
-    //                             this.processingCollects.delete(coleta.id!); // Libera a coleta após o sucesso
-    //
-    //                             // Atualiza a localização do catador
-    //                             const user = this.getCurrentUser();
-    //                             this.wasteCollectorService.updateWasteCollectorLocation({
-    //                                 wasteCollectorId: user.id,
-    //                                 latitude: location.lat,
-    //                                 longitude: location.lng,
-    //                             }).subscribe();
-    //
-    //                             // Exibe mensagem de sucesso
-    //                             this.messageService.add({
-    //                                 severity: 'success',
-    //                                 summary: 'Coleta Concluída',
-    //                                 detail: `Coleta ${coleta.id} foi marcada como concluída.`,
-    //                             });
-    //                         },
-    //                         error: (error) => {
-    //                             console.error(`Erro ao finalizar coleta ${coleta.id}:`, error);
-    //                             // Mostra apenas uma mensagem global de erro
-    //                             if (!this.processingCollects.has('error')) {
-    //                                 this.messageService.add({
-    //                                     severity: 'error',
-    //                                     summary: 'Erro de Coleta',
-    //                                     detail: 'Erro ao finalizar algumas coletas. Tente novamente.',
-    //                                 });
-    //                                 this.processingCollects.add('error'); // Marca que a mensagem de erro foi exibida
-    //                             }
-    //
-    //                             this.processingCollects.delete(coleta.id!); // Libera a coleta para reprocessamento
-    //                         },
-    //                     });
-    //                 }
-    //             } else {
-    //                 console.log(`Coleta ${coleta.id} não está em estado válido para conclusão.`);
-    //             }
-    //         }
-    //     });
-    // }
-
-    // private isLastCollect(collect: Collect): boolean {
-    //     const coletas = this.coletaData.getValue();
-    //     return coletas[coletas.length - 1]?.id === collect.id;
-    // }
-    //
-    // finalizeLastCollect(): void {
-    //     const coletas = this.coletaData.getValue();
-    //
-    //     console.log('finalizeLastCollect - coletas: ', coletas); // TODO REMOVER
-    //
-    //     if (coletas.length === 0) {
-    //         console.warn('Nenhuma coleta em andamento para finalizar.');
-    //         return;
-    //     }
-    //
-    //     const lastCollect = coletas[coletas.length - 1]; // Última coleta
-    //
-    //     if (lastCollect.status === CollectStatus.IN_PROGRESS) {
-    //         this.collectService.finalizeColeta(lastCollect).subscribe({
-    //             next: () => {
-    //                 console.log(`Coleta ${lastCollect.id} finalizada com sucesso.`);
-    //
-    //                 // Atualiza o estado para refletir que a coleta foi finalizada
-    //                 this.setColetasData(coletas.filter((c) => c.id !== lastCollect.id));
-    //
-    //                 this.messageService.add({
-    //                     severity: 'success',
-    //                     summary: 'Coleta Finalizada',
-    //                     detail: `A última coleta (ID: ${lastCollect.id}) foi finalizada com sucesso.`,
-    //                 });
-    //             },
-    //             error: (err) => {
-    //                 console.error(`Erro ao finalizar a coleta ${lastCollect.id}:`, err);
-    //                 this.messageService.add({
-    //                     severity: 'error',
-    //                     summary: 'Erro',
-    //                     detail: `Erro ao finalizar a coleta (ID: ${lastCollect.id}). Tente novamente.`,
-    //                 });
-    //             },
-    //         });
-    //     } else {
-    //         console.warn('A última coleta não está em estado IN_PROGRESS e não pode ser finalizada.');
-    //     }
-    // }
-
 
     //*--------------------------- Gerenciar rota -----------------------------------*//
 
@@ -685,30 +561,6 @@ export class CollectorAndMapStateService {
     /**
      * Cancela a rota atual e reseta o estado do mapa.
      */
-
-    // cancelRoute(): void {
-    //     console.log('CANCELANDO ROTA....');
-    //     const directions = this.directionsRenderer.getDirections();
-    //     if (directions) {
-    //         console.log('Tem diretions Removendo rota:', directions);
-    //     }
-    //
-    //     // Verificar se há um mapa vinculado
-    //     if (this.directionsRenderer.getMap()) {
-    //         this.directionsRenderer.setDirections(null); // Remove a rota
-    //         console.log('Rota removida do mapa com sucesso.');
-    //     } else {
-    //         console.warn('Nenhum mapa vinculado ao DirectionsRenderer.');
-    //     }
-    //
-    //     // Resetar marcadores e estado do mapa
-    //     this.clearMapMarkers();
-    //     this.setMapZoom(15);
-    //     this.setMapCenter(null);
-    //
-    //     console.log('Mapa redefinido com sucesso.');
-    // }
-
     cancelRoute(): void {
         // Verificar se há um mapa vinculado antes de limpar as direções
         if (this.directionsRenderer.getMap()) {
@@ -724,8 +576,6 @@ export class CollectorAndMapStateService {
 
         // Resetar marcadores e estado do mapa
         this.clearMapMarkers();
-        // this.setMapZoom(15);
-        // this.setMapCenter(null);
     }
 
     //*--------------------------- Mensagens -----------------------------------*//

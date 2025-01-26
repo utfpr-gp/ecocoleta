@@ -225,8 +225,8 @@ export class CollectService {
         idWasteCollector: string,
         longitude: number,
         latitude: number,
-        radius: number = 3000,
-        limit: number = 3
+        // radius: number = 5000,
+        // limit: number = 3
     ): Observable<Collect[]> {
         const body = {
             idWasteCollector,
@@ -234,10 +234,11 @@ export class CollectService {
             currentLatitude: latitude
         };
 
-        const params = new HttpParams()
-            .set('radius', radius.toString())
-            .set('limit', limit.toString());
+        // const params = new HttpParams()
+        //     .set('radius', radius.toString())
+        //     .set('limit', limit.toString());
 
-        return this.http.post<Collect[]>(`${this.apiUrl}/get_avaible_collects_reserved`, body, {params});
+        // return this.http.post<Collect[]>(`${this.apiUrl}/get_avaible_collects_reserved`, body, {params});
+        return this.http.post<Collect[]>(`${this.apiUrl}/get_avaible_collects_reserved`, body);
     }
 }

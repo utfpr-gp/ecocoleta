@@ -121,7 +121,7 @@ public class CollectService {
     @Transactional
     public List<CollectAddressAvaibleDTO> getAvailableCollects(
             CollectSearchAvaibleListDTO collectSearchAvaibleListDTO,
-            double radius,
+            Double radius,
             Integer limit,
             boolean linkToWasteCollector) {
 
@@ -135,8 +135,7 @@ public class CollectService {
 
         List<Tuple> tuples;
         if (limit != null) {
-            tuples = collectRepository.findAvailableCollectsWithLimit(
-                    currentLongitude, currentLatitude, wasteCollectorId, radius, limit, linkToWasteCollector);
+            tuples = collectRepository.findAvailableCollectsWithLimit(currentLongitude, currentLatitude, wasteCollectorId, radius, limit);
         } else {
             tuples = collectRepository.findAvailableCollectsWithoutLimit(
                     currentLongitude, currentLatitude, wasteCollectorId, radius, linkToWasteCollector);
@@ -167,8 +166,8 @@ public class CollectService {
                 tuple.get("addressId", Long.class),
                 tuple.get("residentId", Long.class),
                 linkToWasteCollector ? wasteCollectorId : null,
-                tuple.get("longitude", Double.class),
-                tuple.get("latitude", Double.class),
+                tuple.get("longitude", Double.class) != null ? tuple.get("longitude", Double.class) : 0.0, // Trate nulo como 0.0 ou outro valor
+                tuple.get("latitude", Double.class) != null ? tuple.get("latitude", Double.class) : 0.0,   // Trate nulo como 0.0 ou outro valor
                 tuple.get("location", String.class),
                 parseMaterials(tuple.get("materials", String.class)) // Converte a string para uma lista de materiais
         )).toList();
@@ -246,12 +245,9 @@ public class CollectService {
      * @param collectStatus Status da coleta.
      * @return Lista de coletas que correspondem ao status fornecido.
      */
-    public List<CollectDTO> getCollectsByStatusAndUserId(Long userId, CollectStatus collectStatus, Pageable pageable) {
-
-        // Obtém o usuário pelo ID
+    public List<CollectAddressAvaibleDTO> getCollectsByStatusAndUserId(Long userId, CollectStatus collectStatus, Pageable pageable) {
         Optional<User> user = userService.getUserById(userId);
 
-        // Verifica o papel do usuário
         if (user.isPresent()) {
             List<Collect> collects;
 
@@ -260,12 +256,11 @@ public class CollectService {
             } else if (user.get().getRole() == UserRole.WASTE_COLLECTOR) {
                 collects = collectRepository.findCollectsByStatusAndWasteCollectorId(collectStatus, userId, pageable);
             } else {
-                return null;  // Caso o usuário não seja nem residente nem coletor
+                return null; // Usuário não é residente nem coletor
             }
 
-            // Mapeia a lista de entidades `Collect` para `CollectDTO` usando o CollectMapper
             return collects.stream()
-                    .map(collectMapper::toDto)
+                    .map(collectMapper::collectAndAddresstoDto) // Mapper atualizado para incluir endereço
                     .collect(Collectors.toList());
         }
 

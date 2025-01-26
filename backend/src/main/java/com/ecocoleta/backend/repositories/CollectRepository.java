@@ -26,9 +26,21 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
 
     List<Collect> findAllByWasteCollectorId(Long wasteCollectorId);
 
-    List<Collect> findCollectsByStatusAndWasteCollectorId(CollectStatus status, Long wasteCollectorId, Pageable pageable);
+    @Query("SELECT c FROM Collect c " +
+            "LEFT JOIN FETCH c.address a " +
+            "WHERE c.status = :status AND c.resident.id = :userId")
+    List<Collect> findCollectsByStatusAndResidentId(
+            @Param("status") CollectStatus status,
+            @Param("userId") Long residentId,
+            Pageable pageable);
 
-    List<Collect> findCollectsByStatusAndResidentId(CollectStatus status, Long residentId, Pageable pageable);
+    @Query("SELECT c FROM Collect c " +
+            "LEFT JOIN FETCH c.address a " +
+            "WHERE c.status = :status AND c.wasteCollector.id = :userId")
+    List<Collect> findCollectsByStatusAndWasteCollectorId(
+            @Param("status") CollectStatus status,
+            @Param("userId") Long wasteCollectorId,
+            Pageable pageable);
 
     @Modifying
     @Query("UPDATE Collect c SET c.address = NULL WHERE c.address.id = :addressId")
@@ -63,17 +75,17 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
      * ### Observação:
      * - Este método aplica um limite explícito (`LIMIT :limit`) à consulta, adequado para cenários paginados.
      */
-    @Query(value = "select c.id as id, c.amount as amount, " +
-            "c.status as status, c.init_time as initTime, c.end_time as endTime, c.create_time as createTime, c.update_time as updateTime, " +
-            "c.address_id as addressId, c.resident_id as residentId, " +
-            "a.longitude as longitude, a.latitude as latitude, ST_AsText(a.location) as location, " +
-            "c.materials as materials " +
-            "from collects c " +
-            "left join address a on c.address_id = a.id " +
-            "and ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, :radius) " +
-            "where c.status = 'PENDING' " +
-            "and (:linkToWasteCollector = false or c.waste_collector_id = :wasteCollectorId or c.waste_collector_id is null) " +
-            "order by a.location " +
+    @Query(value = "SELECT c.id AS id, c.amount AS amount, " +
+            "c.status AS status, c.init_time AS initTime, c.end_time AS endTime, c.create_time AS createTime, c.update_time AS updateTime, " +
+            "c.address_id AS addressId, c.resident_id AS residentId, c.waste_collector_id as wasteCollectorId, " +
+            "c.materials AS materials, " +
+            "a.longitude AS longitude, a.latitude AS latitude, ST_AsText(a.location) AS location " +
+            "FROM collects c " +
+            "LEFT JOIN address a ON c.address_id = a.id " +
+            "WHERE c.status = 'PENDING' " +
+            "AND (c.waste_collector_id = :wasteCollectorId OR c.waste_collector_id IS NULL) " +
+            "AND ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, :radius) " +
+            "ORDER BY a.location " +
             "limit :limit",
             nativeQuery = true)
     List<Tuple> findAvailableCollectsWithLimit(
@@ -81,8 +93,7 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
             @Param("latitude") Double latitude,
             @Param("wasteCollectorId") Long wasteCollectorId,
             @Param("radius") Double radius,
-            @Param("limit") Integer limit,
-            @Param("linkToWasteCollector") boolean linkToWasteCollector);
+            @Param("limit") Integer limit);
 
     /**
      * Busca coletas disponíveis com parâmetros de raio e opção de atrelar ao wasteCollector, sem limite de registros.
@@ -112,17 +123,17 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
      * - Este método **não aplica um limite explícito** (`LIMIT`) à consulta, retornando todos os registros correspondentes.
      * - Adequado para cenários onde não há necessidade de paginação.
      */
-    @Query(value = "select c.id as id, c.amount as amount, " +
-            "c.status as status, c.init_time as initTime, c.end_time as endTime, c.create_time as createTime, c.update_time as updateTime, " +
-            "c.address_id as addressId, c.resident_id as residentId, " +
-            "a.longitude as longitude, a.latitude as latitude, ST_AsText(a.location) as location, " +
-            "c.materials as materials " +
-            "from collects c " +
-            "left join address a on c.address_id = a.id " +
-            "and ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, :radius) " +
-            "where c.status = 'PENDING' " +
-            "and (:linkToWasteCollector = false or c.waste_collector_id = :wasteCollectorId or c.waste_collector_id is null) " +
-            "order by a.location",
+    @Query(value = "SELECT c.id AS id, c.amount AS amount, " +
+            "c.status AS status, c.init_time AS initTime, c.end_time AS endTime, c.create_time AS createTime, c.update_time AS updateTime, " +
+            "c.address_id AS addressId, c.resident_id AS residentId, " +
+            "c.materials AS materials, " +
+            "a.longitude AS longitude, a.latitude AS latitude, ST_AsText(a.location) AS location " +
+            "FROM collects c " +
+            "LEFT JOIN address a ON c.address_id = a.id " +
+            "WHERE c.status = 'PENDING' " +
+            "AND (:linkToWasteCollector = false OR c.waste_collector_id = :wasteCollectorId OR c.waste_collector_id IS NULL) " +
+            "AND ST_DWithin(ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), a.location, :radius) " +
+            "ORDER BY a.location",
             nativeQuery = true)
     List<Tuple> findAvailableCollectsWithoutLimit(
             @Param("longitude") Double longitude,
@@ -131,7 +142,9 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
             @Param("radius") Double radius,
             @Param("linkToWasteCollector") boolean linkToWasteCollector);
 
-    // Pega todas as coletas pendentes que estão atrasadas
+    /**
+     * Pega coletas por status e avaliação.
+     */
     @Query("SELECT c FROM Collect c WHERE (c.status = 'PENDING' or c.status = 'IN_PROGRESS') AND c.initTime < :sixHoursAgo")
     List<Collect> findOutdatedCollects(@Param("sixHoursAgo") LocalDateTime sixHoursAgo);
 
@@ -143,7 +156,9 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
                                               @Param("isEvaluated") Boolean isEvaluated,
                                               Pageable pageable);
 
-    //Cancela todas as coletas em andamento para um catador
+    /**
+     * Cancela todas as coletas em andamento para um catador.
+     */
     @Query("SELECT c FROM Collect c WHERE c.wasteCollector.id = :wasteCollectorId AND c.status = :status")
     List<Collect> findAllOngoingCollectsByWasteCollectorId(@Param("wasteCollectorId") Long wasteCollectorId,
                                                            @Param("status") CollectStatus status);
