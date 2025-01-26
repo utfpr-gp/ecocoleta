@@ -25,12 +25,8 @@ public class WasteCollectorService {
         return wasteCollectorRespository.existsById(id);
     }
 
-    public WasteCollector getReferenceWasteCollectorById(Long id) {
-        return wasteCollectorRespository.getReferenceById(id);
-    }
-
     public List<WasteCollectorLocationDTO> getRecentLocations() {
-        LocalDateTime threshold = LocalDateTime.now().minusMinutes(30);
+        LocalDateTime threshold = LocalDateTime.now().minusMinutes(60);
         return wasteCollectorRespository.findRecentLocations(threshold).stream()
                 .map(collector -> new WasteCollectorLocationDTO(
                         collector.getId(),
@@ -39,16 +35,6 @@ public class WasteCollectorService {
                 .toList();
     }
 
-    //    public void updateLocation(WasteCollectorLocationDTO locationDTO) {
-//        GeometryFactory geometryFactory = new GeometryFactory();
-//        WasteCollector collector = wasteCollectorRespository.findById(locationDTO.wasteCollectorId())
-//                .orElseThrow(() -> new ValidException("Catador não encontrado"));
-//
-//        // Criar o ponto com fábrica de geometria
-//        collector.setLocation(geometryFactory.createPoint(new Coordinate(locationDTO.longitude(), locationDTO.latitude())));
-//        collector.setLocationUpdated(LocalDateTime.now());
-//        wasteCollectorRespository.save(collector);
-//    }
     public void updateLocation(WasteCollectorLocationDTO locationDTO) {
         WasteCollector collector = wasteCollectorRespository.findById(locationDTO.wasteCollectorId())
                 .orElseThrow(() -> new ValidException("Catador não encontrado"));
