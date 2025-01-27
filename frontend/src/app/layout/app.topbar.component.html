@@ -56,16 +56,20 @@
             }
             <span>Home</span>
         </button>
-        <button class="p-link layout-topbar-button" [routerLink]="'/coletas/em-andamento'" pTooltip="Ver coletas"
-                tooltipPosition="bottom">
-            <i class="pi pi-table"></i>
-            <span>Coletas</span>
-        </button>
-        <button class="p-link layout-topbar-button" [routerLink]="'/coletas/historico'"
-                pTooltip="Ver histórico de coletas" tooltipPosition="bottom">
-            <i class="pi pi-history"></i>
-            <span>Histórico de coletas</span>
-        </button>
+        @if (user?.role === 'WASTE_COLLECTOR' || user?.role === 'RESIDENT') {
+            <button class="p-link layout-topbar-button" [routerLink]="'/coletas/em-andamento'" pTooltip="Ver coletas"
+                    tooltipPosition="bottom">
+                <i class="pi pi-table"></i>
+                <span>Coletas</span>
+            </button>
+        }
+        @if (user?.role === 'RESIDENT') {
+            <button class="p-link layout-topbar-button" [routerLink]="'/coletas/historico'"
+                    pTooltip="Ver histórico de coletas" tooltipPosition="bottom">
+                <i class="pi pi-history"></i>
+                <span>Histórico de coletas</span>
+            </button>
+        }
         <button class="p-link layout-topbar-button" [routerLink]="['/user/perfil', user?.id]" pTooltip="Ver perfil"
                 tooltipPosition="bottom">
             <i class="pi pi-user"></i>
