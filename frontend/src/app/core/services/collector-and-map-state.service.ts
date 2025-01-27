@@ -20,7 +20,7 @@ export class CollectorAndMapStateService {
     // Estado das coletas
     private coletaStatus = new BehaviorSubject<boolean>(false);
     coletaStatus$ = this.coletaStatus.asObservable().pipe(distinctUntilChanged());
-    private coletaData = new BehaviorSubject<Collect[]>([]);
+    coletaData = new BehaviorSubject<Collect[]>([]);
 
     // Localização e marcadores do mapa
     private location = new BehaviorSubject<{ lat: number; lng: number } | null>(null);
