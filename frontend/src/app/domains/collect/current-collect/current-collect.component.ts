@@ -3,11 +3,14 @@ import {Collect, CollectService, CollectStatus} from "../collect.service";
 import {MessageService} from "primeng/api";
 import {PanelModule} from "primeng/panel";
 import {TableModule} from "primeng/table";
-import {User, UserService} from "../../user/user.service";
+import {User, UserRole, UserService} from "../../user/user.service";
 import {CommonModule} from "@angular/common";
 import {ButtonModule} from 'primeng/button';
 import {TooltipModule} from "primeng/tooltip";
 import {StatusTranslatePipe} from 'src/app/core/services/status-translate.pipe';
+import {CollectorAndMapStateService} from "../../../core/services/collector-and-map-state.service";
+import {DialogModule} from "primeng/dialog";
+import {EvaluateDialogComponent} from "../../../shared-components/evaluate-collect-dialog/evaluate-dialog.component";
 
 @Component({
     selector: 'app-current-collect',
@@ -18,7 +21,9 @@ import {StatusTranslatePipe} from 'src/app/core/services/status-translate.pipe';
         ButtonModule,
         CommonModule,
         TooltipModule,
-        StatusTranslatePipe
+        StatusTranslatePipe,
+        DialogModule,
+        EvaluateDialogComponent
     ],
     templateUrl: './current-collect.component.html',
     styleUrl: './current-collect.component.scss'
@@ -30,105 +35,209 @@ export class CurrentCollectComponent implements OnInit {
 
     user: User | null = null;
 
-
-    // Filtros
-    // userId: number = 1; // Simulação do ID do usuário logado
-    // collectStatus: CollectStatus = CollectStatus.IN_PROGRESS;
+    // Dialogs
+    detailsDialogVisible: boolean = false;
+    cancelDialogVisible: boolean = false;
+    pauseDialogVisible: boolean = false;
+    evaluateDialogVisible: boolean = false;
+    selectedCollectId: string | null = null;
+    selectedCollect: Collect | null = null;
 
     constructor(
         private collectService: CollectService,
         private userService: UserService,
-        private messageService: MessageService
+        private messageService: MessageService,
+        private collectorAndMapStateService: CollectorAndMapStateService
     ) {
     }
 
     ngOnInit(): void {
         this.userService.user$.subscribe(user => {
             this.user = user;
+            this.loadCollectsBasedOnRole(0, 10); // Inicia o carregamento com a primeira página
         });
-        this.loadCollects(0, 10); // Carrega a primeira página com 10 registros
+        // this.loadCollects(0, 10); // Carrega a primeira página com 10 registros
+
+        // Inscrição no estado de coletaData (opcional, para mudanças dinâmicas)
+        this.collectorAndMapStateService.coletaData.subscribe(coletaData => {
+            if (this.user?.role === UserRole.WASTE_COLLECTOR) {
+                console.log('Coletas atualizadas como waste collector:', coletaData); // TODO REMOVER
+                this.collects = coletaData;
+                this.totalRecords = coletaData.length;
+            }
+        });
     }
 
     /**
-     * Carrega as coletas de acordo com a página e tamanho.
-     * @param offset Número da página.
-     * @param rows Tamanho da página.
+     * Carrega as coletas de acordo com o papel do usuário e a paginação.
+     * @param offset Página atual (em registros).
+     * @param rows Número de registros por página.
      */
-    loadCollects(offset: number, rows: number) {
-        const page = offset / rows; // Calcula a página com base no offset
+    loadCollectsBasedOnRole(offset: number, rows: number): void {
+        if (!this.user) return;
+
         this.loading = true;
+        const page = offset / rows;
 
-        this.collectService.getActiveCollects(this.user.id, page, rows).subscribe({
-            next: (response: any) => {
-                console.log('Coletas carregadas:', response); // TODO REMOVER
-                this.collects = response.content; // Registros da página atual
-                this.totalRecords = response.totalElements; // Total de registros no banco
-                this.loading = false;
-            },
-            error: (err) => {
-                console.error('Erro ao carregar coletas:', err);
-                this.loading = false;
+        if (this.user.role === UserRole.RESIDENT) {
+            // Carregar coletas para Resident
+            this.collectService.getActiveCollects(this.user.id, page, rows).subscribe({
+                next: (response: any) => {
+                    console.log('Coletas carregadas como resident:', response); // TODO REMOVER
+                    this.collects = response.content;
+                    this.totalRecords = response.totalElements;
+                    this.loading = false;
+                },
+                error: (err) => {
+                    this.handleError('Erro ao carregar coletas.', err);
+                }
+            });
+        } else if (this.user.role === UserRole.WASTE_COLLECTOR) {
+            console.log('l89 Carregando coletas como waste collector...'); // TODO REMOVER
+            // Carregar coletas para WasteCollector (usando coletaData)
+            const allColetas = this.collectorAndMapStateService.coletaData.getValue();
+            this.collects = allColetas.slice(offset, offset + rows); // Paginação manual
+            this.totalRecords = allColetas.length;
+            this.loading = false;
+        }
+    }
 
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Erro',
-                    detail: 'Não foi possível carregar as coletas.',
-                });
-            },
+    /**
+     * Ação ao alterar a página ou número de registros por página.
+     * @param event Evento de paginação.
+     */
+    onLazyLoad(event: { first: number; rows: number }): void {
+        this.loadCollectsBasedOnRole(event.first, event.rows);
+    }
+
+    /**
+     * Gerencia erros ao carregar coletas.
+     * @param message Mensagem de erro a ser exibida.
+     * @param error Objeto de erro retornado.
+     */
+    private handleError(message: string, error: any): void {
+        console.error(message, error);
+        this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: message,
         });
+        this.loading = false;
     }
 
     continueCollect(collect: Collect): void {
         // Simulação de lógica para continuar a coleta
-        console.log('Continuar coleta:', collect);
-        this.messageService.add({
-            severity: 'info',
-            summary: 'Continuar Coleta',
-            detail: `Coleta #${collect.id} está sendo continuada.`,
+        this.collectService.pauseOrActivateCollect(collect.id).subscribe({
+            next: () => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Sucesso',
+                    detail: 'Coleta continuada com sucesso.',
+                });
+                this.loadCollectsBasedOnRole(0, 10); // Recarrega os dados
+            },
+            error: () => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: 'Não foi possível continuar a coleta.',
+                });
+            }
         });
 
     }
 
-    /**
-     * Ação ao clicar em pausar a coleta.
-     * @param collect Coleta a ser pausada.
-     */
-    pauseCollect(collect: Collect): void {
-        // Simulação de lógica para pausar a coleta
-        console.log('Coleta pausada:', collect);
-        this.messageService.add({
-            severity: 'info',
-            summary: 'Pausar Coleta',
-            detail: `Coleta #${collect.id} foi pausada.`,
-        });
+    // Dialogs
+    // Detalhes
+    openDetails(collect: Collect): void {
+        this.selectedCollect = collect;
+        this.detailsDialogVisible = true;
     }
 
-    /**
-     * Ação ao clicar em deletar a coleta.
-     * @param collect Coleta a ser deletada.
-     */
-    deleteCollect(collect: Collect): void {
-        // Simulação de lógica para deletar a coleta
-        console.log('Coleta deletada:', collect);
-        this.messageService.add({
-            severity: 'success',
-            summary: 'Deletar Coleta',
-            detail: `Coleta #${collect.id} foi deletada com sucesso.`,
-        });
+    closeDetailsDialog(): void {
+        this.detailsDialogVisible = false;
+        this.selectedCollect = null;
     }
 
-    /**
-     * Ação ao clicar em avaliar a coleta.
-     * @param collect Coleta a ser avaliada.
-     */
-    evaluateCollect(collect: Collect): void {
-        console.log('Avaliar coleta:', collect);
-        this.messageService.add({
-            severity: 'info',
-            summary: 'Avaliar Coleta',
-            detail: `Coleta #${collect.id} está sendo avaliada.`,
-        });
+    // Cancelar
+    openCancelDialog(collect: Collect): void {
+        this.selectedCollect = collect;
+        this.cancelDialogVisible = true;
     }
 
-    protected readonly CollectStatus = CollectStatus;
+    closeCancelDialog(): void {
+        this.cancelDialogVisible = false;
+        this.selectedCollect = null;
+    }
+
+    confirmCancelCollect(): void {
+        if (this.selectedCollect) {
+            // Lógica para cancelar a coleta no backend
+            this.collectService.cancelCollect(this.selectedCollect.id).subscribe({
+                next: () => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Sucesso',
+                        detail: 'Coleta cancelada com sucesso.',
+                    });
+                    this.closeCancelDialog();
+                    this.loadCollectsBasedOnRole(0, 10); // Recarrega os dados
+                },
+                error: () => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Erro',
+                        detail: 'Não foi possível cancelar a coleta.',
+                    });
+                }
+            });
+        }
+    }
+
+    // Pausar
+    openPauseDialog(collect: Collect): void {
+        this.selectedCollect = collect;
+        this.pauseDialogVisible = true;
+    }
+
+    closePauseDialog(): void {
+        this.pauseDialogVisible = false;
+        this.selectedCollect = null;
+    }
+
+    confirmPauseCollect(): void {
+        if (this.selectedCollect) {
+            // Lógica para pausar a coleta no backend
+            this.collectService.pauseOrActivateCollect(this.selectedCollect.id).subscribe({
+                next: () => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Sucesso',
+                        detail: 'Coleta pausada com sucesso.',
+                    });
+                    this.closePauseDialog();
+                    this.loadCollectsBasedOnRole(0, 10); // Recarrega os dados
+                },
+                error: () => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Erro',
+                        detail: 'Não foi possível pausar a coleta.',
+                    });
+                }
+            });
+        }
+    }
+
+    // Avaliar
+    openEvaluateDialog(collect: Collect): void {
+        this.selectedCollectId = collect.id;
+        this.evaluateDialogVisible = true;
+    }
+
+    hideEvaluateDialog(bool: boolean) {
+        this.selectedCollectId = null;
+        this.evaluateDialogVisible = bool;
+        this.loadCollectsBasedOnRole(0, 10); // Recarrega os dados
+    }
 }

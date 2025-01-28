@@ -60,14 +60,6 @@ export class PerfilComponent implements OnInit {
                     this.user = user;
                     this.userType = user.role;
 
-                    // Mensagem de sucesso
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Usuário carregado com sucesso!',
-                        detail: 'Os dados do usuário foram carregados corretamente.',
-                        life: 3000,
-                    });
-
                     // Carregar os endereços do usuário
                     this.loadUserAddresses();
                 },

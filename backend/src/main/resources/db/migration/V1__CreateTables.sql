@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS waste_collectors
 (
     id               BIGINT PRIMARY KEY,
     cpf              VARCHAR(11),
-    score            INTEGER   DEFAULT null,
+    score            FLOAT  DEFAULT null,
     picture          VARCHAR(255),
     location         GEOGRAPHY(POINT, 4326), -- Coluna para armazenar a localização
     location_updated TIMESTAMP,

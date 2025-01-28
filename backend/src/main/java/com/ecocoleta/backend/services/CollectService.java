@@ -6,9 +6,6 @@ import com.ecocoleta.backend.domain.collect.CollectMaterials;
 import com.ecocoleta.backend.domain.collect.dto.CollectSearchAvaibleListDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.domain.collect.mapper.CollectMapper;
-//import com.ecocoleta.backend.domain.collectMaterial.CollectMaterial;
-//import com.ecocoleta.backend.domain.material.Material;
-//import com.ecocoleta.backend.domain.material.MaterialIdDTO;
 import com.ecocoleta.backend.domain.resident.Resident;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
@@ -30,9 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.Objects;
 
-//import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -49,15 +44,6 @@ public class CollectService {
 
     @Autowired
     private ResidentRepository residentRepository;
-
-//    @Autowired
-//    private CollectMaterialRepository collectMaterialRepository;
-
-    @Autowired
-    private AddressService addressService;
-
-    @Autowired
-    private ResidentService residentService;
 
     @Autowired
     private WasteCollectorService wasteCollectorService;
@@ -121,7 +107,7 @@ public class CollectService {
     @Transactional
     public List<CollectAddressAvaibleDTO> getAvailableCollects(
             CollectSearchAvaibleListDTO collectSearchAvaibleListDTO,
-            double radius,
+            Double radius,
             Integer limit,
             boolean linkToWasteCollector) {
 
@@ -135,8 +121,7 @@ public class CollectService {
 
         List<Tuple> tuples;
         if (limit != null) {
-            tuples = collectRepository.findAvailableCollectsWithLimit(
-                    currentLongitude, currentLatitude, wasteCollectorId, radius, limit, linkToWasteCollector);
+            tuples = collectRepository.findAvailableCollectsWithLimit(currentLongitude, currentLatitude, wasteCollectorId, radius, limit);
         } else {
             tuples = collectRepository.findAvailableCollectsWithoutLimit(
                     currentLongitude, currentLatitude, wasteCollectorId, radius, linkToWasteCollector);
@@ -167,8 +152,8 @@ public class CollectService {
                 tuple.get("addressId", Long.class),
                 tuple.get("residentId", Long.class),
                 linkToWasteCollector ? wasteCollectorId : null,
-                tuple.get("longitude", Double.class),
-                tuple.get("latitude", Double.class),
+                tuple.get("longitude", Double.class) != null ? tuple.get("longitude", Double.class) : 0.0, // Trate nulo como 0.0 ou outro valor
+                tuple.get("latitude", Double.class) != null ? tuple.get("latitude", Double.class) : 0.0,   // Trate nulo como 0.0 ou outro valor
                 tuple.get("location", String.class),
                 parseMaterials(tuple.get("materials", String.class)) // Converte a string para uma lista de materiais
         )).toList();
@@ -205,6 +190,34 @@ public class CollectService {
     }
 
     /**
+     * Avalia uma coleta e atualiza a pontuação média do catador.
+     *
+     * @param collectId ID da coleta a ser avaliada.
+     * @param rating    Avaliação dada pelo usuário (1 a 5).
+     */
+    @Transactional
+    public void evaluateCollect(Long collectId, Integer rating) {
+        // Verifica se a coleta existe
+        Collect collect = collectRepository.findById(collectId)
+                .orElseThrow(() -> new EntityNotFoundException("Coleta não encontrada"));
+
+        // Verifica se a coleta já foi avaliada
+        if (Boolean.TRUE.equals(collect.isEvaluated())) {
+            throw new ValidException("Essa coleta já foi avaliada.");
+        }
+
+        // Atualiza a avaliação e marca a coleta como avaliada
+        collect.setRating(rating);
+        collect.setEvaluated(true);
+        collectRepository.save(collect);
+
+        // Atualiza a média de avaliação do catador
+        Long wasteCollectorId = collect.getWasteCollector().getId();
+        Double averageRating = collectRepository.findAverageRatingByWasteCollectorId(wasteCollectorId);
+        collectRepository.updateWasteCollectorScore(wasteCollectorId, averageRating);
+    }
+
+    /**
      * Reseta todas as coletas em andamento para um catador.
      *
      * @param wasteCollectorId ID do catador de resíduos.
@@ -213,9 +226,9 @@ public class CollectService {
     @Transactional
     public Boolean resetAllCollects(Long wasteCollectorId) {
         // Buscar todas as coletas em andamento para o catador especificado
-        List<Collect> ongoingCollects = collectRepository.findAllOngoingCollectsByWasteCollectorId(wasteCollectorId, CollectStatus.IN_PROGRESS.name());
+        List<Collect> ongoingCollects = collectRepository.findAllOngoingCollectsByWasteCollectorId(wasteCollectorId, CollectStatus.IN_PROGRESS);
         if (ongoingCollects.isEmpty()) {
-            return false;
+            return true;
         }
 
         for (Collect collect : ongoingCollects) {
@@ -246,12 +259,9 @@ public class CollectService {
      * @param collectStatus Status da coleta.
      * @return Lista de coletas que correspondem ao status fornecido.
      */
-    public List<CollectDTO> getCollectsByStatusAndUserId(Long userId, CollectStatus collectStatus, Pageable pageable) {
-
-        // Obtém o usuário pelo ID
+    public List<CollectAddressAvaibleDTO> getCollectsByStatusAndUserId(Long userId, CollectStatus collectStatus, Pageable pageable) {
         Optional<User> user = userService.getUserById(userId);
 
-        // Verifica o papel do usuário
         if (user.isPresent()) {
             List<Collect> collects;
 
@@ -260,12 +270,11 @@ public class CollectService {
             } else if (user.get().getRole() == UserRole.WASTE_COLLECTOR) {
                 collects = collectRepository.findCollectsByStatusAndWasteCollectorId(collectStatus, userId, pageable);
             } else {
-                return null;  // Caso o usuário não seja nem residente nem coletor
+                return null; // Usuário não é residente nem coletor
             }
 
-            // Mapeia a lista de entidades `Collect` para `CollectDTO` usando o CollectMapper
             return collects.stream()
-                    .map(collectMapper::toDto)
+                    .map(collectMapper::collectAndAddresstoDto) // Mapper atualizado para incluir endereço
                     .collect(Collectors.toList());
         }
 
@@ -320,7 +329,7 @@ public class CollectService {
                 collect.setStatus(CollectStatus.PAUSED);
                 collectRepository.save(collect);
             } else if (collect.getStatus().equals(CollectStatus.PAUSED)) {
-                collect.setStatus(CollectStatus.IN_PROGRESS);
+                collect.setStatus(CollectStatus.PENDING);
                 collectRepository.save(collect);
             }
 

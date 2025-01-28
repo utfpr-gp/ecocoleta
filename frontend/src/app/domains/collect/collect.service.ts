@@ -62,10 +62,31 @@ export class CollectService {
         return this.http.post<Collect>(`${this.apiUrl}/create_new_collect`, collect);
     }
 
+    /**
+     * Finaliza uma coleta.
+     *
+     * Este método faz uma requisição HTTP para o endpoint `/finish_collect`
+     *
+     * @param coleta
+     * @returns Observable contendo a resposta do backend.
+     */
     finalizeColeta(coleta: Collect): Observable<any> {
         return this.http.post(`${this.apiUrl}/finish_collect`, coleta);
     }
 
+    /**
+     * Reseta todas as coletas atreladas a um WasteCollector.
+     *
+     * Este método faz uma requisição HTTP DELETE para o endpoint `/reset_collects`
+     * enviando o ID do WasteCollector para resetar as coletas associadas.
+     *
+     * @param wasteCollectorId - ID do WasteCollector cujas coletas serão resetadas.
+     * @returns Observable contendo a resposta do backend.
+     */
+    resetCollects(wasteCollectorId: string): Observable<void> {
+        const params = new HttpParams().set('wasteCollectorId', wasteCollectorId.toString());
+        return this.http.delete<void>(`${this.apiUrl}/reset_collects`, {params});
+    }
 
     /**
      * Atualiza uma coleta existente.
@@ -96,7 +117,7 @@ export class CollectService {
      * @param size - Quantidade de registros por página (padrão: 10).
      * @returns Observable contendo a lista de coletas.
      */
-    getCollectsByStatus(userId: number, collectStatus: CollectStatus, page: number = 0, size: number = 10): Observable<Collect[]> {
+    getCollectsByStatus(userId: string, collectStatus: CollectStatus, page: number = 0, size: number = 10): Observable<Collect[]> {
         const params = new HttpParams()
             .set('userId', userId)
             .set('collectStatus', collectStatus)
@@ -204,8 +225,8 @@ export class CollectService {
         idWasteCollector: string,
         longitude: number,
         latitude: number,
-        radius: number = 3000,
-        limit: number = 3
+        // radius: number = 5000,
+        // limit: number = 3
     ): Observable<Collect[]> {
         const body = {
             idWasteCollector,
@@ -213,10 +234,49 @@ export class CollectService {
             currentLatitude: latitude
         };
 
-        const params = new HttpParams()
-            .set('radius', radius.toString())
-            .set('limit', limit.toString());
+        // const params = new HttpParams()
+        //     .set('radius', radius.toString())
+        //     .set('limit', limit.toString());
 
-        return this.http.post<Collect[]>(`${this.apiUrl}/get_avaible_collects_reserved`, body, { params });
+        // return this.http.post<Collect[]>(`${this.apiUrl}/get_avaible_collects_reserved`, body, {params});
+        return this.http.post<Collect[]>(`${this.apiUrl}/get_avaible_collects_reserved`, body);
     }
+
+    /**
+     * Cancela uma coleta por id.
+     * @param collectId - ID da coleta a ser cancelada.
+     * @returns Observable contendo a resposta do backend.
+     * @throws Error se o ID da coleta não for fornecido.
+     */
+    cancelCollect(collectId: string): Observable<any> {
+        const params = new HttpParams().set('collectId', collectId);
+        return this.http.delete<any>(`${this.apiUrl}/cancel_collect`, {params});
+    }
+
+    /**
+     * Pausa ou ativa uma coleta tornando-a indisponível no momento.
+     * @param collectId - ID da coleta a ser pausada ou ativada.
+     * @returns Observable contendo o DTO da coleta atualizado.
+     * @throws Error se o ID da coleta não for fornecido.
+     */
+    pauseOrActivateCollect(collectId: string): Observable<Collect> {
+        const params = new HttpParams().set('collectId', collectId);
+        return this.http.post<Collect>(`${this.apiUrl}/paused_collect`, null, { params });
+    }
+
+    /**
+     * Avalia uma coleta.
+     *
+     * Este método faz uma requisição HTTP para o endpoint `/evaluate` para
+     * registrar a avaliação de uma coleta e atualizar a pontuação média do catador.
+     *
+     * @param collectId - ID da coleta a ser avaliada.
+     * @param rating - Avaliação dada pelo usuário (1 a 5 estrelas).
+     * @returns Observable contendo a resposta do backend.
+     */
+    evaluateCollect(collectId: string, rating: number): Observable<void> {
+        const params = new HttpParams().set('rating', rating);
+        return this.http.post<void>(`${this.apiUrl}/evaluate/${collectId}`, null, { params });
+    }
+
 }

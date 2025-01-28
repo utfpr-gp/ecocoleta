@@ -2,6 +2,7 @@ package com.ecocoleta.backend.domain.collect.mapper;
 
 import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.collect.Collect;
+import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
 import com.ecocoleta.backend.domain.resident.Resident;
 import com.ecocoleta.backend.infra.exception.ValidException;
@@ -30,6 +31,8 @@ public class CollectMapper {
         return new CollectDTO(
                 collect.getId(),
                 collect.getAmount(),
+                collect.isEvaluated(),
+                collect.getRating(),
                 collect.getStatus(),
                 collect.getInitTime(),
                 collect.getEndTime(),
@@ -55,6 +58,27 @@ public class CollectMapper {
                 resident,
                 dto.materials() // Lista de materiais
         );
+    }
+
+    public CollectAddressAvaibleDTO collectAndAddresstoDto(Collect collect) {
+        Address address = collect.getAddress();
+
+        return new CollectAddressAvaibleDTO(
+                collect.getId(),
+                collect.getAmount(),
+                collect.getStatus().toString(),
+                collect.getInitTime(),
+                collect.getEndTime(),
+                collect.getCreateTime(),
+                collect.getUpdateTime(),
+                address != null ? address.getId() : null, // ID do endereço
+                collect.getResident().getId(),
+                collect.getWasteCollector() != null ? collect.getWasteCollector().getId() : null,
+                address != null ? address.getLongitude() : null, // Longitude
+                address != null ? address.getLatitude() : null,  // Latitude
+                address != null && address.getLocation() != null ? address.getLocation().toString() : null,// Location
+                collect.getMaterials()
+                );
     }
 
 }
