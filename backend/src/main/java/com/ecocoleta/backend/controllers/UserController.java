@@ -2,9 +2,9 @@ package com.ecocoleta.backend.controllers;
 
 import com.ecocoleta.backend.domain.LoginResponseDTO;
 import com.ecocoleta.backend.domain.company.Company;
-import com.ecocoleta.backend.domain.company.CompanyDTO;
+import com.ecocoleta.backend.domain.company.dto.CompanyDTO;
 import com.ecocoleta.backend.domain.resident.Resident;
-import com.ecocoleta.backend.domain.resident.ResidentDTO;
+import com.ecocoleta.backend.domain.resident.dto.ResidentDTO;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.domain.user.dto.UserDTO;
@@ -124,10 +124,11 @@ public class UserController {
 
     // Get User by id
     @GetMapping("/{id}")
-    public ResponseEntity getUser(@PathVariable Long id) {
-        var user = userService.getUserById(id);
-        return ResponseEntity.ok(new UserGetDTO(user));
+    public ResponseEntity<?> getUser(@PathVariable Long id) {
+        Object userDto = userService.getUserDtoById(id);
+        return ResponseEntity.ok(userDto);
     }
+
 
     // Listagem de usuários ativos
     @GetMapping("list")

@@ -1,0 +1,14 @@
+.custom-card {
+    background-color: #ffffff; /* Fundo branco */
+    border-radius: 12px; /* Bordas arredondadas */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    width: 100%; /* Largura total */
+    //max-width: 800px; /* Largura máxima */
+    margin: 0 auto; /* Centralizar horizontalmente */
+    display: flex; /* Ativa Flexbox */
+    flex-direction: column; /* Elementos em coluna */
+    align-items: center; /* Centraliza horizontalmente */
+    justify-content: center; /* Centraliza verticalmente */
+    text-align: center; /* Garante que o texto dentro seja centralizado */
+    padding: 20px; /* Espaçamento interno */
+}

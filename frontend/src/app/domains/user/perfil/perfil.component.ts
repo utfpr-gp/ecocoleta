@@ -12,6 +12,10 @@ import {DialogModule} from "primeng/dialog";
 import {ButtonModule} from "primeng/button";
 import {ToastModule} from "primeng/toast";
 import {AddressFormDialogComponent} from "../../../shared-components/address-form-dialog/address-form-dialog.component";
+import {AvatarModule} from "primeng/avatar";
+import {RatingModule} from "primeng/rating";
+import {FormsModule} from '@angular/forms';
+import {CardModule} from "primeng/card"; // Importação do FormsModule
 
 
 @Component({
@@ -25,7 +29,11 @@ import {AddressFormDialogComponent} from "../../../shared-components/address-for
         TableModule,
         DialogModule,
         ToastModule,
-        AddressFormDialogComponent
+        AddressFormDialogComponent,
+        AvatarModule,
+        RatingModule,
+        FormsModule,
+        CardModule
     ],
     templateUrl: './perfil.component.html',
     styleUrl: './perfil.component.scss'
