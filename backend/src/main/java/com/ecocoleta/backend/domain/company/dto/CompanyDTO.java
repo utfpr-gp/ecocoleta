@@ -1,4 +1,4 @@
-package com.ecocoleta.backend.domain.company;
+package com.ecocoleta.backend.domain.company.dto;
 
 import com.ecocoleta.backend.domain.address.AddressDTO;
 import com.ecocoleta.backend.domain.user.UserRole;

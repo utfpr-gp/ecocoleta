@@ -16,6 +16,7 @@ export type User = {
     cpf?: number;
     cnpj?: number;
     picture?: string | File;
+    score?: number;
     role?: UserRole | string;
     token?: string;
     createdAt?: string;

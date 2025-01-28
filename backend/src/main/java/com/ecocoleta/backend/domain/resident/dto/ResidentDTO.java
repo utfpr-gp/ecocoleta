@@ -1,4 +1,4 @@
-package com.ecocoleta.backend.domain.resident;
+package com.ecocoleta.backend.domain.resident.dto;
 
 
 import com.ecocoleta.backend.domain.address.AddressDTO;
