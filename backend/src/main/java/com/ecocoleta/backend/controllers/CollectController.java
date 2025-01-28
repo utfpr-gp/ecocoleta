@@ -395,4 +395,24 @@ public class CollectController {
                 collectStatus.equals(CollectStatus.COMPLETED) ||
                 collectStatus.equals(CollectStatus.CANCELLED);
     }
+
+    /**
+     * Endpoint para avaliar uma coleta.
+     *
+     * @param collectId ID da coleta.
+     * @param rating    Avaliação de 1 a 5 estrelas.
+     */
+    @PostMapping("evaluate/{collectId}")
+    public ResponseEntity<Void> evaluateCollect(
+            @PathVariable Long collectId,
+            @RequestParam Integer rating) {
+
+        if (rating < 1 || rating > 5) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        collectService.evaluateCollect(collectId, rating);
+        return ResponseEntity.ok().build();
+    }
+
 }

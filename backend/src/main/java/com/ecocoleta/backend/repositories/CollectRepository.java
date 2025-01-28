@@ -163,4 +163,10 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
     List<Collect> findAllOngoingCollectsByWasteCollectorId(@Param("wasteCollectorId") Long wasteCollectorId,
                                                            @Param("status") CollectStatus status);
 
+    @Query("SELECT AVG(c.rating) FROM Collect c WHERE c.wasteCollector.id = :wasteCollectorId AND c.rating IS NOT NULL")
+    Double findAverageRatingByWasteCollectorId(@Param("wasteCollectorId") Long wasteCollectorId);
+
+    @Modifying
+    @Query("UPDATE WasteCollector wc SET wc.score = :averageRating WHERE wc.id = :wasteCollectorId")
+    void updateWasteCollectorScore(@Param("wasteCollectorId") Long wasteCollectorId, @Param("averageRating") Double averageRating);
 }

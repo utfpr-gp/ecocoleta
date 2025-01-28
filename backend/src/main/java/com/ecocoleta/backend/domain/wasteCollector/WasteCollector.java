@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 public class WasteCollector extends User {
 
     private String cpf;
-    private Integer score;
+    private Float score;
     private String picture;
     @Column(columnDefinition = "geography(Point, 4326)")
     private Point location;

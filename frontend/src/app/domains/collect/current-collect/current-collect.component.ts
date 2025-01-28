@@ -10,6 +10,7 @@ import {TooltipModule} from "primeng/tooltip";
 import {StatusTranslatePipe} from 'src/app/core/services/status-translate.pipe';
 import {CollectorAndMapStateService} from "../../../core/services/collector-and-map-state.service";
 import {DialogModule} from "primeng/dialog";
+import {EvaluateDialogComponent} from "../../../shared-components/evaluate-collect-dialog/evaluate-dialog.component";
 
 @Component({
     selector: 'app-current-collect',
@@ -21,7 +22,8 @@ import {DialogModule} from "primeng/dialog";
         CommonModule,
         TooltipModule,
         StatusTranslatePipe,
-        DialogModule
+        DialogModule,
+        EvaluateDialogComponent
     ],
     templateUrl: './current-collect.component.html',
     styleUrl: './current-collect.component.scss'
@@ -38,12 +40,8 @@ export class CurrentCollectComponent implements OnInit {
     cancelDialogVisible: boolean = false;
     pauseDialogVisible: boolean = false;
     evaluateDialogVisible: boolean = false;
-
+    selectedCollectId: string | null = null;
     selectedCollect: Collect | null = null;
-
-    // Avaliação
-    selectedRating: number = 0;
-    evaluationComment: string = '';
 
     constructor(
         private collectService: CollectService,
@@ -129,54 +127,25 @@ export class CurrentCollectComponent implements OnInit {
 
     continueCollect(collect: Collect): void {
         // Simulação de lógica para continuar a coleta
-        console.log('Continuar coleta:', collect);
-        this.messageService.add({
-            severity: 'info',
-            summary: 'Continuar Coleta',
-            detail: `Coleta #${collect.id} está sendo continuada.`,
+        this.collectService.pauseOrActivateCollect(collect.id).subscribe({
+            next: () => {
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Sucesso',
+                    detail: 'Coleta continuada com sucesso.',
+                });
+                this.closePauseDialog();
+                this.loadCollectsBasedOnRole(0, 10); // Recarrega os dados
+            },
+            error: () => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: 'Não foi possível continuar a coleta.',
+                });
+            }
         });
 
-    }
-
-    /**
-     * Ação ao clicar em pausar a coleta.
-     * @param collect Coleta a ser pausada.
-     */
-    pauseCollect(collect: Collect): void {
-        // Simulação de lógica para pausar a coleta
-        console.log('Coleta pausada:', collect);
-        this.messageService.add({
-            severity: 'info',
-            summary: 'Pausar Coleta',
-            detail: `Coleta #${collect.id} foi pausada.`,
-        });
-    }
-
-    /**
-     * Ação ao clicar em deletar a coleta.
-     * @param collect Coleta a ser deletada.
-     */
-    deleteCollect(collect: Collect): void {
-        // Simulação de lógica para deletar a coleta
-        console.log('Coleta deletada:', collect);
-        this.messageService.add({
-            severity: 'success',
-            summary: 'Deletar Coleta',
-            detail: `Coleta #${collect.id} foi deletada com sucesso.`,
-        });
-    }
-
-    /**
-     * Ação ao clicar em avaliar a coleta.
-     * @param collect Coleta a ser avaliada.
-     */
-    evaluateCollect(collect: Collect): void {
-        console.log('Avaliar coleta:', collect);
-        this.messageService.add({
-            severity: 'info',
-            summary: 'Avaliar Coleta',
-            detail: `Coleta #${collect.id} está sendo avaliada.`,
-        });
     }
 
     // Dialogs
@@ -203,27 +172,27 @@ export class CurrentCollectComponent implements OnInit {
     }
 
     confirmCancelCollect(): void {
-        // if (this.selectedCollect) {
-        //     // Lógica para cancelar a coleta no backend
-        //     this.collectService.cancelCollect(this.selectedCollect.id).subscribe({
-        //         next: () => {
-        //             this.messageService.add({
-        //                 severity: 'success',
-        //                 summary: 'Sucesso',
-        //                 detail: 'Coleta cancelada com sucesso.',
-        //             });
-        //             this.closeCancelDialog();
-        //             this.loadCollects(0, 10); // Recarrega os dados
-        //         },
-        //         error: () => {
-        //             this.messageService.add({
-        //                 severity: 'error',
-        //                 summary: 'Erro',
-        //                 detail: 'Não foi possível cancelar a coleta.',
-        //             });
-        //         }
-        //     });
-        // }
+        if (this.selectedCollect) {
+            // Lógica para cancelar a coleta no backend
+            this.collectService.cancelCollect(this.selectedCollect.id).subscribe({
+                next: () => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Sucesso',
+                        detail: 'Coleta cancelada com sucesso.',
+                    });
+                    this.closeCancelDialog();
+                    this.loadCollectsBasedOnRole(0, 10); // Recarrega os dados
+                },
+                error: () => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Erro',
+                        detail: 'Não foi possível cancelar a coleta.',
+                    });
+                }
+            });
+        }
     }
 
     // Pausar
@@ -238,63 +207,38 @@ export class CurrentCollectComponent implements OnInit {
     }
 
     confirmPauseCollect(): void {
-        // if (this.selectedCollect) {
-        //     // Lógica para pausar a coleta no backend
-        //     this.collectService.pauseCollect(this.selectedCollect.id).subscribe({
-        //         next: () => {
-        //             this.messageService.add({
-        //                 severity: 'success',
-        //                 summary: 'Sucesso',
-        //                 detail: 'Coleta pausada com sucesso.',
-        //             });
-        //             this.closePauseDialog();
-        //             this.loadCollects(0, 10); // Recarrega os dados
-        //         },
-        //         error: () => {
-        //             this.messageService.add({
-        //                 severity: 'error',
-        //                 summary: 'Erro',
-        //                 detail: 'Não foi possível pausar a coleta.',
-        //             });
-        //         }
-        //     });
-        // }
+        if (this.selectedCollect) {
+            // Lógica para pausar a coleta no backend
+            this.collectService.pauseOrActivateCollect(this.selectedCollect.id).subscribe({
+                next: () => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Sucesso',
+                        detail: 'Coleta pausada com sucesso.',
+                    });
+                    this.closePauseDialog();
+                    this.loadCollectsBasedOnRole(0, 10); // Recarrega os dados
+                },
+                error: () => {
+                    this.messageService.add({
+                        severity: 'error',
+                        summary: 'Erro',
+                        detail: 'Não foi possível pausar a coleta.',
+                    });
+                }
+            });
+        }
     }
 
     // Avaliar
     openEvaluateDialog(collect: Collect): void {
-        this.selectedCollect = collect;
+        this.selectedCollectId = collect.id;
         this.evaluateDialogVisible = true;
     }
 
-    closeEvaluateDialog(): void {
-        this.evaluateDialogVisible = false;
-        this.selectedCollect = null;
-        this.selectedRating = 0;
-        this.evaluationComment = '';
+    hideEvaluateDialog(bool: boolean) {
+        this.selectedCollectId = null;
+        this.evaluateDialogVisible = bool;
+        this.loadCollectsBasedOnRole(0, 10); // Recarrega os dados
     }
-
-    // submitEvaluation(): void {
-    //     if (this.selectedCollect) {
-    //         // Lógica para enviar a avaliação no backend
-    //         this.collectService.evaluateCollect(this.selectedCollect.id, this.selectedRating, this.evaluationComment).subscribe({
-    //             next: () => {
-    //                 this.messageService.add({
-    //                     severity: 'success',
-    //                     summary: 'Sucesso',
-    //                     detail: 'Avaliação enviada com sucesso.',
-    //                 });
-    //                 this.closeEvaluateDialog();
-    //                 this.loadCollects(0, 10); // Recarrega os dados
-    //             },
-    //             error: () => {
-    //                 this.messageService.add({
-    //                     severity: 'error',
-    //                     summary: 'Erro',
-    //                     detail: 'Não foi possível enviar a avaliação.',
-    //                 });
-    //             }
-    //         });
-    //     }
-    // }
 }

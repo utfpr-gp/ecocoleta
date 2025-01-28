@@ -11,6 +11,8 @@ import java.util.List;
 public record CollectDTO(
         long id,
         Integer amount,
+        boolean isEvaluated,
+        Integer rating,
         CollectStatus status,
         LocalDateTime initTime,
         LocalDateTime endTime,

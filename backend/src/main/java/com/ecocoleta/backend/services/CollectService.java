@@ -204,6 +204,34 @@ public class CollectService {
     }
 
     /**
+     * Avalia uma coleta e atualiza a pontuação média do catador.
+     *
+     * @param collectId ID da coleta a ser avaliada.
+     * @param rating    Avaliação dada pelo usuário (1 a 5).
+     */
+    @Transactional
+    public void evaluateCollect(Long collectId, Integer rating) {
+        // Verifica se a coleta existe
+        Collect collect = collectRepository.findById(collectId)
+                .orElseThrow(() -> new EntityNotFoundException("Coleta não encontrada"));
+
+        // Verifica se a coleta já foi avaliada
+        if (Boolean.TRUE.equals(collect.isEvaluated())) {
+            throw new ValidException("Essa coleta já foi avaliada.");
+        }
+
+        // Atualiza a avaliação e marca a coleta como avaliada
+        collect.setRating(rating);
+        collect.setEvaluated(true);
+        collectRepository.save(collect);
+
+        // Atualiza a média de avaliação do catador
+        Long wasteCollectorId = collect.getWasteCollector().getId();
+        Double averageRating = collectRepository.findAverageRatingByWasteCollectorId(wasteCollectorId);
+        collectRepository.updateWasteCollectorScore(wasteCollectorId, averageRating);
+    }
+
+    /**
      * Reseta todas as coletas em andamento para um catador.
      *
      * @param wasteCollectorId ID do catador de resíduos.
@@ -315,7 +343,7 @@ public class CollectService {
                 collect.setStatus(CollectStatus.PAUSED);
                 collectRepository.save(collect);
             } else if (collect.getStatus().equals(CollectStatus.PAUSED)) {
-                collect.setStatus(CollectStatus.IN_PROGRESS);
+                collect.setStatus(CollectStatus.PENDING);
                 collectRepository.save(collect);
             }
 

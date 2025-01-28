@@ -7,20 +7,19 @@
         [totalRecords]="totalRecords"
         [lazy]="true"
         (onLazyLoad)="onLazyLoad($event)">
-        <!--        (onLazyLoad)="loadCollects($event.first, $event.rows)">-->
         <ng-template pTemplate="header">
             <tr>
-                <th>ID</th>
+                <th style="max-width:1rem;">ID</th>
                 <th>Status</th>
                 <th>Data</th>
-                <th class="fixed-column" style="min-width:8rem;">Ações</th>
+                <th class="fixed-column" style="min-width:10rem;">Ações</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-collect>
             <tr>
                 <td>{{ collect.id }}</td>
                 <td>{{ collect.status | statusTranslate }}</td>
-                <td>{{ collect.createTime | date:'dd/MM/yy, hh:mm a' }}</td>
+                <td>{{ collect.createTime | date:'dd/MM/yy' }}</td>
                 <td class="fixed-column">
                     <!-- Botão Detalhes (visível para todos os usuários) -->
                     <button
@@ -47,7 +46,7 @@
                         pButton
                         class="p-button-rounded p-button-warning p-button-sm mr-1"
                         icon="pi pi-pause"
-                        (click)="pauseCollect(collect)"
+                        (click)="openPauseDialog(collect)"
                         title="Pausar Coleta"
                     ></button>
 
@@ -57,7 +56,7 @@
                         pButton
                         class="p-button-rounded p-button-info p-button-sm mr-1"
                         icon="pi pi-star"
-                        (click)="evaluateCollect(collect)"
+                        (click)="openEvaluateDialog(collect)"
                         title="Avaliar Coleta"
                     ></button>
 
@@ -67,7 +66,7 @@
                         pButton
                         class="p-button-rounded p-button-danger p-button-sm mr-1"
                         icon="pi pi-times"
-                        (click)="deleteCollect(collect)"
+                        (click)="openCancelDialog(collect)"
                         title="Cancelar Coleta"
                     ></button>
                 </td>
@@ -76,31 +75,13 @@
     </p-table>
 </p-panel>
 
-<!--TODO TELA DAS COLETAS ATUAIS, LISTA AS COLETAS-->
-<!-- ok lista em tabela as coletas, com coluna id, descrição = (data dd/mm/aaaa e hora), pausar coleta = (botão swap), ação (avaliar, deletar)-->
-<!-- ok fazer pagina das atuais onde tras todas exeto cancelado e concluida ? modificar o ucriar metodo no back para trazer isso -->
-<!-- ok pagina historico pode trazer todos os status e com filtragem por status e listagem-->
-<!-- fazer botão de avaliar coleta, que abre um modal com um form de avaliação, com estrelas e comentario-->
-<!-- Fluxo Geral
-Tela 1: Coletas Ativas
-
-Lista coletas com status PENDING, PAUSED, IN_PROGRESS e COMPLETED (não avaliadas).
-Ações disponíveis: Continuar, Pausar, Avaliar, Cancelar.
-Tela 2: Histórico
-
-Lista coletas com status COMPLETED (avaliadas) e CANCELLED.
-Permite filtrar por status e período.
-Campos Adicionados:
-
-isEvaluated: Identifica se a coleta foi avaliada.
-rating: Armazena a pontuação (1-5 estrelas).-->
-
+<!--dialog de detalhes-->
 <p-dialog
     [(visible)]="detailsDialogVisible"
     [header]="'Detalhes da Coleta #' + selectedCollect?.id"
     [modal]="true"
     [responsive]="true"
-    [style]="{ width: '50vw' }"
+    [style]="{ width: '55vw' }"
     [dismissableMask]="true"
     (onHide)="closeDetailsDialog()">
     <div *ngIf="selectedCollect">
@@ -117,13 +98,13 @@ rating: Armazena a pontuação (1-5 estrelas).-->
     </div>
 </p-dialog>
 
-<!--todo dialog de cancelar e confirmar-->
+<!--dialog de cancelar e confirmar-->
 <p-dialog
     [(visible)]="cancelDialogVisible"
     [header]="'Cancelar Coleta #' + selectedCollect?.id"
     [modal]="true"
     [responsive]="true"
-    [style]="{ width: '30vw' }"
+    [style]="{ width: '55vw' }"
     [dismissableMask]="true"
     (onHide)="closeCancelDialog()">
     <div *ngIf="selectedCollect">
@@ -135,14 +116,13 @@ rating: Armazena a pontuação (1-5 estrelas).-->
     </div>
 </p-dialog>
 
-
-<!--todo dialog de pausar coleta-->
+<!--dialog de pausar coleta-->
 <p-dialog
     [(visible)]="pauseDialogVisible"
     [header]="'Pausar Coleta #' + selectedCollect?.id"
     [modal]="true"
     [responsive]="true"
-    [style]="{ width: '30vw' }"
+    [style]="{ width: '55vw' }"
     [dismissableMask]="true"
     (onHide)="closePauseDialog()">
     <div *ngIf="selectedCollect">
@@ -154,5 +134,12 @@ rating: Armazena a pontuação (1-5 estrelas).-->
     </div>
 </p-dialog>
 
-
-<!--todo dialog avaliar, essa fazer um componente separado para reutilizar no historico page-->
+<!--dialog de avaliar coleta-->
+@if (evaluateDialogVisible) {
+    <app-evaluate-dialog
+        [evaluationDialogVisible]="evaluateDialogVisible"
+        [collectId]="selectedCollectId"
+        (outEvaluationDialog)="hideEvaluateDialog($event)"
+    >
+    </app-evaluate-dialog>
+}

@@ -241,4 +241,42 @@ export class CollectService {
         // return this.http.post<Collect[]>(`${this.apiUrl}/get_avaible_collects_reserved`, body, {params});
         return this.http.post<Collect[]>(`${this.apiUrl}/get_avaible_collects_reserved`, body);
     }
+
+    /**
+     * Cancela uma coleta por id.
+     * @param collectId - ID da coleta a ser cancelada.
+     * @returns Observable contendo a resposta do backend.
+     * @throws Error se o ID da coleta não for fornecido.
+     */
+    cancelCollect(collectId: string): Observable<any> {
+        const params = new HttpParams().set('collectId', collectId);
+        return this.http.delete<any>(`${this.apiUrl}/cancel_collect`, {params});
+    }
+
+    /**
+     * Pausa ou ativa uma coleta tornando-a indisponível no momento.
+     * @param collectId - ID da coleta a ser pausada ou ativada.
+     * @returns Observable contendo o DTO da coleta atualizado.
+     * @throws Error se o ID da coleta não for fornecido.
+     */
+    pauseOrActivateCollect(collectId: string): Observable<Collect> {
+        const params = new HttpParams().set('collectId', collectId);
+        return this.http.post<Collect>(`${this.apiUrl}/paused_collect`, null, { params });
+    }
+
+    /**
+     * Avalia uma coleta.
+     *
+     * Este método faz uma requisição HTTP para o endpoint `/evaluate` para
+     * registrar a avaliação de uma coleta e atualizar a pontuação média do catador.
+     *
+     * @param collectId - ID da coleta a ser avaliada.
+     * @param rating - Avaliação dada pelo usuário (1 a 5 estrelas).
+     * @returns Observable contendo a resposta do backend.
+     */
+    evaluateCollect(collectId: string, rating: number): Observable<void> {
+        const params = new HttpParams().set('rating', rating);
+        return this.http.post<void>(`${this.apiUrl}/evaluate/${collectId}`, null, { params });
+    }
+
 }

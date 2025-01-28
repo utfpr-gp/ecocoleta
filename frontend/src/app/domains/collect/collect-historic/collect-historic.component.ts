@@ -8,6 +8,8 @@ import { CommonModule } from "@angular/common";
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from "primeng/tooltip";
 import { StatusTranslatePipe } from 'src/app/core/services/status-translate.pipe';
+import {EvaluateDialogComponent} from "../../../shared-components/evaluate-collect-dialog/evaluate-dialog.component";
+import {DialogModule} from "primeng/dialog";
 
 @Component({
   selector: 'app-coletas-historico',
@@ -18,7 +20,9 @@ import { StatusTranslatePipe } from 'src/app/core/services/status-translate.pipe
         ButtonModule,
         CommonModule,
         TooltipModule,
-        StatusTranslatePipe
+        StatusTranslatePipe,
+        EvaluateDialogComponent,
+        DialogModule
     ],
   templateUrl: './collect-historic.component.html',
   styleUrl: './collect-historic.component.scss'
@@ -28,6 +32,12 @@ export class CollectHistoricComponent implements OnInit {
     totalRecords: number = 0;
     loading: boolean = false;
     user: User | null = null;
+
+    // Dialogs
+    detailsDialogVisible: boolean = false;
+    evaluateDialogVisible: boolean = false;
+    selectedCollectId: string | null = null;
+    selectedCollect: Collect | null = null;
 
     constructor(
         private collectService: CollectService,
@@ -71,12 +81,27 @@ export class CollectHistoricComponent implements OnInit {
         });
     }
 
-    evaluateCollect(collect: Collect): void {
-        console.log('Avaliar coleta:', collect);
-        this.messageService.add({
-            severity: 'info',
-            summary: 'Avaliar Coleta',
-            detail: `Coleta #${collect.id} está sendo avaliada.`,
-        });
+    // Dialogs
+    // Detalhes
+    openDetails(collect: Collect): void {
+        this.selectedCollect = collect;
+        this.detailsDialogVisible = true;
+    }
+
+    closeDetailsDialog(): void {
+        this.detailsDialogVisible = false;
+        this.selectedCollect = null;
+    }
+
+    // Avaliar
+    openEvaluateDialog(collect: Collect): void {
+        this.selectedCollectId = collect.id;
+        this.evaluateDialogVisible = true;
+    }
+
+    hideEvaluateDialog(bool: boolean) {
+        this.selectedCollectId = null;
+        this.evaluateDialogVisible = bool;
+        this.loadCollects(0, 10); // Recarrega os dados
     }
 }

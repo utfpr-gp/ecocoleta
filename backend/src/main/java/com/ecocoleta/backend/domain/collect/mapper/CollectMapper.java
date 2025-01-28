@@ -31,6 +31,8 @@ public class CollectMapper {
         return new CollectDTO(
                 collect.getId(),
                 collect.getAmount(),
+                collect.isEvaluated(),
+                collect.getRating(),
                 collect.getStatus(),
                 collect.getInitTime(),
                 collect.getEndTime(),
