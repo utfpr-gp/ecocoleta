@@ -134,7 +134,6 @@ export class CurrentCollectComponent implements OnInit {
                     summary: 'Sucesso',
                     detail: 'Coleta continuada com sucesso.',
                 });
-                this.closePauseDialog();
                 this.loadCollectsBasedOnRole(0, 10); // Recarrega os dados
             },
             error: () => {

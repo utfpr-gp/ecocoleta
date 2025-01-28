@@ -6,9 +6,6 @@ import com.ecocoleta.backend.domain.collect.CollectMaterials;
 import com.ecocoleta.backend.domain.collect.dto.CollectSearchAvaibleListDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.domain.collect.mapper.CollectMapper;
-//import com.ecocoleta.backend.domain.collectMaterial.CollectMaterial;
-//import com.ecocoleta.backend.domain.material.Material;
-//import com.ecocoleta.backend.domain.material.MaterialIdDTO;
 import com.ecocoleta.backend.domain.resident.Resident;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
@@ -30,9 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.Objects;
 
-//import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -49,15 +44,6 @@ public class CollectService {
 
     @Autowired
     private ResidentRepository residentRepository;
-
-//    @Autowired
-//    private CollectMaterialRepository collectMaterialRepository;
-
-    @Autowired
-    private AddressService addressService;
-
-    @Autowired
-    private ResidentService residentService;
 
     @Autowired
     private WasteCollectorService wasteCollectorService;
