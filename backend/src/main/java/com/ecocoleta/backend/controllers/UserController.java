@@ -133,11 +133,27 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    // Listagem de usuários ativos
-    @GetMapping("list")
-    public ResponseEntity<Page<UserGetDTO>> listUser(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
-        var page = userService.getAllByActivoTrue(pageable).map(UserGetDTO::new);
-        return ResponseEntity.ok(page);
+//    // Listagem de usuários ativos
+//    @GetMapping("/list")
+//    public ResponseEntity<Page<UserGetDTO>> listUser(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
+//        var page = userService.getAllByActivoTrue(pageable).map(UserGetDTO::new);
+//        return ResponseEntity.ok(page);
+//    }
+
+    /** 🔄 Listagem de usuários com filtro opcional por tipo */
+    @GetMapping("/list")
+    public ResponseEntity<Page<UserGetDTO>> listUsers(
+            @RequestParam(required = false) UserRole role,
+            @PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
+        Page<UserGetDTO> users = userService.getUsersByRole(role, pageable);
+        return ResponseEntity.ok(users);
+    }
+
+    /** 🛑 Desativa um usuário */
+    @PutMapping("/deactivate/{id}")
+    public ResponseEntity<Void> deactivateUser(@PathVariable Long id) {
+        userService.deactivateUser(id);
+        return ResponseEntity.ok().build();
     }
 
     /**

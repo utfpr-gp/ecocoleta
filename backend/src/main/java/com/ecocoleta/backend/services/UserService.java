@@ -12,6 +12,8 @@ import com.ecocoleta.backend.domain.user.dto.UserTypeCountDTO;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.domain.wasteCollector.dto.WasteCollectorGetDTO;
 import com.ecocoleta.backend.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -110,6 +112,28 @@ public class UserService {
 
     public UserDetails findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    /** 🔄 Obtém usuários filtrados por tipo */
+    public Page<UserGetDTO> getUsersByRole(UserRole role, Pageable pageable) {
+        Page<User> users;
+
+        if (role != null) {
+            users = userRepository.findAllByRole(role, pageable);
+        } else {
+            users = userRepository.findAllByActivoTrue(pageable); // Retorna todos se o tipo não for especificado
+        }
+
+        return users.map(UserGetDTO::new);
+    }
+
+    /** 🛑 Desativa um usuário */
+    @Transactional
+    public void deactivateUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        user.setActivo(false);
+        userRepository.save(user);
     }
 
     public User createUser(User user) {
