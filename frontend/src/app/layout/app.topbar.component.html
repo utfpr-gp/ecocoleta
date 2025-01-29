@@ -56,6 +56,15 @@
             }
             <span>Home</span>
         </button>
+        @if (user?.role === 'ADMIN' || user?.role === 'COMPANY') {
+            <button class="p-link layout-topbar-button"
+                    [routerLink]="user.role === 'ADMIN' ? '/admin/user-list' : '/company/user-list'"
+                    pTooltip="Lista de usuários"
+                    tooltipPosition="bottom">
+                <i class="pi pi-list"></i>
+                <span>Usuários</span>
+            </button>
+        }
         @if (user?.role === 'WASTE_COLLECTOR' || user?.role === 'RESIDENT') {
             <button class="p-link layout-topbar-button" [routerLink]="'/coletas/em-andamento'" pTooltip="Ver coletas"
                     tooltipPosition="bottom">

@@ -37,6 +37,11 @@ export enum CollectStatus {
     CANCELLED = 'CANCELLED'
 }
 
+export interface CollectStatusCount {
+    status: string;
+    count: number;
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -279,4 +284,11 @@ export class CollectService {
         return this.http.post<void>(`${this.apiUrl}/evaluate/${collectId}`, null, { params });
     }
 
+    getDailyCollectReport(): Observable<CollectStatusCount[]> {
+        return this.http.get<CollectStatusCount[]>(`${this.apiUrl}/daily-report`);
+    }
+
+    getMonthlyCollectReport(): Observable<CollectStatusCount[]> {
+        return this.http.get<CollectStatusCount[]>(`${this.apiUrl}/monthly-report`);
+    }
 }

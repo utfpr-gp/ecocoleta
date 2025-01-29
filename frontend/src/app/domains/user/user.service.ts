@@ -30,6 +30,11 @@ export enum UserRole {
     ADMIN = 'ADMIN',
 }
 
+export interface UserTypeCount {
+    role: string;
+    count: number;
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -112,6 +117,10 @@ export class UserService {
 
     getUserById(userId: string): Observable<User> {
         return this.http.get<User>(`${this.apiUrlUser}/${userId}`);
+    }
+
+    getUserReport(): Observable<UserTypeCount[]> {
+        return this.http.get<UserTypeCount[]>(`${this.apiUrlUser}/user-report`);
     }
 
     //MÉTODOS DE CRUD

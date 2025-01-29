@@ -1,1 +1,37 @@
-<p>home-company works!</p>
+<div class="grid">
+    <!-- 📊 Gráfico de Coletas no Mês (Bar Chart) -->
+    <div class="col-12 md:col-6 lg:col-4">
+        <p-card>
+            <ng-template pTemplate="header">
+                <h2 class="text-center">Coletas no Mês</h2>
+            </ng-template>
+            <ng-template pTemplate="content">
+                <p-chart type="bar" [data]="monthlyCollectData" [options]="chartOptions"></p-chart>
+            </ng-template>
+        </p-card>
+    </div>
+
+    <!-- 📈 Gráfico de Coletas no Dia (Line Chart) -->
+    <div class="col-12 md:col-6 lg:col-4">
+        <p-card>
+            <ng-template pTemplate="header">
+                <h2 class="text-center">Coletas Hoje</h2>
+            </ng-template>
+            <ng-template pTemplate="content">
+                <p-chart type="line" [data]="dailyCollectData" [options]="chartOptions"></p-chart>
+            </ng-template>
+        </p-card>
+    </div>
+
+    <!-- 🥧 Gráfico de Usuários (Pie Chart) -->
+    <div class="col-12 md:col-6 lg:col-4">
+        <p-card>
+            <ng-template pTemplate="header">
+                <h2 class="text-center">Distribuição de Usuários</h2>
+            </ng-template>
+            <ng-template pTemplate="content">
+                <p-chart type="pie" [data]="userChartData" [options]="chartOptions"></p-chart>
+            </ng-template>
+        </p-card>
+    </div>
+</div>

@@ -7,6 +7,8 @@ import {PerfilComponent} from "./domains/user/perfil/perfil.component";
 import {HomeComponent} from "./domains/home/home.component";
 import {NotificacoesComponent} from "./domains/user/notificacoes/notificacoes.component";
 import {UserRegisterComponent} from "./domains/user/user-register/user-register.component";
+import {UserListAdminComponent} from "./domains/admin/user-list-admin/user-list-admin.component";
+import {UserListCompanyComponent} from "./domains/company/user-list-company/user-list-company.component";
 
 @NgModule({
     imports: [
@@ -46,6 +48,26 @@ import {UserRegisterComponent} from "./domains/user/user-register/user-register.
                             {
                                 path: 'notificacoes/:user_id',
                                 component: NotificacoesComponent,
+                                canActivate: [AuthGuard],
+                            },
+                        ],
+                    },
+                    {
+                        path: 'company',
+                        children: [
+                            {
+                                path: 'user-list',
+                                component: UserListCompanyComponent,
+                                canActivate: [AuthGuard],
+                            },
+                        ],
+                    },
+                    {
+                        path: 'admin',
+                        children: [
+                            {
+                                path: 'user-list',
+                                component: UserListAdminComponent,
                                 canActivate: [AuthGuard],
                             },
                         ],
