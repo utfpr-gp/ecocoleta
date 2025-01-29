@@ -9,6 +9,7 @@ import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.domain.user.dto.UserDTO;
 import com.ecocoleta.backend.domain.user.dto.UserGetDTO;
+import com.ecocoleta.backend.domain.user.dto.UserTypeCountDTO;
 import com.ecocoleta.backend.domain.user.dto.UserUpdateDTO;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.domain.wasteCollector.dto.WasteCollectorDTO;
@@ -26,7 +27,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
+ * Controlador REST para operações relacionadas a usuários.
  * Faz o cadastro do usuário individual ou empresa.
  * A principal diferença entre as duas entidades é o CPF e CNPJ. Em relação aos demais atributos, usa-se a classe User.
  */
@@ -129,12 +133,21 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-
     // Listagem de usuários ativos
     @GetMapping("list")
     public ResponseEntity<Page<UserGetDTO>> listUser(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
         var page = userService.getAllByActivoTrue(pageable).map(UserGetDTO::new);
         return ResponseEntity.ok(page);
+    }
+
+    /**
+     * Obtém a contagem de usuários por tipo.
+     *
+     * @return ResponseEntity contendo uma lista de UserTypeCountDTO com as contagens de usuários.
+     */
+    @GetMapping("/user-report")
+    public ResponseEntity<List<UserTypeCountDTO>> getUserReport() {
+        return ResponseEntity.ok(userService.getUserTypeCounts());
     }
 
     @GetMapping("/waste-collectors")

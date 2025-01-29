@@ -8,6 +8,7 @@ import com.ecocoleta.backend.domain.resident.dto.ResidentGetDTO;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.domain.user.dto.UserGetDTO;
+import com.ecocoleta.backend.domain.user.dto.UserTypeCountDTO;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.domain.wasteCollector.dto.WasteCollectorGetDTO;
 import com.ecocoleta.backend.repositories.UserRepository;
@@ -21,6 +22,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Serviço para gerenciar operações relacionadas a usuários.
+ */
 @Service
 public class UserService {
 
@@ -31,7 +35,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-        public Optional<User> getUserById(Long id) {
+    public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -137,5 +141,14 @@ public class UserService {
 
     public Page<User> getAllByRole(UserRole role, Pageable pageable) {
         return userRepository.findAllByRole(role, pageable);
+    }
+
+    /**
+     * Obtém a contagem de usuários agrupados por tipo (Resident, WasteCollector, Company).
+     *
+     * @return Lista de UserTypeCountDTO contendo a contagem de usuários por tipo.
+     */
+    public List<UserTypeCountDTO> getUserTypeCounts() {
+        return userRepository.countUsersByRole();
     }
 }
