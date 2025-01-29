@@ -5,6 +5,7 @@ import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.collect.CollectMaterials;
 import com.ecocoleta.backend.domain.collect.dto.CollectSearchAvaibleListDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
+import com.ecocoleta.backend.domain.collect.dto.CollectStatusCountDTO;
 import com.ecocoleta.backend.domain.collect.mapper.CollectMapper;
 import com.ecocoleta.backend.domain.resident.Resident;
 import com.ecocoleta.backend.domain.user.User;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import java.time.LocalDateTime;
@@ -279,6 +281,25 @@ public class CollectService {
         }
 
         return null;
+    }
+
+    /**
+     * Obtém a contagem de coletas por status no dia atual.
+     *
+     * @return Lista de CollectStatusCountDTO com a contagem de coletas por status.
+     */
+    public List<CollectStatusCountDTO> getDailyCollectStatusCount() {
+        return collectRepository.countCollectsByStatusForToday(LocalDate.now());
+    }
+
+    /**
+     * Obtém a contagem de coletas mensais filtradas pelos status COMPLETED e CANCELLED.
+     *
+     * @return Lista de CollectStatusCountDTO com a contagem de coletas por status.
+     */
+    public List<CollectStatusCountDTO> getMonthlyCollectStatusCount() {
+        return collectRepository.countMonthlyCollectsByStatus(
+                List.of(CollectStatus.COMPLETED, CollectStatus.CANCELLED));
     }
 
     /**

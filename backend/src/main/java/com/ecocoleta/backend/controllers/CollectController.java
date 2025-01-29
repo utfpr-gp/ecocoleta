@@ -4,6 +4,7 @@ import com.ecocoleta.backend.domain.collect.CollectStatus;
 import com.ecocoleta.backend.domain.collect.dto.CollectAddressAvaibleDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectDTO;
 import com.ecocoleta.backend.domain.collect.dto.CollectSearchAvaibleListDTO;
+import com.ecocoleta.backend.domain.collect.dto.CollectStatusCountDTO;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.repositories.WasteCollectorRespository;
@@ -85,7 +86,7 @@ public class CollectController {
      */
     @PostMapping("create_new_collect")
     @Transactional
-    public ResponseEntity createNewCollect(@RequestBody @Valid CollectDTO collectDTO) {
+    public ResponseEntity<CollectDTO> createNewCollect(@RequestBody @Valid CollectDTO collectDTO) {
         var dto = collectService.createCollect(collectDTO);
         return ResponseEntity.ok().body(dto);
     }
@@ -123,7 +124,7 @@ public class CollectController {
      * Recebe o ID do usuário e o status da coleta.
      * Retorna uma lista de coletas que correspondem ao status fornecido.
      */
-    @GetMapping("get_collects")
+    @GetMapping("/get_collects")
     @Transactional
     public ResponseEntity<List<CollectAddressAvaibleDTO>> getCollectsByStatus(@RequestParam @Valid Long userId,
                                                                               @RequestParam @Valid CollectStatus collectStatus,
@@ -144,6 +145,26 @@ public class CollectController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(List.of());
         }
+    }
+
+    /**
+     * Obtém o relatório diário de coletas por status.
+     *
+     * @return ResponseEntity contendo uma lista de CollectStatusCountDTO com as contagens por status.
+     */
+    @GetMapping("/daily-report")
+    public ResponseEntity<List<CollectStatusCountDTO>> getDailyCollectReport() {
+        return ResponseEntity.ok(collectService.getDailyCollectStatusCount());
+    }
+
+    /**
+     * Obtém o relatório mensal de coletas concluídas e canceladas.
+     *
+     * @return ResponseEntity contendo uma lista de CollectStatusCountDTO com as contagens por status.
+     */
+    @GetMapping("/monthly-report")
+    public ResponseEntity<List<CollectStatusCountDTO>> getMonthlyCollectReport() {
+        return ResponseEntity.ok(collectService.getMonthlyCollectStatusCount());
     }
 
     /**
