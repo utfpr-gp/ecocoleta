@@ -123,6 +123,14 @@ export class UserService {
         return this.http.get<UserTypeCount[]>(`${this.apiUrlUser}/user-report`);
     }
 
+    getUsersByRole(role?: UserRole, page: number = 0, size: number = 10): Observable<any> {
+        let url = `${this.apiUrlUser}/list?page=${page}&size=${size}`;
+        if (role) {
+            url += `&role=${role}`;
+        }
+        return this.http.get<any>(url);
+    }
+
     //MÉTODOS DE CRUD
     async createAndUpdateUser(user: User): Promise<void> {
         try {
@@ -163,6 +171,11 @@ export class UserService {
             // Lança o erro para ser tratado no componente
             throw error;
         }
+    }
+
+    /** Desativa um usuário pelo ID */
+    deactivateUser(userId: string): Observable<void> {
+        return this.http.put<void>(`${this.apiUrlUser}/deactivate/${userId}`, {});
     }
 
     private getErrorMessage(error: any): string {

@@ -9,6 +9,8 @@ import { TooltipModule } from "primeng/tooltip";
 import { StatusTranslatePipe } from 'src/app/core/services/status-translate.pipe';
 import {EvaluateDialogComponent} from "../../../shared-components/evaluate-collect-dialog/evaluate-dialog.component";
 import {DialogModule} from "primeng/dialog";
+import {ToastModule} from "primeng/toast";
+import {UserFormComponent} from "../../../shared-components/user-form/user-form.component";
 
 @Component({
   selector: 'app-user-list-admin',
@@ -21,7 +23,9 @@ import {DialogModule} from "primeng/dialog";
         TooltipModule,
         StatusTranslatePipe,
         EvaluateDialogComponent,
-        DialogModule
+        DialogModule,
+        ToastModule,
+        UserFormComponent
     ],
   templateUrl: './user-list-admin.component.html',
   styleUrl: './user-list-admin.component.scss'
