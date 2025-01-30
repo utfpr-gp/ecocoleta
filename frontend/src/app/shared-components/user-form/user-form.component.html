@@ -80,6 +80,25 @@
                              text="É necessário preencher a senha."></app-message>
             </div>
 
+            <!--            <div class="field col-12 md:col-6" *ngIf="userRole === 'WASTE_COLLECTOR'">-->
+            <!--                <label for="cpf">CPF</label><b class="ml-1" style="color: crimson;">*</b>-->
+            <!--                <div class="p-inputgroup">-->
+            <!--                    <input formControlName="cpf" id="cpf" required pInputText type="text" maxlength="11"-->
+            <!--                           placeholder="Somente números">-->
+            <!--                </div>-->
+            <!--                <app-message [control]="formUser.get('cpf')" error="required"-->
+            <!--                             text="É necessário preencher o cpf."></app-message>-->
+            <!--            </div>-->
+
+            <!--            <div class="field col-12 md:col-6" *ngIf="userRole === 'COMPANY'">-->
+            <!--                <label for="cnpj">CNPJ</label><b class="ml-1" style="color: crimson;">*</b>-->
+            <!--                <div class="p-inputgroup">-->
+            <!--                    <input formControlName="cnpj" id="cnpj" required pInputText type="text" maxlength="14"-->
+            <!--                           placeholder="Somente números">-->
+            <!--                </div>-->
+            <!--                <app-message [control]="formUser.get('cnpj')" error="required"-->
+            <!--                             text="É necessário preencher o cnpj."></app-message>-->
+            <!--            </div>-->
             <div class="field col-12 md:col-6" *ngIf="userRole === 'WASTE_COLLECTOR'">
                 <label for="cpf">CPF</label><b class="ml-1" style="color: crimson;">*</b>
                 <div class="p-inputgroup">
@@ -87,7 +106,9 @@
                            placeholder="Somente números">
                 </div>
                 <app-message [control]="formUser.get('cpf')" error="required"
-                             text="É necessário preencher o cpf."></app-message>
+                             text="É necessário preencher o CPF."></app-message>
+                <app-message [control]="formUser.get('cpf')" error="pattern"
+                             text="CPF deve conter somente números."></app-message>
             </div>
 
             <div class="field col-12 md:col-6" *ngIf="userRole === 'COMPANY'">
@@ -97,8 +118,11 @@
                            placeholder="Somente números">
                 </div>
                 <app-message [control]="formUser.get('cnpj')" error="required"
-                             text="É necessário preencher o cnpj."></app-message>
+                             text="É necessário preencher o CNPJ."></app-message>
+                <app-message [control]="formUser.get('cnpj')" error="pattern"
+                             text="CNPJ deve conter somente números."></app-message>
             </div>
+
 
             <div class="field col-12 md:col-6" *ngIf="userRole === 'WASTE_COLLECTOR' && !formModeUpdate">
                 <label for="picture">Foto</label><b class="ml-1" style="color: crimson;">*</b>
