@@ -22,8 +22,6 @@ public class MyAccountController {
     @Autowired
     UserAddressService userAddressService;
 
-    //TODO  metodo myacont/id para pegar dados do usuario
-
     //Metodos de Address>>>>>
     @GetMapping("/{userId}/addresses")
     public ResponseEntity<List<AddressDTO>> getAddresses(@PathVariable Long userId) {

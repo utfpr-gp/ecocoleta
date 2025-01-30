@@ -29,7 +29,6 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String uri = request.getRequestURI();
-        System.out.println("URI: " + uri);  // Log para depuração
 
         // Ignora rotas públicas (como /auth/login, /user (POST) para cadastro)
         if (uri.startsWith("/auth/login") || (uri.startsWith("/user") && request.getMethod().equals(HttpMethod.POST.name()))) {

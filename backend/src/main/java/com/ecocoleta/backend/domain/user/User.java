@@ -103,11 +103,6 @@ public class User implements UserDetails, Serializable {
         }
     }
 
-    //TODO verificar reset de senha
-    /*public void setPassword(String password) {
-        this.password = PasswordUtil.generateBCrypt(password);
-    }*/
-
     public void delete() {
         this.activo = false;
     }

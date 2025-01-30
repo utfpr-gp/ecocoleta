@@ -335,7 +335,6 @@ public class CollectService {
      * @return DTO da coleta atualizados.
      * @throws ValidException Se o usuário não tiver permissão para cancelar a coleta.
      */
-//    TODO mudar para receber o user id e não o user
     public CollectDTO pausedCollect(@Valid Long collectId, User user) {
 
         if (user.getRole().equals(UserRole.WASTE_COLLECTOR)) {

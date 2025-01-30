@@ -91,8 +91,6 @@ public class CollectController {
         return ResponseEntity.ok().body(dto);
     }
 
-    //    TODO rota de upodate de coleta??? ou é melhor fazer um cancelamento e criar uma nova coleta?
-
     // retrona a lista de coletas atuais do usuario --- mudar o nome do endpoint
     @GetMapping("/active_collects")
     public ResponseEntity<Page<CollectDTO>> getActiveCollects(@RequestParam @Valid Long userId,
@@ -386,8 +384,6 @@ public class CollectController {
             return ResponseEntity.internalServerError().body("Erro inesperado: " + e.getMessage());
         }
     }
-
-    //TODO endpint para tornar disponivel a coleta ou indisponivel, assim deixando de lado a opção de agendar coleta, o usuario modifica o status qeu esta disponivel, ...
 
     /**
      * Endpoint para puasar ou ativar uma coleta tornando indisponivel naquele momento.
