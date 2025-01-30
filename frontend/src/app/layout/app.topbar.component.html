@@ -1,0 +1,100 @@
+<div class="layout-topbar">
+    <a class="layout-topbar-logo" [routerLink]="'/home'">
+        <!--        <svg xmlns="http://www.w3.org/2000/svg" width="400" height="100" viewBox="0 0 400 100" role="img" aria-label="EcoColeta">-->
+        <!--            <defs>-->
+        <!--                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">-->
+        <!--                    <stop offset="0%" style="stop-color: #66ff99; stop-opacity: 1;" />-->
+        <!--                    <stop offset="100%" style="stop-color: #33cc66; stop-opacity: 1;" />-->
+        <!--                </linearGradient>-->
+        <!--            </defs>-->
+        <!--            <text x="20" y="70" font-family="'Poppins', sans-serif" font-size="50" fill="url(#gradient)" font-weight="bold">-->
+        <!--                EcoColeta-->
+        <!--            </text>-->
+        <!--        </svg>-->
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 400 100"
+            preserveAspectRatio="xMidYMid meet"
+            role="img"
+            aria-label="EcoColeta"
+            style="width: 100%; max-width: 200px; height: auto;"
+        >
+            <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color: #66ff99; stop-opacity: 1;"/>
+                    <stop offset="100%" style="stop-color: #33cc66; stop-opacity: 1;"/>
+                </linearGradient>
+            </defs>
+            <text x="20" y="70" font-family="'Poppins', sans-serif" font-size="50" fill="url(#gradient)"
+                  font-weight="bold">
+                EcoColeta
+            </text>
+        </svg>
+    </a>
+
+    <!--Chamado do menu desativado ate uso futuro-->
+    <!--    <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">-->
+    <!--        <i class="pi pi-bars"></i>-->
+    <!--    </button>-->
+
+    <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button"
+            (click)="layoutService.showProfileSidebar()">
+        <i class="pi pi-ellipsis-v"></i>
+    </button>
+
+    <div #topbarmenu class="layout-topbar-menu"
+         [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+        <button class="p-link layout-topbar-button" pTooltip="Bem-vindo!" tooltipPosition="bottom">
+            <span>Olá, {{ user?.name }}</span>
+        </button>
+        <button class="p-link layout-topbar-button" [routerLink]="'/home'" pTooltip="Ir para Home"
+                tooltipPosition="bottom">
+            @if (user?.role === 'WASTE_COLLECTOR' || user?.role === 'RESIDENT') {
+                <i class="pi pi-map"></i>
+            } @else {
+                <i class="pi pi-home"></i>
+            }
+            <span>Home</span>
+        </button>
+        @if (user?.role === 'ADMIN' || user?.role === 'COMPANY') {
+            <button class="p-link layout-topbar-button"
+                    [routerLink]="user.role === 'ADMIN' ? '/admin/user-list' : '/company/user-list'"
+                    pTooltip="Lista de usuários"
+                    tooltipPosition="bottom">
+                <i class="pi pi-list"></i>
+                <span>Usuários</span>
+            </button>
+        }
+        @if (user?.role === 'WASTE_COLLECTOR' || user?.role === 'RESIDENT') {
+            <button class="p-link layout-topbar-button" [routerLink]="'/coletas/em-andamento'" pTooltip="Ver coletas"
+                    tooltipPosition="bottom">
+                <i class="pi pi-table"></i>
+                <span>Coletas</span>
+            </button>
+        }
+        @if (user?.role === 'RESIDENT') {
+            <button class="p-link layout-topbar-button" [routerLink]="'/coletas/historico'"
+                    pTooltip="Ver histórico de coletas" tooltipPosition="bottom">
+                <i class="pi pi-history"></i>
+                <span>Histórico de coletas</span>
+            </button>
+        }
+        <button class="p-link layout-topbar-button" [routerLink]="['/user/perfil', user?.id]" pTooltip="Ver perfil"
+                tooltipPosition="bottom">
+            <i class="pi pi-user"></i>
+            <span>Perfil</span>
+        </button>
+        <!--Implementar futuramente-->
+        <!--        <button class="p-link layout-topbar-button" [routerLink]="['/user/notificacoes',  user?.id]"-->
+        <!--                pTooltip="Ver notificações"-->
+        <!--                tooltipPosition="bottom">-->
+        <!--            <i class="pi pi-bell"></i>-->
+        <!--            <span>Notificações</span>-->
+        <!--        </button>-->
+        <button class="p-link layout-topbar-button" (click)="logout()" pTooltip="Sair do sistema"
+                tooltipPosition="bottom">
+            <i class="pi pi-sign-out"></i>
+            <span>Sair</span>
+        </button>
+    </div>
+</div>

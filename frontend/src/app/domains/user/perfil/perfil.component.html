@@ -1,0 +1,73 @@
+@if (user) {
+    @if (userType === "WASTE_COLLECTOR") {
+        <div class="custom-card p-d-flex p-flex-column p-ai-center p-jc-center p-p-4">
+            <!-- Foto do Catador -->
+            <p-avatar
+                [image]="user?.picture"
+                [icon]="!user?.picture ? 'pi pi-user' : null"
+                size="xlarge"
+                shape="circle"
+                class="p-mb-3"
+            ></p-avatar>
+
+            <!-- Nome do Catador -->
+            <h3 class="text-primary p-text-center p-mt-2">{{ user?.name }}</h3>
+
+            <!-- Pontuação em Estrelas -->
+            <p-rating
+                [(ngModel)]="user.score"
+                [cancel]="false"
+                [stars]="5"
+                [readonly]="true"
+                class="p-mt-2"
+            ></p-rating>
+        </div>
+    }
+
+    <app-user-form [formModeUpdate]="true" [userRole]="userType" [formData]="user"
+                   (formSubmitted)="handleFormSubmission($event)"></app-user-form>
+}
+<!-- Painel de Endereços -->
+<p-panel class="col-12" header="Endereços">
+    <p-scrollPanel [style]="{ width: '100%', height: '150px' }">
+        <p-table [value]="addresses" [rows]="5">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Endereço</th>
+                    <th>Detalhes</th>
+                    <th class="text-right">Ações</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-address let-i="rowIndex">
+                <tr>
+                    <td>{{ address.name }}</td>
+                    <td>{{ address.street }}, {{ address.neighborhood }}, {{ address.number }}, {{ address.city }}
+                        - {{ address.state }}
+                    </td>
+                    <td class="text-right">
+                        <button type="button" pButton icon="pi pi-pencil" class="p-button-warning p-button-rounded"
+                                (click)="openEditAddressModal(address)"></button>
+                        <button type="button" pButton icon="pi pi-trash" class="p-button-danger p-button-rounded"
+                                (click)="removeAddress(address.id)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="3" class="text-center">Nenhum endereço encontrado.</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-scrollPanel>
+
+    <!-- Botão de Adicionar Endereço -->
+    <div class="field col-12 text-center">
+        <button type="button" pButton icon="pi pi-plus" label="Adicionar Endereço" class="p-button-text"
+                (click)="openAddAddressModal()"></button>
+    </div>
+</p-panel>
+
+@if (addressFormDialog) {
+    <app-address-form-dialog [userId]="userId" [address_id]="address_id" [addressFormDialog]="addressFormDialog"
+                             (outAddressFormDialog)="hideAddressDialog($event)"></app-address-form-dialog>
+}

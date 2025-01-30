@@ -1,0 +1,123 @@
+<p-panel class="col-12" header="{{ formModeUpdate ? 'Editar' : 'Cadastrar' }} Coleta">
+    <form [formGroup]="formCollect" (ngSubmit)="onSubmit()">
+        <div class="p-grid p-justify-center">
+            <div class="field col-12 md:col-6">
+                <label for="materials">Materiais
+                    <i class="pi pi-info-circle ml-2"
+                       pTooltip="Selecione os materiais que serão incluídos nesta coleta"
+                       tooltipPosition="right">
+                    </i>
+                </label><b class="ml-1" style="color: crimson;"> *</b>
+                <div class="p-inputgroup">
+                    <p-listbox
+                        id="materials"
+                        formControlName="materials"
+                        [options]="materials"
+                        optionLabel="name"
+                        optionValue="code"
+                        [style]="{'width':'15rem'}"
+                        [multiple]="true"
+                        [metaKeySelection]="false"
+                        [listStyle]="{'max-height': '220px'}"/>
+                </div>
+                <app-message [control]="formCollect.get('materials')" error="required"
+                             text="Selecione pelo menos um material para a coleta"></app-message>
+            </div>
+
+            <div class="field col-12 md:col-4">
+                <label for="amount">Quantidade de caixas/sacos
+                    <i class="pi pi-info-circle ml-2"
+                       pTooltip="Informe a quantidade de sacolas ou caixas a serem coletadas"
+                       tooltipPosition="right">
+                    </i>
+                </label><b class="ml-1" style="color: crimson;"> *</b>
+                <div class="p-inputgroup">
+                    <p-inputNumber
+                        id="amount"
+                        formControlName="amount"
+                        mode="decimal"
+                        [showButtons]="true"
+                        inputId="minmax-buttons"
+                        [min]="1"
+                        [max]="10"/>
+                </div>
+                <app-message [control]="formCollect.get('amount')" error="required"
+                             text="Informe a quantidade de caixas ou sacos"></app-message>
+            </div>
+
+            <div class="col-12 md:col-4">
+                <div class="field">
+                    <label for="address" class="block mb-1">Endereço
+                        <i class="pi pi-info-circle ml-2"
+                           pTooltip="Endereço onde a coleta será realizada"
+                           tooltipPosition="right">
+                        </i>
+                        <b style="color: crimson;"> *</b></label>
+                    <p-dropdown
+                        id="address"
+                        formControlName="address"
+                        [options]="addresses"
+                        [optionValue]="'id'"
+                        [placeholder]="'Escolha um endereço'"
+                        [optionLabel]="'name'"
+                        [showClear]="true"
+                        emptyFilterMessage="Endereço não encontrado"
+                        emptyMessage="Nenhum endereço encontrado"
+                        styleClass="w-full"
+                        [ngClass]="{ 'ng-invalid ng-dirty': formCollect.get('address')?.invalid }">
+                        <ng-template let-address pTemplate="item">
+                            <div class="p-d-flex p-flex-column">
+                                <strong>{{ address.name }}</strong> <br>
+                                <small>{{ address.street +', '+ address.number +', '+ address.neighborhood +', '+ address.city +', '+ address.state }}</small>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                    <app-message
+                        [control]="formCollect.get('address')"
+                        error="required"
+                        text="Selecione o endereço da coleta">
+                    </app-message>
+                </div>
+
+                <div class="p-col-fixed">
+                    <button
+                        pButton
+                        type="button"
+                        icon="pi pi-plus"
+                        label="Endereço"
+                        class="p-button-success p-button-rounded"
+                        (click)="openAddAddressModal()">
+                    </button>
+                </div>
+            </div>
+
+        </div>
+                <div class="w-full flex flex-column md:flex-row align-items-center justify-content-center gap-2 mt-4">
+<!--                    <div *ngIf="!formModeUpdate" class="col-12 md:col-3">-->
+<!--                        <button-->
+<!--                            pButton-->
+<!--                            pRipple-->
+<!--                            label="Voltar"-->
+<!--                            (click)="onCancel()"-->
+<!--                            class="w-full p-3 text-xl p-button-rounded p-button-outlined"-->
+<!--                            type="button">-->
+<!--                        </button>-->
+<!--                    </div>-->
+                    <div class="col-12 md:col-3">
+                        <button
+                            pButton
+                            pRipple
+                            label="{{formModeUpdate ? 'Atualizar' : 'Criar' }}"
+                            type="submit"
+                            class="w-full p-3 text-xl p-button-rounded"
+                            [disabled]="formCollect.invalid">
+                        </button>
+                    </div>
+                </div>
+    </form>
+</p-panel>
+
+@if (addressFormDialog){
+    <app-address-form-dialog [userId]="user?.id" [addressFormDialog]="addressFormDialog" (outAddressFormDialog)="hideAddressDialog($event)" ></app-address-form-dialog>
+}
+

@@ -1,0 +1,21 @@
+<p-dialog
+    [(visible)]="evaluationDialogVisible"
+    [modal]="true"
+    [style]="{ width: '55vw' }"
+    header="Avaliar Coleta"
+    (onHide)="hideDialog()">
+
+    <ng-template pTemplate="content">
+        <div class="p-d-flex p-flex-column p-ai-center">
+            <p>Deixe sua avaliação para a coleta:</p>
+            <p-rating [(ngModel)]="selectedRating" [stars]="5" [cancel]="false"></p-rating>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" class="p-button-text" icon="pi pi-times"
+                (click)="hideDialog()"></button>
+        <button pButton pRipple label="Salvar" class="p-button-success" icon="pi pi-check" (click)="submitEvaluation()"
+                [disabled]="!selectedRating"></button>
+    </ng-template>
+</p-dialog>

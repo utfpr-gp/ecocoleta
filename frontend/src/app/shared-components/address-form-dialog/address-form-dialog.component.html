@@ -1,0 +1,73 @@
+<p-dialog
+    [(visible)]="addressFormDialog"
+    [modal]="true"
+    [style]="{width: '600px'}"
+    [header]="address_id ? 'Editar Endereço' : 'Cadastrar Endereço'"
+    (onShow)="showDialog()"
+    (onHide)="hideDialog()">
+    <ng-template pTemplate="content">
+        <form [formGroup]="addressForm" autocomplete="off" class="p-grid p-justify-center">
+            <div class="field col-10 md:col-6">
+                <label for="name">Nome do endereço</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="name" id="name" required maxlength="255" pInputText type="text">
+                </div>
+                <app-message [control]="addressForm.get('name')" error="required" text="É necessário preencher o nome desse endereço."></app-message>
+            </div>
+
+            <div class="field col-10 md:col-6">
+                <label for="cep">Cep</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="cep" id="cep" required maxlength="255" pInputText type="text" (input)="onCepChange($event.target.value)">
+                </div>
+                <app-message [control]="addressForm.get('cep')" error="required" text="CEP é obrigatório."></app-message>
+            </div>
+
+            <div class="field col-10 md:col-6">
+                <label for="street">Rua</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="street" id="street" required maxlength="255" pInputText type="text">
+                </div>
+                <app-message [control]="addressForm.get('street')" error="required" text="Rua é obrigatória."></app-message>
+            </div>
+
+            <div class="field col-10 md:col-6">
+                <label for="number">Número</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="number" id="number" required maxlength="255" pInputText type="text">
+                </div>
+                <app-message [control]="addressForm.get('number')" error="required" text="Número é obrigatória."></app-message>
+            </div>
+
+            <div class="field col-10 md:col-6">
+                <label for="neighborhood">Bairro</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="neighborhood" id="neighborhood" required maxlength="255" pInputText type="text">
+                </div>
+                <app-message [control]="addressForm.get('neighborhood')" error="required" text="Bairro é obrigatória."></app-message>
+            </div>
+
+            <div class="field col-10 md:col-6">
+                <label for="city">Cidade</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="city" id="city" required maxlength="255" pInputText type="text">
+                </div>
+                <app-message [control]="addressForm.get('city')" error="required" text="Cidade é obrigatória."></app-message>
+            </div>
+
+            <div class="field col-10 md:col-6">
+                <label for="state">Estado</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="state" id="state" required maxlength="255" pInputText type="text">
+                </div>
+                <app-message [control]="addressForm.get('state')" error="required" text="Estado é obrigatória."></app-message>
+            </div>
+
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button type="button" pButton pRipple label="Cancelar" class="p-button-text" icon="pi pi-times" (click)="hideDialog()"></button>
+        <button type="button" pButton pRipple label="{{address_id ? 'Alterar' : 'Cadastrar' }}" class="p-button-text" icon="pi pi-check" (click)="salveAddress()" [disabled]="addressForm.invalid || !addressForm.dirty"></button>
+    </ng-template>
+</p-dialog>

@@ -1,0 +1,80 @@
+<p-panel class="col-12" header="Histórico de Coletas">
+    <p-table
+        [value]="collects"
+        [paginator]="true"
+        [rows]="5"
+        [loading]="loading"
+        [totalRecords]="totalRecords"
+        [lazy]="true"
+        (onLazyLoad)="loadCollects($event.first, $event.rows)"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="max-width:1rem;">ID</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th class="fixed-column" style="min-width:10rem;">Ações</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-collect>
+            <tr>
+                <td>{{ collect.id }}</td>
+                <td>{{ collect.status | statusTranslate }}</td>
+                <td>{{ collect.createTime | date:'dd/MM/yy' }}</td>
+                <td class="fixed-column">
+                    <!-- Botão Detalhes (visível para todos os usuários) -->
+                    <button
+                        pButton
+                        class="p-button-rounded p-button-info p-button-sm mr-1"
+                        icon="pi pi-info-circle"
+                        (click)="openDetails(collect)"
+                        title="Detalhes da Coleta"
+                    ></button>
+
+                    <!-- Botão de Avaliar -->
+                    <button
+                        *ngIf="collect.status === 'COMPLETED' && !collect.isEvaluated"
+                        pButton
+                        class="p-button-rounded p-button-info p-button-sm mr-1"
+                        icon="pi pi-star"
+                        (click)="openEvaluateDialog(collect)"
+                        title="Avaliar Coleta"
+                    ></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+<!--dialog de detalhes-->
+<p-dialog
+    [(visible)]="detailsDialogVisible"
+    [header]="'Detalhes da Coleta #' + selectedCollect?.id"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: '55vw' }"
+    [dismissableMask]="true"
+    (onHide)="closeDetailsDialog()">
+    <div *ngIf="selectedCollect">
+        <p><strong>Status:</strong> {{ selectedCollect.status | statusTranslate }}</p>
+        <p><strong>Data:</strong> {{ selectedCollect.createTime | date:'dd/MM/yy, hh:mm a' }}</p>
+        <p><strong>Materiais:</strong></p>
+        <ul>
+            <li *ngFor="let material of selectedCollect.materials">
+                {{ material }}
+            </li>
+        </ul>
+        <p><strong>Quantidade de sacos:</strong> {{ selectedCollect.amount }}</p>
+        <!-- Adicione mais campos conforme necessário -->
+    </div>
+</p-dialog>
+
+<!--dialog de avaliar coleta-->
+@if (evaluateDialogVisible) {
+    <app-evaluate-dialog
+        [evaluationDialogVisible]="evaluateDialogVisible"
+        [collectId]="selectedCollectId"
+        (outEvaluationDialog)="hideEvaluateDialog($event)"
+    >
+    </app-evaluate-dialog>
+}

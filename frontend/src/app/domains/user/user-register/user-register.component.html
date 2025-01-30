@@ -1,0 +1,11 @@
+<p-toast></p-toast>
+<app-user-form [formModeUpdate]="false" [userRole]="userType" (formSubmitted)="handleFormSubmission($event)"></app-user-form>
+
+
+<p-dialog [(visible)]="showModal" header="Selecione o tipo de usuário" [modal]="true" [closable]="false">
+    <p>Escolha o tipo de usuário para o cadastro:</p>
+    <div class="flex justify-content-around">
+        <button pButton label="Residente" (click)="selectUserType(UserRole.RESIDENT)" class="p-button-primary"></button>
+        <button pButton label="Catador" (click)="selectUserType(UserRole.WASTE_COLLECTOR)" class="p-button-secondary"></button>
+    </div>
+</p-dialog>

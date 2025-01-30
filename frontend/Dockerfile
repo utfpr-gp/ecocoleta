@@ -1,5 +1,5 @@
 # Definir a imagem base que será usada
-FROM node:8.9.4-alpine AS builder
+FROM node:18.17.1-alpine3.17 AS builder
 
 # Definir o diretório de trabalho para a aplicação
 WORKDIR /app
@@ -17,14 +17,15 @@ COPY . .
 RUN npm run build
 
 # Definir a imagem base para a aplicação
-FROM nginx:1.21-alpine AS production
+FROM nginx:1.25.2-alpine AS production
 
 VOLUME /var/cache/nginx
 
+# Copiar os arquivos do projeto angular para a imagem
+COPY --from=builder /app/dist/frontend /usr/share/nginx/html
+
 # Copiar os arquivos de configuração do nginx para a imagem
-COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
-#COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./config/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expor a porta do nginx
 EXPOSE 80

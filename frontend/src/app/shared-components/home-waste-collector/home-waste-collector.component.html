@@ -1,0 +1,30 @@
+<div class="waste-collector-container">
+    <div *ngIf="loading$ | async" class="loading-overlay-component">
+        <p-progressSpinner></p-progressSpinner>
+    </div>
+    <!-- Mostrar coletas disponíveis apenas quando não estiver em coleta -->
+    <ng-container *ngIf="isCollectingFlag$ | async as isCollecting">
+        <h3 *ngIf="!isCollecting" class="text-3xl text-center">
+            Coletas Disponíveis: {{ totalAvailableCollects }}
+        </h3>
+
+        <!-- Mensagem para coleta em andamento -->
+        <h3 *ngIf="isCollecting" class="text-3xl text-center">
+            Coleta em andamento
+        </h3>
+    </ng-container>
+
+    <!-- Mapa Responsivo -->
+    <div class="map-container">
+        <app-map></app-map>
+    </div>
+</div>
+
+
+<p-dialog [(visible)]="showModal" header="Coletas em Progresso" [modal]="true" [closable]="false">
+    <p class="text-center">Você tem coletas em progresso. Deseja retomá-las ou resetá-las?</p>
+    <div class="flex justify-content-around mt-4">
+        <button pButton label="Retomar" (click)="handleModalAction('resume')" class="p-button-success"></button>
+        <button pButton label="Resetar" (click)="handleModalAction('reset')" class="p-button-danger"></button> <!--// class="p-button-secondary">-->
+    </div>
+</p-dialog>

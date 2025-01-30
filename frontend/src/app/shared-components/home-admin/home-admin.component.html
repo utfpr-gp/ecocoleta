@@ -1,0 +1,12 @@
+<div class="flex flex-column align-items-center justify-content-center flex-grow-1 py-5">
+    <div class="w-11 sm:w-8 md:w-6 lg:w-4">
+        <p-card>
+            <ng-template pTemplate="header">
+                <h2 class="text-center">Distribuição de Usuários</h2>
+            </ng-template>
+            <ng-template pTemplate="content">
+                <p-chart type="pie" [data]="userChartData" [options]="userChartOptions"></p-chart>
+            </ng-template>
+        </p-card>
+    </div>
+</div>

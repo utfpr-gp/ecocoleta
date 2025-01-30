@@ -1,0 +1,34 @@
+/* You can add global styles to this file, and also import other style files */
+
+$gutter: 1rem; //for primeflex grid system
+/* PrimeNG Theme */
+@import "../node_modules/primeng/resources/themes/saga-green/theme.css";
+
+@import "assets/layout/styles/layout/layout.scss";
+
+/* PrimeNG */
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/primeflex/primeflex.scss";
+@import "../node_modules/primeicons/primeicons.css";
+
+/* Demos */
+@import "assets/demo/styles/flags/flags.css";
+@import "assets/demo/styles/badges.scss";
+@import "assets/demo/styles/code.scss";
+
+/* Custom */
+.loading-overlay-component {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8); /* Fundo semi-transparente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10; /* Garante que o spinner fique acima dos outros elementos */
+    border-radius: 8px; /* Opcional, ajusta o visual */
+    text-align: center; /* Centraliza o texto */
+    padding: 1rem;
+}
