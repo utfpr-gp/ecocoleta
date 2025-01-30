@@ -14,6 +14,7 @@ import {BrowserModule} from "@angular/platform-browser";
 import {JwtModule} from "@auth0/angular-jwt";
 import {MessageService} from "primeng/api";
 import { GoogleMapsModule } from '@angular/google-maps';
+import {ToastModule} from "primeng/toast";
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
     return new TranslateHttpLoader(httpClient);
@@ -46,7 +47,8 @@ export function tokenGetter(): string {
                 useFactory: HttpLoaderFactory,
                 deps: [HttpClient]
             }
-        })
+        }),
+        ToastModule
     ],
     providers: [
         {
