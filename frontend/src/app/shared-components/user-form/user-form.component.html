@@ -147,7 +147,7 @@
         </div>
 
         <div class="w-full flex flex-column md:flex-row align-items-center justify-content-center gap-2 mt-4">
-            <div *ngIf="!formModeUpdate" class="col-12 md:col-3">
+            <div *ngIf="!formModeUpdate && userRole !== 'COMPANY' " class="col-12 md:col-3">
                 <button
                     pButton
                     pRipple
