@@ -121,7 +121,7 @@ public class UserService {
         if (role != null) {
             users = userRepository.findAllByRole(role, pageable);
         } else {
-            users = userRepository.findAllByActivoTrue(pageable); // Retorna todos se o tipo não for especificado
+            users = userRepository.findAll(pageable); // Retorna todos se o tipo não for especificado
         }
 
         return users.map(UserGetDTO::new);
