@@ -67,7 +67,6 @@ public class Address implements Serializable {
         this.setLocationFromCoordinates(); // Define o Point automaticamente
     }
 
-    // Método para criar o Point (location) a partir de longitude e latitude
     public void setLocationFromCoordinates() {
         if (latitude != null && longitude != null) {
             GeometryFactory geometryFactory = new GeometryFactory();

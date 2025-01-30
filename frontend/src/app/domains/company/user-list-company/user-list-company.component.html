@@ -1,0 +1,122 @@
+<p-panel class="col-12" header="Catadores">
+    <p-table
+        [value]="wasteCollectors"
+        [paginator]="true"
+        [rows]="pageSize"
+        [loading]="loading"
+        [totalRecords]="totalRecords"
+        [lazy]="true"
+        (onLazyLoad)="onPageChange($event)"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Nome</th>
+                <!--                <th>Telefone</th>-->
+                <th>Status</th>
+                <th class="fixed-column" style="min-width:8rem;">Ações</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-collector>
+            <tr>
+                <td>{{ collector.name }}</td>
+                <!--                <td>{{ collector.phone }}</td>-->
+                <td>
+                    <i
+                        [ngClass]="collector.activo ? 'pi pi-check text-green-500' : 'pi pi-times text-red-500'"
+                        style="font-size: 1.5rem;">
+                    </i>
+                </td>
+                <td class="fixed-column">
+                    <!-- Botão Detalhes -->
+                    <button
+                        pButton
+                        class="p-button-rounded p-button-info p-button-sm mr-1"
+                        icon="pi pi-user"
+                        (click)="openDetailsDialog(collector.id)"
+                        title="Ver Detalhes"
+                    ></button>
+
+                    <!-- Botão Desativar -->
+                    <button
+                        *ngIf="collector.activo"
+                        pButton
+                        class="p-button-rounded p-button-danger p-button-sm mr-1"
+                        icon="pi pi-ban"
+                        (click)="openDeactivateDialog(collector)"
+                        title="Desativar Catador"
+                    ></button>
+
+                    <!-- Botão Ativar -->
+                    <button
+                        *ngIf="!collector.activo"
+                        pButton
+                        class="p-button-rounded p-button-success p-button-sm mr-1"
+                        icon="pi pi-check"
+                        (click)="toggleUserStatus(collector, true)"
+                        title="Ativar Catador"
+                    ></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
+
+<!-- Dialog de Detalhes -->
+<p-dialog
+    [(visible)]="detailsDialogVisible"
+    [header]="'Editar Catador: ' + selectedCollector?.name"
+    [modal]="true"
+    [style]="{ width: '80vw' }"
+    [dismissableMask]="true"
+    (onHide)="closeDetailsDialog()">
+
+    @if (selectedCollector) {
+        <div class="custom-card p-d-flex p-flex-column p-ai-center p-jc-center p-p-4">
+            <!-- Foto do Catador -->
+            <p-avatar
+                [image]="selectedCollector?.picture"
+                [icon]="!selectedCollector?.picture ? 'pi pi-user' : null"
+                size="xlarge"
+                shape="circle"
+                class="p-mb-3"
+            ></p-avatar>
+
+            <!-- Nome do Catador -->
+            <h3 class="text-primary p-text-center p-mt-2">{{ selectedCollector?.name }}</h3>
+
+            <!-- Pontuação em Estrelas -->
+            <p-rating
+                [(ngModel)]="selectedCollector.score"
+                [cancel]="false"
+                [stars]="5"
+                [readonly]="true"
+                class="p-mt-2"
+            ></p-rating>
+        </div>
+    }
+
+    <app-user-form
+        *ngIf="selectedCollector"
+        [formData]="selectedCollector"
+        [formModeUpdate]="true"
+        [userRole]="'WASTE_COLLECTOR'"
+        (formSubmitted)="handleFormSubmission($event)">
+    </app-user-form>
+</p-dialog>
+
+
+<!-- Dialog de Confirmação de Desativação -->
+<p-dialog
+    [(visible)]="deactivateDialogVisible"
+    [header]="'Desativar ' + selectedCollector?.name"
+    [modal]="true"
+    [style]="{ width: '55vw' }"
+    [dismissableMask]="true"
+>
+    <p>Tem certeza de que deseja desativar o catador <strong>{{ selectedCollector?.name }}</strong>?</p>
+    <div class="flex justify-content-end gap-2">
+        <button pButton label="Cancelar" class="p-button-text" (click)="deactivateDialogVisible = false"></button>
+        <button pButton label="Confirmar" class="p-button-danger" (click)="confirmDeactivate()"></button>
+    </div>
+</p-dialog>

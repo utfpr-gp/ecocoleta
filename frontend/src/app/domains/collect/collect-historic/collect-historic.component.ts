@@ -63,19 +63,16 @@ export class CollectHistoricComponent implements OnInit {
 
         this.collectService.getHistoryCollects(this.user.id, page, rows).subscribe({
             next: (response: any) => {
-                console.log('Coletas carregadas:', response); //todo remover
                 this.collects = response.content; // Registros da página atual
                 this.totalRecords = response.totalElements; // Total de registros no banco
                 this.loading = false;
             },
             error: (err) => {
-                console.error('Erro ao carregar histórico de coletas:', err); //todo remover
                 this.loading = false;
-
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: 'Não foi possível carregar o histórico de coletas.',
+                    detail: 'Não foi possível carregar o histórico de coletas.: ' + err.message,
                 });
             },
         });

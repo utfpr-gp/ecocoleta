@@ -99,20 +99,14 @@ export class PerfilComponent implements OnInit {
     updateUser(user: User) {
         this.userService.createAndUpdateUser(user)
             .then(() => {
-
-                console.log('Usuário atualizado com sucesso', user); // TODO apagar apos teste
-
                 this.messageService.add({
                     severity: 'success',
-                    summary: 'Usuário criado com sucesso!',
+                    summary: 'Usuário atualizado com sucesso!',
                     life: 3000,
                 });
-                this.router.navigate(['/home/user/perfil']);
+                this.router.navigate(['/home']);
             })
             .catch((error) => {
-
-                console.error('Erro ao atualizar usuário:', error); // TODO: Remover após teste
-
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Erro ao atualizar usuário',
@@ -129,8 +123,6 @@ export class PerfilComponent implements OnInit {
             this.addressService.getAllAddressByUserId(this.user.id).subscribe(
                 (addresses) => {
 
-                    console.log('Endereços do usuário:', addresses); //TODO apagar apos teste
-
                     this.addresses = addresses;
                 },
                 (error) => {
@@ -141,9 +133,6 @@ export class PerfilComponent implements OnInit {
                         detail: error?.message || 'Não foi possível carregar os endereços.',
                         life: 3000
                     });
-
-                    // Opcional: logar o erro completo para depuração
-                    console.error('Erro ao carregar endereços:', error); // TODO remover após teste
                 }
             );
         }
@@ -190,7 +179,6 @@ export class PerfilComponent implements OnInit {
                         detail: error?.message || 'Não foi possível excluir o endereço.',
                         life: 3000,
                     });
-                    console.error('Erro ao excluir endereço:', error); // TODO remover após teste
                 },
             });
         }

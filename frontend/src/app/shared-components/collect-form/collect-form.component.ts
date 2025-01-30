@@ -67,22 +67,16 @@ export class CollectFormComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log('oninit form-collect'); //TODO apagar apos teste
-
         // Inicializar formulário
         this.initForm();
 
         // Caso seja modo de edição, carregar os dados do usuário no formulário
         if (this.formData) {
-
-            console.log('iniciando formData collect-form: ', this.formData); //TODO apagar apos teste
-
             this.formCollect.patchValue(this.formData);
         }
 
         this.materials = this.transformEnumToOptions(MateriaisReciclaveis);
         this.loadUserAddresses();
-        //TODO continuar form collect
     }
 
     initForm() {
@@ -116,13 +110,8 @@ export class CollectFormComponent implements OnInit {
     }
 
     loadUserAddresses() {
-        console.log('Carregando endereços do usuário:', this.user?.id); //TODO apagar apos teste
-
             this.addressService.getAllAddressByUserId(this.user?.id).subscribe(
                 (addresses) => {
-
-                    console.log('Endereços do usuário:', addresses); //TODO apagar apos teste
-
                     this.addresses = addresses;
                 },
                 (error) => {
@@ -133,9 +122,6 @@ export class CollectFormComponent implements OnInit {
                         detail: error?.error?.message || 'Não foi possível carregar os endereços.',
                         life: 3000
                     });
-
-                    // Opcional: logar o erro completo para depuração
-                    console.error('Erro ao carregar endereços:', error); // TODO remover após teste
                 }
             );
         }

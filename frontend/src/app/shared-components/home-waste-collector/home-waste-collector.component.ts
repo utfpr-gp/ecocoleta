@@ -65,19 +65,14 @@ export class HomeWasteCollectorComponent implements OnInit, OnDestroy {
                     console.log('Verificando coletas em progresso...');
                     this.collectorAndMapStateService.checkProgressCollects().subscribe((progressCollects) => {
                         if (progressCollects.length > 0) {
-                            console.log('HOME WASTE - ONINIT - Coleta em andamento. showModal...'); // todo remove
                             this.progressCollects = progressCollects;
                             this.showModal = true; // Exibe o modal
                         } else {
-                            console.log('HOME WASTE - ONINIT - Nenhuma coleta em progresso. initializeUnlinkedCollects...'); // todo remove
                             this.initializeUnlinkedCollects(); // Nenhuma coleta em progresso
                         }
                     });
 
                 } else {
-                    console.log('HOME WASTE - ONINIT - Coleta em andamento. resumeinProgress...'); // todo remove
-                    // this.collectorAndMapStateService.startLocationMonitoring();
-                    // TODO ao retoamr não ta gerando rota
                     this.collectorAndMapStateService.resumeInProgressCollects();
                 }
             })

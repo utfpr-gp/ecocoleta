@@ -3,6 +3,7 @@ package com.ecocoleta.backend.repositories;
 import com.ecocoleta.backend.domain.address.Address;
 import com.ecocoleta.backend.domain.collect.Collect;
 import com.ecocoleta.backend.domain.collect.CollectStatus;
+import com.ecocoleta.backend.domain.collect.dto.CollectStatusCountDTO;
 import jakarta.persistence.Tuple;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -169,4 +171,27 @@ public interface CollectRepository extends JpaRepository<Collect, Long> {
     @Modifying
     @Query("UPDATE WasteCollector wc SET wc.score = :averageRating WHERE wc.id = :wasteCollectorId")
     void updateWasteCollectorScore(@Param("wasteCollectorId") Long wasteCollectorId, @Param("averageRating") Double averageRating);
+
+    /**
+     * Conta a quantidade de coletas por status no dia atual.
+     *
+     * @param date Data para a qual a contagem será realizada.
+     * @return Lista de CollectStatusCountDTO com a contagem de coletas por status.
+     */
+    @Query("SELECT new com.ecocoleta.backend.domain.collect.dto.CollectStatusCountDTO(c.status, COUNT(c)) " +
+            "FROM Collect c WHERE DATE(c.createTime) = :date GROUP BY c.status")
+    List<CollectStatusCountDTO> countCollectsByStatusForToday(@Param("date") LocalDate date);
+
+    /**
+     * Conta a quantidade de coletas por status no mês atual, considerando apenas coletas concluídas ou canceladas.
+     *
+     * @param statuses Lista de status a serem considerados na contagem.
+     * @return Lista de CollectStatusCountDTO com a contagem de coletas por status.
+     */
+    @Query("SELECT new com.ecocoleta.backend.domain.collect.dto.CollectStatusCountDTO(c.status, COUNT(c)) " +
+            "FROM Collect c WHERE c.status IN :statuses " +
+            "AND FUNCTION('DATE_TRUNC', 'month', c.createTime) = FUNCTION('DATE_TRUNC', 'month', CURRENT_DATE) " +
+            "GROUP BY c.status")
+    List<CollectStatusCountDTO> countMonthlyCollectsByStatus(@Param("statuses") List<CollectStatus> statuses);
+
 }

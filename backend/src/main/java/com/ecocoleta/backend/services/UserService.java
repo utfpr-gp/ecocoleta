@@ -8,9 +8,13 @@ import com.ecocoleta.backend.domain.resident.dto.ResidentGetDTO;
 import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.domain.user.dto.UserGetDTO;
+import com.ecocoleta.backend.domain.user.dto.UserTypeCountDTO;
+import com.ecocoleta.backend.domain.user.dto.UserUpdateDTO;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.domain.wasteCollector.dto.WasteCollectorGetDTO;
 import com.ecocoleta.backend.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +25,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Serviço para gerenciar operações relacionadas a usuários.
+ */
 @Service
 public class UserService {
 
@@ -31,7 +38,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-        public Optional<User> getUserById(Long id) {
+    public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -108,6 +115,29 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    /** 🔄 Obtém usuários filtrados por tipo */
+    public Page<UserGetDTO> getUsersByRole(UserRole role, Pageable pageable) {
+        Page<User> users;
+
+        if (role != null) {
+            users = userRepository.findAllByRole(role, pageable);
+        } else {
+            users = userRepository.findAll(pageable); // Retorna todos se o tipo não for especificado
+        }
+
+        return users.map(UserGetDTO::new);
+    }
+
+    /** ✅ Alterna o status de um usuário (ativa ou desativa) */
+    @Transactional
+    public void toggleUserStatus(Long id, boolean status) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        user.setActivo(status);
+        userRepository.save(user);
+    }
+
+
     public User createUser(User user) {
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
@@ -138,4 +168,60 @@ public class UserService {
     public Page<User> getAllByRole(UserRole role, Pageable pageable) {
         return userRepository.findAllByRole(role, pageable);
     }
+
+    /**
+     * Obtém a contagem de usuários agrupados por tipo (Resident, WasteCollector, Company).
+     *
+     * @return Lista de UserTypeCountDTO contendo a contagem de usuários por tipo.
+     */
+    public List<UserTypeCountDTO> getUserTypeCounts() {
+        return userRepository.countUsersByRole();
+    }
+
+    @Transactional
+    public Object updateUser(Long id, UserUpdateDTO userUpdateDTO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+
+        // Atualiza dados comuns a todos os usuários
+        user.update(userUpdateDTO);
+
+        // Tratamento específico baseado no tipo do usuário
+        if (user instanceof WasteCollector wasteCollector) {
+            updateWasteCollector(wasteCollector, userUpdateDTO);
+        } else if (user instanceof Company company) {
+            updateCompany(company, userUpdateDTO);
+        } else if (user instanceof Resident resident) {
+            updateResident(resident, userUpdateDTO);
+        }
+
+        // Retorna o DTO atualizado de acordo com o tipo de usuário
+        return getUserDtoById(user.getId());
+    }
+
+    private void updateWasteCollector(WasteCollector wasteCollector, UserUpdateDTO userUpdateDTO) {
+        if (userUpdateDTO.cpf() != null) {
+            wasteCollector.setCpf(userUpdateDTO.cpf());
+        }
+        if (userUpdateDTO.picture() != null) {
+            wasteCollector.setPicture(userUpdateDTO.picture());
+        }
+        if (userUpdateDTO.longitude() != null && userUpdateDTO.latitude() != null) {
+            wasteCollector.updateLocation(userUpdateDTO.longitude(), userUpdateDTO.latitude());
+        }
+    }
+
+    private void updateCompany(Company company, UserUpdateDTO userUpdateDTO) {
+        if (userUpdateDTO.cnpj() != null) {
+            company.setCnpj(userUpdateDTO.cnpj());
+        }
+        if (userUpdateDTO.companyName() != null) {
+            company.setCompany_name(userUpdateDTO.companyName());
+        }
+    }
+
+    private void updateResident(Resident resident, UserUpdateDTO userUpdateDTO) {
+        // Se houver atributos específicos para o residente, atualize-os aqui
+    }
+
 }

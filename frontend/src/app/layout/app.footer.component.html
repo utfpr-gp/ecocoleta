@@ -34,6 +34,15 @@
         </button>
         <span class="mt-2 w-full text-center">Home</span>
     </div>
+    @if (user?.role === 'ADMIN' || user?.role === 'COMPANY') {
+        <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;"
+             [routerLink]="user.role === 'ADMIN' ? '/admin/user-list' : '/company/user-list'">
+            <button class="p-link layout-footer-button flex justify-content-center align-items-center">
+                <i class="pi pi-list text-2xl"></i>
+            </button>
+            <span class="mt-2 w-full text-center">Usuários</span>
+        </div>
+    }
     @if (user?.role === 'RESIDENT') {
         <div class="flex flex-column align-items-center justify-content-center flex-1" style="text-align: center;"
              [routerLink]="'/coletas/em-andamento'">

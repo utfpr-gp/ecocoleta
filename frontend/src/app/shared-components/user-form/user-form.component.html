@@ -87,7 +87,9 @@
                            placeholder="Somente números">
                 </div>
                 <app-message [control]="formUser.get('cpf')" error="required"
-                             text="É necessário preencher o cpf."></app-message>
+                             text="É necessário preencher o CPF."></app-message>
+                <app-message [control]="formUser.get('cpf')" error="pattern"
+                             text="CPF deve conter somente números."></app-message>
             </div>
 
             <div class="field col-12 md:col-6" *ngIf="userRole === 'COMPANY'">
@@ -97,7 +99,19 @@
                            placeholder="Somente números">
                 </div>
                 <app-message [control]="formUser.get('cnpj')" error="required"
-                             text="É necessário preencher o cnpj."></app-message>
+                             text="É necessário preencher o CNPJ."></app-message>
+                <app-message [control]="formUser.get('cnpj')" error="pattern"
+                             text="CNPJ deve conter somente números."></app-message>
+            </div>
+
+            <div class="field col-12 md:col-6" *ngIf="userRole === 'COMPANY'">
+                <label for="companyName">Razão Social</label><b class="ml-1" style="color: crimson;">*</b>
+                <div class="p-inputgroup">
+                    <input formControlName="companyName" id="companyName" required maxlength="255" pInputText
+                           type="text" placeholder="Nome da Empresa">
+                </div>
+                <app-message [control]="formUser.get('companyName')" error="required"
+                             text="É necessário preencher a razão social."></app-message>
             </div>
 
             <div class="field col-12 md:col-6" *ngIf="userRole === 'WASTE_COLLECTOR' && !formModeUpdate">
@@ -130,7 +144,6 @@
                 <app-message [control]="formUser.get('picture')" error="required"
                              text="É necessário carregar a foto."></app-message>
             </div>
-            <!--            TODO em modo de update e wateCollector trazer a img ???-->
         </div>
 
         <div class="w-full flex flex-column md:flex-row align-items-center justify-content-center gap-2 mt-4">

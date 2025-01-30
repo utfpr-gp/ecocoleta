@@ -18,7 +18,9 @@ export type User = {
     picture?: string | File;
     score?: number;
     role?: UserRole | string;
+    activo?: boolean;
     token?: string;
+    companyName?: string;
     createdAt?: string;
     updatedAt?: string;
 };
@@ -28,6 +30,11 @@ export enum UserRole {
     RESIDENT = 'RESIDENT',
     COMPANY = 'COMPANY',
     ADMIN = 'ADMIN',
+}
+
+export interface UserTypeCount {
+    role: string;
+    count: number;
 }
 
 @Injectable({
@@ -71,7 +78,7 @@ export class UserService {
 
     private handleLoginRedirection(token: string): void {
         this.authService.armazenarToken(token);
-        const redirectUrl = localStorage.getItem('redirectUrl') || '/home';
+        const redirectUrl = localStorage.getItem('redirectUrl') || '/auth/login';
         localStorage.removeItem('redirectUrl');
         this.router.navigate([redirectUrl]);
     }
@@ -82,6 +89,8 @@ export class UserService {
                 return `${this.apiUrlUser}/waste-collector`;
             case UserRole.RESIDENT:
                 return `${this.apiUrlUser}/resident`;
+            case UserRole.COMPANY:
+                return `${this.apiUrlUser}/company`;
             default:
                 throw new Error('Role não suportada');
         }
@@ -114,46 +123,64 @@ export class UserService {
         return this.http.get<User>(`${this.apiUrlUser}/${userId}`);
     }
 
+    getUserReport(): Observable<UserTypeCount[]> {
+        return this.http.get<UserTypeCount[]>(`${this.apiUrlUser}/user-report`);
+    }
+
+    getUsersByRole(role?: UserRole, page: number = 0, size: number = 10): Observable<any> {
+        let url = `${this.apiUrlUser}/list?page=${page}&size=${size}`;
+        if (role) {
+            url += `&role=${role}`;
+        }
+        return this.http.get<any>(url);
+    }
+
     //MÉTODOS DE CRUD
-    async createAndUpdateUser(user: User): Promise<void> {
+    async createAndUpdateUser(user: User): Promise<User> {
         try {
+            let result: User;
+
             if (user.id) {
                 // Atualizando o usuário existente
-                // const updatedUser = await this.http
-                //     .put<User>(`${this.apiUrlUser}/${user.id}`, user)
-                //     .toPromise();
-                await this.http.put<User>(`${this.apiUrlUser}/${user.id}`, user).toPromise();
+                result = await this.http.put<User>(`${this.apiUrlUser}/${user.id}`, user).toPromise();
             } else {
-                // Criando um novo usuário
-                // Limpa o token do usuário antes de criar um novo
-                this.authService.limparToken();
-
-                if (user.role === 'WASTE_COLLECTOR' && user.picture) {
+                // Upload da imagem, se necessário
+                if (user.role === UserRole.WASTE_COLLECTOR && user.picture) {
                     const file: File = user.picture as File;
-
-                    // Faz o upload da imagem e atualiza o campo `picture` do usuário
                     user.picture = await this.cloudinaryUploadImgService.uploadImage(file);
                 }
 
                 const endpoint = this.getUserCreationUrl(user.role);
-                const newUser = await this.http.post<User>(endpoint, user).toPromise();
+                result = await this.http.post<User>(endpoint, user).toPromise();
 
-                if (newUser.token) {
-                    this.handleLoginRedirection(newUser.token);
+                // Verifica se precisa redirecionar após a criação
+                if (result.token && user.role !== UserRole.COMPANY) {
+                    this.handleLoginRedirection(result.token);
                 }
             }
+
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: `Usuário ${user.name} ${user.id ? 'atualizado' : 'cadastrado'} com sucesso!`,
+                life: 3000,
+            });
+
+            return result;  // Retorna o usuário criado/atualizado
         } catch (error) {
-            // Exibe mensagem de erro detalhada
             this.messageService.add({
                 severity: 'error',
                 summary: 'Erro ao criar/atualizar usuário',
                 detail: this.getErrorMessage(error?.error),
                 life: 3000,
             });
-
-            // Lança o erro para ser tratado no componente
             throw error;
         }
+    }
+
+    /** Desativa/ativa um usuário pelo ID */
+    toggleUserStatus(id: string, status: boolean) {
+        return this.http.put<void>(`${this.apiUrlUser}/toggle-status/${id}/${status}`, {});
     }
 
     private getErrorMessage(error: any): string {

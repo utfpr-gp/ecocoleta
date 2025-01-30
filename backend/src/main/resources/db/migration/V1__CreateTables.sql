@@ -77,7 +77,7 @@ CREATE INDEX idx_waste_collectors_location ON waste_collectors USING GIST (locat
 CREATE TABLE IF NOT EXISTS companys
 (
     id           BIGINT PRIMARY KEY,
-    cnpj         VARCHAR(11)  NOT NULL,
+    cnpj         VARCHAR(15)  NOT NULL,
     company_name VARCHAR(255) NOT NULL,
     create_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_time  TIMESTAMP,

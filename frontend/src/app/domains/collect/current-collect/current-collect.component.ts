@@ -61,7 +61,6 @@ export class CurrentCollectComponent implements OnInit {
         // Inscrição no estado de coletaData (opcional, para mudanças dinâmicas)
         this.collectorAndMapStateService.coletaData.subscribe(coletaData => {
             if (this.user?.role === UserRole.WASTE_COLLECTOR) {
-                console.log('Coletas atualizadas como waste collector:', coletaData); // TODO REMOVER
                 this.collects = coletaData;
                 this.totalRecords = coletaData.length;
             }
@@ -83,7 +82,6 @@ export class CurrentCollectComponent implements OnInit {
             // Carregar coletas para Resident
             this.collectService.getActiveCollects(this.user.id, page, rows).subscribe({
                 next: (response: any) => {
-                    console.log('Coletas carregadas como resident:', response); // TODO REMOVER
                     this.collects = response.content;
                     this.totalRecords = response.totalElements;
                     this.loading = false;
@@ -93,7 +91,6 @@ export class CurrentCollectComponent implements OnInit {
                 }
             });
         } else if (this.user.role === UserRole.WASTE_COLLECTOR) {
-            console.log('l89 Carregando coletas como waste collector...'); // TODO REMOVER
             // Carregar coletas para WasteCollector (usando coletaData)
             const allColetas = this.collectorAndMapStateService.coletaData.getValue();
             this.collects = allColetas.slice(offset, offset + rows); // Paginação manual
