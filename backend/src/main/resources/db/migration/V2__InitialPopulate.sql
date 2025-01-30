@@ -15,7 +15,7 @@ INSERT INTO waste_collectors (id, cpf)
 VALUES (3, '12345678901');
 
 INSERT INTO companys (id, cnpj, company_name)
-VALUES (4, '12345678901', 'Empresa Teste');
+VALUES (4, '12345678901234', 'Empresa Teste');
 
 -- ST_SetSRID: Define o SRID (Sistema de Referência Espacial) da geometria, neste caso, usamos o 4326, que é o SRID padrão para coordenadas GPS (latitude/longitude).
 -- ST_MakePoint: Cria um ponto a partir das coordenadas de longitude e latitude, onde o primeiro valor é a longitude e o segundo é a latitude.
