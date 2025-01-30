@@ -1,4 +1,13 @@
 <p-panel class="col-12" header="Prefeituras">
+    <div class="flex justify-content-center mb-3">
+        <button
+            pButton
+            label="Cadastrar Prefeitura"
+            icon="pi pi-plus"
+            class="p-button-success p-button-rounded"
+            (click)="openCreateDialog()">
+        </button>
+    </div>
     <p-table
         [value]="companies"
         [paginator]="true"
@@ -80,6 +89,24 @@
 </p-dialog>
 
 
+<!-- Dialog de Cadastro de Prefeituras -->
+<p-dialog
+    [(visible)]="newCompanyDialogVisible"
+    [header]="'Cadastrar Prefeitura'"
+    [modal]="true"
+    [responsive]="true"
+    [style]="{ width: '80vw' }"
+    [dismissableMask]="true"
+    (onHide)="closeCreateDialog()">
+
+    <app-user-form
+        [formModeUpdate]="false"
+        [userRole]="'COMPANY'"
+        (formSubmitted)="handleFormSubmission($event)">
+    </app-user-form>
+</p-dialog>
+
+
 <!-- Dialog de Confirmação de Desativação -->
 <p-dialog
     [(visible)]="deactivateDialogVisible"
@@ -95,6 +122,3 @@
         <button pButton label="Confirmar" class="p-button-danger" (click)="confirmDeactivate()"></button>
     </div>
 </p-dialog>
-
-
-<!--TODO botão addd company, abrir modal de form para cadastrar...-->

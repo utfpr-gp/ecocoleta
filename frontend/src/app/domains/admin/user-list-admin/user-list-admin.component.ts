@@ -41,6 +41,7 @@ export class UserListAdminComponent implements OnInit {
 
     detailsDialogVisible: boolean = false;
     deactivateDialogVisible: boolean = false;
+    newCompanyDialogVisible: boolean = false;
     selectedCompany: User | null = null;
     formModeUpdate: boolean = true; // Sempre editando
 
@@ -149,25 +150,41 @@ export class UserListAdminComponent implements OnInit {
         this.selectedCompany = null;
     }
 
+    /** 🆕 Abre o formulário em modo de criação */
+    openCreateDialog(): void {
+        this.newCompanyDialogVisible = true;
+    }
+
+    /** ❌ Fecha o formulário de criação */
+    closeCreateDialog(): void {
+        this.newCompanyDialogVisible = false;
+        this.detailsDialogVisible = false;
+        this.selectedCompany = null;    }
+
     /** 📩 Atualiza os Dados ao Submeter o Formulário */
-    handleFormSubmission(event: { user: User, action: 'update' }) {
+    handleFormSubmission(event: { user: User, action: 'create' | 'update' }) {
+        const {user, action} = event;
+
+        user.role = UserRole.COMPANY;
 
         console.log('chamou handlesubmited event: ', event);
 
-        this.userService.createAndUpdateUser(event.user).then(() => {
+        this.userService.createAndUpdateUser(user).then(() => {
+            const message = action === 'create' ? 'cadastrada' : 'atualizada';
+
             this.messageService.add({
                 severity: 'success',
                 summary: 'Sucesso',
-                detail: `Catador ${event.user.name} atualizado com sucesso!`
+                detail: `Prefeitura ${user.name} ${message} com sucesso!`
             });
 
-            this.closeDetailsDialog();
+            this.closeCreateDialog();
             this.loadCompanies(this.currentPage, this.pageSize);
         }).catch(() => {
             this.messageService.add({
                 severity: 'error',
                 summary: 'Erro',
-                detail: 'Erro ao atualizar o catador.'
+                detail: `Não foi possível ${action === 'create' ? 'cadastrar' : 'atualizar'} a prefeitura.`
             });
         });
     }

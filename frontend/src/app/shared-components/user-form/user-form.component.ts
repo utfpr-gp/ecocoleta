@@ -116,6 +116,10 @@ export class UserFormComponent implements OnInit {
                     ? [Validators.required, Validators.minLength(14), Validators.pattern('[0-9]*')]
                     : []
             ),
+            companyName: new FormControl(
+                '',
+                this.userRole === 'COMPANY' ? [Validators.required, Validators.minLength(3), Validators.maxLength(250)] : []
+            ),
             picture: new FormControl(
                 '',
                 this.userRole === 'WASTE_COLLECTOR' ? [Validators.required] : []
@@ -124,7 +128,6 @@ export class UserFormComponent implements OnInit {
 
         // Caso seja modo de edição, carregar os dados do usuário no formulário
         if (this.formData) {
-            console.log('iniciou o form formData: ', this.formData); //todo: remove
             this.userRole = this.formData.role;
             this.formUser.patchValue(this.formData);
         }

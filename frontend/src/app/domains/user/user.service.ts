@@ -89,6 +89,8 @@ export class UserService {
                 return `${this.apiUrlUser}/waste-collector`;
             case UserRole.RESIDENT:
                 return `${this.apiUrlUser}/resident`;
+            case UserRole.COMPANY:
+                return `${this.apiUrlUser}/company`;
             default:
                 throw new Error('Role não suportada');
         }
@@ -134,34 +136,37 @@ export class UserService {
     }
 
     //MÉTODOS DE CRUD
-    async createAndUpdateUser(user: User): Promise<void> {
+    async createAndUpdateUser(user: User): Promise<User> {
         try {
+            let result: User;
+
             if (user.id) {
                 // Atualizando o usuário existente
-                console.log('Atualizando usuário: ', user);
-                await this.http.put<User>(`${this.apiUrlUser}/${user.id}`, user).toPromise();
+                result = await this.http.put<User>(`${this.apiUrlUser}/${user.id}`, user).toPromise();
             } else {
-                // Criando um novo usuário
-                this.authService.limparToken();
-
-                if (user.role === 'WASTE_COLLECTOR' && user.picture) {
+                // Upload da imagem, se necessário
+                if (user.role === UserRole.WASTE_COLLECTOR && user.picture) {
                     const file: File = user.picture as File;
                     user.picture = await this.cloudinaryUploadImgService.uploadImage(file);
                 }
 
                 const endpoint = this.getUserCreationUrl(user.role);
-                const newUser = await this.http.post<User>(endpoint, user).toPromise();
+                result = await this.http.post<User>(endpoint, user).toPromise();
 
-                if (newUser.token) {
-                    this.handleLoginRedirection(newUser.token);
-
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Usuário criado com sucesso!',
-                        life: 3000,
-                    });
+                // Verifica se precisa redirecionar após a criação
+                if (result.token && user.role !== UserRole.COMPANY) {
+                    this.handleLoginRedirection(result.token);
                 }
             }
+
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Sucesso',
+                detail: `Usuário ${user.name} ${user.id ? 'atualizado' : 'cadastrado'} com sucesso!`,
+                life: 3000,
+            });
+
+            return result;  // Retorna o usuário criado/atualizado
         } catch (error) {
             this.messageService.add({
                 severity: 'error',
@@ -169,7 +174,6 @@ export class UserService {
                 detail: this.getErrorMessage(error?.error),
                 life: 3000,
             });
-
             throw error;
         }
     }
