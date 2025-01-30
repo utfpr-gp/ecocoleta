@@ -61,15 +61,11 @@ export class UserFormComponent implements OnInit {
         // Inicializar formulário
         this.initForm();
 
-        // Caso seja modo de edição, carregar os dados do usuário no formulário
-        if (this.formData) {
-            this.userRole = this.formData.role;
-            this.formUser.patchValue(this.formData);
-        }
     }
 
     initForm() {
         this.formUser = this.formBuilder.group({
+            id: new FormControl(''),  // Adiciona o campo id
             email: new FormControl('', [Validators.required, Validators.email]),
             emailCheck: new FormControl(
                 '',
@@ -105,6 +101,8 @@ export class UserFormComponent implements OnInit {
             phone: new FormControl('', [
                 Validators.required,
                 Validators.minLength(11),
+                Validators.maxLength(11),
+                Validators.pattern('[0-9]*'),
             ]),
             cpf: new FormControl(
                 '',
@@ -123,6 +121,13 @@ export class UserFormComponent implements OnInit {
                 this.userRole === 'WASTE_COLLECTOR' ? [Validators.required] : []
             ),
         });
+
+        // Caso seja modo de edição, carregar os dados do usuário no formulário
+        if (this.formData) {
+            console.log('iniciou o form formData: ', this.formData);
+            this.userRole = this.formData.role;
+            this.formUser.patchValue(this.formData);
+        }
     }
 
     onSelectImg(event: any) {
@@ -165,6 +170,11 @@ export class UserFormComponent implements OnInit {
     onSubmit() {
         if (this.formUser.valid) {
             const user = this.formUser.value as User;
+
+            // Garante que o id está incluso mesmo que não seja exibido no formulário
+            if (this.formModeUpdate && this.formData?.id) {
+                user.id = this.formData.id;
+            }
 
             if (this.formModeUpdate) {
                 this.formSubmitted.emit({user, action: 'update'});

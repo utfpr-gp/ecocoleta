@@ -51,6 +51,11 @@ public class User implements UserDetails, Serializable {
         this.createTime = LocalDateTime.now();
     }
 
+    @PostUpdate
+    public void postUpdate() {
+        this.updateTime = LocalDateTime.now();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.role == UserRole.ADMIN)
@@ -86,15 +91,15 @@ public class User implements UserDetails, Serializable {
     public void update(UserUpdateDTO userUpdateDTO) {
         if (userUpdateDTO.name() != null) {
             this.name = userUpdateDTO.name();
-            this.updateTime = LocalDateTime.now();
         }
         if (userUpdateDTO.phone() != null) {
             this.phone = userUpdateDTO.phone();
-            this.updateTime = LocalDateTime.now();
         }
         if (userUpdateDTO.role() != null) {
             this.role = userUpdateDTO.role();
-            this.updateTime = LocalDateTime.now();
+        }
+        if (userUpdateDTO.email() != null) {
+            this.email = userUpdateDTO.email();
         }
     }
 

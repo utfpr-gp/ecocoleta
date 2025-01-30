@@ -6,8 +6,6 @@ import {User, UserRole, UserService} from "../../user/user.service";
 import {CommonModule} from "@angular/common";
 import {ButtonModule} from 'primeng/button';
 import {TooltipModule} from "primeng/tooltip";
-import {StatusTranslatePipe} from 'src/app/core/services/status-translate.pipe';
-import {EvaluateDialogComponent} from "../../../shared-components/evaluate-collect-dialog/evaluate-dialog.component";
 import {DialogModule} from "primeng/dialog";
 import {ToastModule} from "primeng/toast";
 import {UserFormComponent} from "../../../shared-components/user-form/user-form.component";
@@ -24,8 +22,6 @@ import {FormsModule} from "@angular/forms";
         ButtonModule,
         CommonModule,
         TooltipModule,
-        StatusTranslatePipe,
-        EvaluateDialogComponent,
         DialogModule,
         ToastModule,
         UserFormComponent,
@@ -111,8 +107,6 @@ export class UserListCompanyComponent implements OnInit {
         this.deactivateDialogVisible = true;
     }
 
-    // TODO: Implementar a desativação do catador
-
     // /** ✅ Confirma a Desativação */
     confirmDeactivate(): void {
         if (!this.selectedCollector) return;
@@ -155,10 +149,11 @@ export class UserListCompanyComponent implements OnInit {
         this.selectedCollector = null;
     }
 
-    // TODO: Implementar a atualização do catador
-
     /** 📩 Atualiza os Dados ao Submeter o Formulário */
     handleFormSubmission(event: { user: User, action: 'update' }) {
+
+        console.log('chamou handlesubmited event: ', event);
+
         this.userService.createAndUpdateUser(event.user).then(() => {
             this.messageService.add({
                 severity: 'success',

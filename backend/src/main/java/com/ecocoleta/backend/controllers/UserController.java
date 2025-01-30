@@ -16,6 +16,7 @@ import com.ecocoleta.backend.domain.wasteCollector.dto.WasteCollectorDTO;
 import com.ecocoleta.backend.infra.exception.ValidException;
 import com.ecocoleta.backend.services.AuthenticationService;
 import com.ecocoleta.backend.services.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -175,15 +176,28 @@ public class UserController {
     }
 
     // Update de usuário
+//    @PutMapping("/{id}")
+//    @Transactional
+//    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
+//        var user = userService.getUserById(id);
+//        if (user.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        user.get().update(userUpdateDTO);
+//        return ResponseEntity.ok(new UserGetDTO(user));
+//    }
+    // Update de usuário
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO userUpdateDTO) {
-        var user = userService.getUserById(id);
-        if (user.isEmpty()) {
+        try {
+            var updatedUserDto = userService.updateUser(id, userUpdateDTO);
+            return ResponseEntity.ok(updatedUserDto);
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        user.get().update(userUpdateDTO);
-        return ResponseEntity.ok(new UserGetDTO(user));
     }
 
     // Deletar usuário

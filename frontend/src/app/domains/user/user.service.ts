@@ -20,6 +20,7 @@ export type User = {
     role?: UserRole | string;
     activo?: boolean;
     token?: string;
+    companyName?: string;
     createdAt?: string;
     updatedAt?: string;
 };
@@ -77,7 +78,7 @@ export class UserService {
 
     private handleLoginRedirection(token: string): void {
         this.authService.armazenarToken(token);
-        const redirectUrl = localStorage.getItem('redirectUrl') || '/home';
+        const redirectUrl = localStorage.getItem('redirectUrl') || '/auth/login';
         localStorage.removeItem('redirectUrl');
         this.router.navigate([redirectUrl]);
     }
@@ -137,19 +138,14 @@ export class UserService {
         try {
             if (user.id) {
                 // Atualizando o usuário existente
-                // const updatedUser = await this.http
-                //     .put<User>(`${this.apiUrlUser}/${user.id}`, user)
-                //     .toPromise();
+                console.log('Atualizando usuário: ', user);
                 await this.http.put<User>(`${this.apiUrlUser}/${user.id}`, user).toPromise();
             } else {
                 // Criando um novo usuário
-                // Limpa o token do usuário antes de criar um novo
                 this.authService.limparToken();
 
                 if (user.role === 'WASTE_COLLECTOR' && user.picture) {
                     const file: File = user.picture as File;
-
-                    // Faz o upload da imagem e atualiza o campo `picture` do usuário
                     user.picture = await this.cloudinaryUploadImgService.uploadImage(file);
                 }
 
@@ -158,10 +154,15 @@ export class UserService {
 
                 if (newUser.token) {
                     this.handleLoginRedirection(newUser.token);
+
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Usuário criado com sucesso!',
+                        life: 3000,
+                    });
                 }
             }
         } catch (error) {
-            // Exibe mensagem de erro detalhada
             this.messageService.add({
                 severity: 'error',
                 summary: 'Erro ao criar/atualizar usuário',
@@ -169,7 +170,6 @@ export class UserService {
                 life: 3000,
             });
 
-            // Lança o erro para ser tratado no componente
             throw error;
         }
     }

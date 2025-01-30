@@ -9,6 +9,7 @@ import com.ecocoleta.backend.domain.user.User;
 import com.ecocoleta.backend.domain.user.UserRole;
 import com.ecocoleta.backend.domain.user.dto.UserGetDTO;
 import com.ecocoleta.backend.domain.user.dto.UserTypeCountDTO;
+import com.ecocoleta.backend.domain.user.dto.UserUpdateDTO;
 import com.ecocoleta.backend.domain.wasteCollector.WasteCollector;
 import com.ecocoleta.backend.domain.wasteCollector.dto.WasteCollectorGetDTO;
 import com.ecocoleta.backend.repositories.UserRepository;
@@ -176,4 +177,51 @@ public class UserService {
     public List<UserTypeCountDTO> getUserTypeCounts() {
         return userRepository.countUsersByRole();
     }
+
+    @Transactional
+    public Object updateUser(Long id, UserUpdateDTO userUpdateDTO) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+
+        // Atualiza dados comuns a todos os usuários
+        user.update(userUpdateDTO);
+
+        // Tratamento específico baseado no tipo do usuário
+        if (user instanceof WasteCollector wasteCollector) {
+            updateWasteCollector(wasteCollector, userUpdateDTO);
+        } else if (user instanceof Company company) {
+            updateCompany(company, userUpdateDTO);
+        } else if (user instanceof Resident resident) {
+            updateResident(resident, userUpdateDTO);
+        }
+
+        // Retorna o DTO atualizado de acordo com o tipo de usuário
+        return getUserDtoById(user.getId());
+    }
+
+    private void updateWasteCollector(WasteCollector wasteCollector, UserUpdateDTO userUpdateDTO) {
+        if (userUpdateDTO.cpf() != null) {
+            wasteCollector.setCpf(userUpdateDTO.cpf());
+        }
+        if (userUpdateDTO.picture() != null) {
+            wasteCollector.setPicture(userUpdateDTO.picture());
+        }
+        if (userUpdateDTO.longitude() != null && userUpdateDTO.latitude() != null) {
+            wasteCollector.updateLocation(userUpdateDTO.longitude(), userUpdateDTO.latitude());
+        }
+    }
+
+    private void updateCompany(Company company, UserUpdateDTO userUpdateDTO) {
+        if (userUpdateDTO.cnpj() != null) {
+            company.setCnpj(userUpdateDTO.cnpj());
+        }
+        if (userUpdateDTO.companyName() != null) {
+            company.setCompany_name(userUpdateDTO.companyName());
+        }
+    }
+
+    private void updateResident(Resident resident, UserUpdateDTO userUpdateDTO) {
+        // Se houver atributos específicos para o residente, atualize-os aqui
+    }
+
 }
