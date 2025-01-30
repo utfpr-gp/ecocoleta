@@ -56,7 +56,7 @@ export class HomeCompanyComponent implements OnInit {
         });
     }
 
-    /** 📈 Carrega o gráfico de coletas no dia (Line Chart) */
+    /** Carrega o gráfico de coletas no dia (Line Chart) */
     loadDailyCollectData(): void {
         this.collectService.getDailyCollectReport().subscribe((data: CollectStatusCount[]) => {
             this.dailyCollectData = {
@@ -72,7 +72,7 @@ export class HomeCompanyComponent implements OnInit {
         });
     }
 
-    /** 🥧 Carrega o gráfico de usuários (Pie Chart) */
+    /** Carrega o gráfico de usuários (Pie Chart) */
     loadUserReport(): void {
         this.userService.getUserReport().subscribe((data: UserTypeCount[]) => {
             // Filtrando apenas WasteCollectors e Residents
@@ -88,17 +88,18 @@ export class HomeCompanyComponent implements OnInit {
         });
     }
 
-    /** 🔄 Converte status de coleta para rótulos mais amigáveis */
+    /** Converte status de coleta para rótulos mais amigáveis */
     getStatusLabel(status: string): string {
         switch (status) {
             case 'COMPLETED': return 'Concluídas';
             case 'CANCELLED': return 'Canceladas';
             case 'PENDING': return 'Pendentes';
+            case 'PAUSED': return 'Pausadas';
             default: return status;
         }
     }
 
-    /** 🔄 Converte papéis de usuários para nomes amigáveis */
+    /** Converte papéis de usuários para nomes amigáveis */
     getRoleLabel(role: string): string {
         switch (role) {
             case 'RESIDENT': return 'Residentes';
