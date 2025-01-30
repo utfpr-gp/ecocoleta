@@ -167,8 +167,6 @@ export class CollectorAndMapStateService {
      * Para a coleta e o monitoramento de localização.
      */
     stopCollection(): void {
-        // Adiciona spinner loading (caso necessário)
-        // TODO: Implement spinner logic
         this.setLoading(true); // Ativar o spinner
 
         if (this.coletaStatus.getValue()) {
@@ -221,21 +219,15 @@ export class CollectorAndMapStateService {
             return;
         }
 
-        console.log('Resumindo coletas em andamento...'); // TODO REMOVER
-
         this.setLoading(true); // Ativar spinner
 
         this.locationService.getCurrentLocation().then((position) => {
             const location = {lat: position.coords.latitude, lng: position.coords.longitude};
 
-            console.log('resume collecting Localização atual:', location); // TODO REMOVER
-
             // Centraliza o mapa na localização do usuário
             this.setMapCenter(location);
             this.setLocation(location);
             this.updateUserLocationMarker(location);
-
-            console.log('resume collecting Localização do usuário atualizada no mapa.'); // TODO REMOVER
 
             // Atualiza a localização no backend
             this.wasteCollectorService.updateWasteCollectorLocation({
@@ -258,7 +250,6 @@ export class CollectorAndMapStateService {
                                 // Atualiza os dados de coleta e reinicia a rota
                                 this.setColetasData(inProgressCollects);
                                 this.generateRoute();
-                                // TODO aqui não esta gerando rota
 
                                 // Reinicia o monitoramento de localização
                                 this.startLocationMonitoring();
@@ -331,14 +322,11 @@ export class CollectorAndMapStateService {
                 // Atualiza o marcador da localização do usuário
                 this.updateUserLocationMarker(location);
 
-                console.log('Nova localização monitorada:', location); // TODO REMOVER
-
                 // Verifica proximidade com coletas (opcional)
                 this.checkProximity(location);
             },
             (error) => {
-                //TODO adicionar menssagem de erro???
-                console.error('Erro no monitoramento de localização:', error);
+                this.showErrorMessage('Erro ao monitorar localização. Tente novamente.: ' + error.message);
             }
         );
     }
@@ -361,7 +349,6 @@ export class CollectorAndMapStateService {
         console.log('Verificando proximidade...', location);
 
         const coletas = this.coletaData.getValue(); // Obtem o array atual de coletas
-        console.log('checkProximity Coletas array coletasData: ', coletas); // TODO REMOVER
 
         const threshold = 30; // Distância limite em metros (30 metros)
 
@@ -371,11 +358,6 @@ export class CollectorAndMapStateService {
             // Calcula a distância utilizando a fórmula de Haversine para maior precisão
 
             const distance = this.calculateHaversineDistance(location, {lat: coleta.latitude, lng: coleta.longitude});
-            console.log('foreach Coleta:', coleta); // TODO REMOVER
-
-            console.log(`Coleta ID ${coleta.id}: distância calculada = ${distance} metros`); // TODO REMOVER
-
-            // TODO verificar distancia não esta correto !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             // Verifica se a coleta está próxima e ainda não foi processada
             if (distance <= threshold && coleta.status !==  "COMPLETED") {
@@ -524,8 +506,6 @@ export class CollectorAndMapStateService {
             return;
         }
 
-        // TODO pegar lista de coletas e excluir as que ja foram coletadas com status completed
-
         const waypoints = coletas.map((coleta) => ({
             location: {lat: coleta.latitude!, lng: coleta.longitude!},
             stopover: true,
@@ -568,12 +548,9 @@ export class CollectorAndMapStateService {
         if (this.directionsRenderer.getMap()) {
             try {
                 this.directionsRenderer.setDirections({routes: []} as google.maps.DirectionsResult); // Remove as rotas
-                console.log('Rota removida do mapa com sucesso.'); //todo remover
             } catch (error) {
-                console.error('Erro ao remover rota:', error); //todo remover
-            }
-        } else {
-            console.warn('Nenhum mapa vinculado ao DirectionsRenderer.');
+                this.showErrorMessage('Erro ao limpar a rota: ' + error.message);
+                }
         }
 
         // Resetar marcadores e estado do mapa

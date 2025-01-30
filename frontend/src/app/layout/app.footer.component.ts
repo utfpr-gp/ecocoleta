@@ -35,10 +35,8 @@ export class AppFooterComponent implements OnInit {
             take(1), // Garante que pega apenas o valor atual.
             tap(isCollecting => {
                 if (!isCollecting) {
-                    console.log('BOTÃO FOOTER COLETA START CLICADO - toggleColeta - START'); // todo remove
                     this.collectorAndMapStateService.startCollection(this.user?.id);
                 } else {
-                    console.log('BOTÃO FOOTER COLETA START CLICADO - toggleColeta - STOP'); // todo remove
                     this.collectorAndMapStateService.stopCollection();
                 }
             })

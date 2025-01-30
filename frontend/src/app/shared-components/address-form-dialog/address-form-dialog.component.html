@@ -5,9 +5,6 @@
     [header]="address_id ? 'Editar Endereço' : 'Cadastrar Endereço'"
     (onShow)="showDialog()"
     (onHide)="hideDialog()">
-    <!--TODO refatorar as divs para o padrão da dialog acima-->
-    <!--TODO retirar o smalll e colocar o app message-->
-
     <ng-template pTemplate="content">
         <form [formGroup]="addressForm" autocomplete="off" class="p-grid p-justify-center">
             <div class="field col-10 md:col-6">

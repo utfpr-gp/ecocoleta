@@ -71,19 +71,3 @@
     <app-address-form-dialog [userId]="userId" [address_id]="address_id" [addressFormDialog]="addressFormDialog"
                              (outAddressFormDialog)="hideAddressDialog($event)"></app-address-form-dialog>
 }
-
-
-<!--TODO > tela de perfil usar 2 panels{
-* panel 1 dados do user
-* panel 2 listagem de endereços (botão excluir - editar exclui e cadastra denovo sem tempo)
-}
-* tembem dialog de edição dos dados de user
-* dialog de add endereço (uso no painel de criar coleta e  no perfil )
--->
-<!--TODO avalixar se precisa modificar  a tela perfil para carredar dados do usuario como foto e pontos/strela/pontuação, depois dessa tela clica em editar e abre os dados para edição...-->
-
-<!--TODO add dialog address-->
-<!-- Modal para Adicionar Endereço -->
-<!--<p-dialog header="Adicionar Endereço" [(visible)]="displayAddAddressModal" [modal]="true" [closable]="false" [responsive]="true" [style]="{ width: '50vw' }">-->
-<!--    <app-address-form (formSubmitted)="addAddress($event)"></app-address-form>-->
-<!--</p-dialog>-->
