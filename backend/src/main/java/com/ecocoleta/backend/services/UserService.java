@@ -127,14 +127,15 @@ public class UserService {
         return users.map(UserGetDTO::new);
     }
 
-    /** 🛑 Desativa um usuário */
+    /** ✅ Alterna o status de um usuário (ativa ou desativa) */
     @Transactional
-    public void deactivateUser(Long id) {
+    public void toggleUserStatus(Long id, boolean status) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
-        user.setActivo(false);
+        user.setActivo(status);
         userRepository.save(user);
     }
+
 
     public User createUser(User user) {
 

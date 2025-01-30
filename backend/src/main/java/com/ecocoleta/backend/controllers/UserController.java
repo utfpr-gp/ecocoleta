@@ -140,7 +140,7 @@ public class UserController {
 //        return ResponseEntity.ok(page);
 //    }
 
-    /** 🔄 Listagem de usuários com filtro opcional por tipo */
+    /** Listagem de usuários com filtro opcional por tipo */
     @GetMapping("/list")
     public ResponseEntity<Page<UserGetDTO>> listUsers(
             @RequestParam(required = false) UserRole role,
@@ -149,10 +149,10 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    /** 🛑 Desativa um usuário */
-    @PutMapping("/deactivate/{id}")
-    public ResponseEntity<Void> deactivateUser(@PathVariable Long id) {
-        userService.deactivateUser(id);
+    /** Alterna o status ativo/inativo de um usuário */
+    @PutMapping("/toggle-status/{id}/{status}")
+    public ResponseEntity<Void> toggleUserStatus(@PathVariable Long id, @PathVariable boolean status) {
+        userService.toggleUserStatus(id, status);
         return ResponseEntity.ok().build();
     }
 

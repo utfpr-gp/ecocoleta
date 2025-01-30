@@ -1,4 +1,4 @@
-<p-panel class="col-12" header="Catadores de Recicláveis">
+<p-panel class="col-12" header="Catadores">
     <p-table
         [value]="wasteCollectors"
         [paginator]="true"
@@ -11,7 +11,8 @@
         <ng-template pTemplate="header">
             <tr>
                 <th>Nome</th>
-                <th>Telefone</th>
+                <!--                <th>Telefone</th>-->
+                <th>Status</th>
                 <th class="fixed-column" style="min-width:8rem;">Ações</th>
             </tr>
         </ng-template>
@@ -19,7 +20,13 @@
         <ng-template pTemplate="body" let-collector>
             <tr>
                 <td>{{ collector.name }}</td>
-                <td>{{ collector.phone }}</td>
+                <!--                <td>{{ collector.phone }}</td>-->
+                <td>
+                    <i
+                        [ngClass]="collector.activo ? 'pi pi-check text-green-500' : 'pi pi-times text-red-500'"
+                        style="font-size: 1.5rem;">
+                    </i>
+                </td>
                 <td class="fixed-column">
                     <!-- Botão Detalhes -->
                     <button
@@ -32,11 +39,22 @@
 
                     <!-- Botão Desativar -->
                     <button
+                        *ngIf="collector.activo"
                         pButton
                         class="p-button-rounded p-button-danger p-button-sm mr-1"
                         icon="pi pi-ban"
                         (click)="openDeactivateDialog(collector)"
                         title="Desativar Catador"
+                    ></button>
+
+                    <!-- Botão Ativar -->
+                    <button
+                        *ngIf="!collector.activo"
+                        pButton
+                        class="p-button-rounded p-button-success p-button-sm mr-1"
+                        icon="pi pi-check"
+                        (click)="toggleUserStatus(collector, true)"
+                        title="Ativar Catador"
                     ></button>
                 </td>
             </tr>

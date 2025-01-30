@@ -113,27 +113,31 @@ export class UserListCompanyComponent implements OnInit {
 
     // TODO: Implementar a desativação do catador
 
-    /** ✅ Confirma a Desativação */
+    // /** ✅ Confirma a Desativação */
     confirmDeactivate(): void {
         if (!this.selectedCollector) return;
 
-        this.userService.deactivateUser(this.selectedCollector.id).subscribe({
+        this.toggleUserStatus(this.selectedCollector, false);
+        this.closeDeactivateDialog();
+    }
+
+    /** ✅ Alterna o status ativo/inativo de um catador */
+    toggleUserStatus(collector: User, newStatus: boolean): void {
+        this.userService.toggleUserStatus(collector.id, newStatus).subscribe({
             next: () => {
+                const message = newStatus ? 'ativado' : 'desativado';
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Sucesso',
-                    detail: `Catador ${this.selectedCollector.name} desativado com sucesso!`
+                    detail: `Catador ${collector.name} ${message} com sucesso!`
                 });
-
-                this.deactivateDialogVisible = false;
-                this.selectedCollector = null;
                 this.loadWasteCollectors(this.currentPage, this.pageSize);
             },
             error: () => {
                 this.messageService.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: 'Não foi possível desativar o catador.'
+                    detail: 'Não foi possível atualizar o status do catador.'
                 });
             }
         });
@@ -142,6 +146,12 @@ export class UserListCompanyComponent implements OnInit {
     /** ❌ Fecha o Dialog */
     closeDetailsDialog(): void {
         this.detailsDialogVisible = false;
+        this.selectedCollector = null;
+    }
+
+    /** ❌ Fecha o Dialog confirma desativação*/
+    closeDeactivateDialog(): void {
+        this.deactivateDialogVisible = false;
         this.selectedCollector = null;
     }
 

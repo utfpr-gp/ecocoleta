@@ -18,6 +18,7 @@ export type User = {
     picture?: string | File;
     score?: number;
     role?: UserRole | string;
+    activo?: boolean;
     token?: string;
     createdAt?: string;
     updatedAt?: string;
@@ -173,9 +174,9 @@ export class UserService {
         }
     }
 
-    /** Desativa um usuário pelo ID */
-    deactivateUser(userId: string): Observable<void> {
-        return this.http.put<void>(`${this.apiUrlUser}/deactivate/${userId}`, {});
+    /** Desativa/ativa um usuário pelo ID */
+    toggleUserStatus(id: string, status: boolean) {
+        return this.http.put<void>(`${this.apiUrlUser}/toggle-status/${id}/${status}`, {});
     }
 
     private getErrorMessage(error: any): string {
