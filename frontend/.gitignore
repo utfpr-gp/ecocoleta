@@ -38,12 +38,6 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Environment variables
-/src/environments/environment.ts
-/src/environments/environment.prod.ts
-/src/environments/environment.development.ts
-
-
 # certificat
 /ssl/localhost.crt
 /ssl/localhost.key
