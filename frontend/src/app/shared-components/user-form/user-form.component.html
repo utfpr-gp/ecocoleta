@@ -11,11 +11,12 @@
                              text="É necessário preencher o Nome."></app-message>
             </div>
 
+            <!-- Telefone com máscara -->
             <div class="field col-12 md:col-6">
                 <label for="phone">Telefone</label><b class="ml-1" style="color: crimson;">*</b>
                 <div class="p-inputgroup">
-                    <input formControlName="phone" id="phone" required maxlength="15" pInputText type="tel"
-                           placeholder="(XX) XXXXX-XXXX">
+                    <input formControlName="phone" id="phone" required pInputText type="tel"
+                           placeholder="(XX) XXXXX-XXXX" mask="(00) 00000-0000">
                 </div>
                 <app-message [control]="formUser.get('phone')" error="required"
                              text="É necessário preencher o número."></app-message>
@@ -80,28 +81,26 @@
                              text="É necessário preencher a senha."></app-message>
             </div>
 
+            <!-- CPF com máscara -->
             <div class="field col-12 md:col-6" *ngIf="userRole === 'WASTE_COLLECTOR'">
                 <label for="cpf">CPF</label><b class="ml-1" style="color: crimson;">*</b>
                 <div class="p-inputgroup">
-                    <input formControlName="cpf" id="cpf" required pInputText type="text" maxlength="11"
-                           placeholder="Somente números">
+                    <input formControlName="cpf" id="cpf" required pInputText type="text"
+                           mask="000.000.000-00" placeholder="000.000.000-00">
                 </div>
-                <app-message [control]="formUser.get('cpf')" error="required"
-                             text="É necessário preencher o CPF."></app-message>
-                <app-message [control]="formUser.get('cpf')" error="pattern"
-                             text="CPF deve conter somente números."></app-message>
+                <app-message [control]="formUser.get('cpf')" error="required" text="É necessário preencher o CPF."></app-message>
+                <app-message [control]="formUser.get('cpf')" error="cpfInvalido" text="CPF inválido."></app-message>
             </div>
 
+            <!-- CNPJ com máscara -->
             <div class="field col-12 md:col-6" *ngIf="userRole === 'COMPANY'">
                 <label for="cnpj">CNPJ</label><b class="ml-1" style="color: crimson;">*</b>
                 <div class="p-inputgroup">
-                    <input formControlName="cnpj" id="cnpj" required pInputText type="text" maxlength="14"
-                           placeholder="Somente números">
+                    <input formControlName="cnpj" id="cnpj" required pInputText type="text"
+                           mask="00.000.000/0000-00" placeholder="00.000.000/0000-00">
                 </div>
-                <app-message [control]="formUser.get('cnpj')" error="required"
-                             text="É necessário preencher o CNPJ."></app-message>
-                <app-message [control]="formUser.get('cnpj')" error="pattern"
-                             text="CNPJ deve conter somente números."></app-message>
+                <app-message [control]="formUser.get('cnpj')" error="required" text="É necessário preencher o CNPJ."></app-message>
+                <app-message [control]="formUser.get('cnpj')" error="cnpjInvalido" text="CNPJ inválido."></app-message>
             </div>
 
             <div class="field col-12 md:col-6" *ngIf="userRole === 'COMPANY'">
