@@ -66,8 +66,6 @@ export class LandingComponent {
         }
     ];
 
-
-
     constructor(public layoutService: LayoutService, public router: Router) {
     }
 
