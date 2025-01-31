@@ -15,6 +15,11 @@ import {JwtModule} from "@auth0/angular-jwt";
 import {MessageService} from "primeng/api";
 import { GoogleMapsModule } from '@angular/google-maps';
 import {ToastModule} from "primeng/toast";
+import {IConfig, NgxMaskModule} from "ngx-mask";
+
+const maskConfig: Partial<IConfig> = {
+    validation: true,
+};
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
     return new TranslateHttpLoader(httpClient);
@@ -48,7 +53,8 @@ export function tokenGetter(): string {
                 deps: [HttpClient]
             }
         }),
-        ToastModule
+        ToastModule,
+        NgxMaskModule.forRoot(maskConfig),
     ],
     providers: [
         {
