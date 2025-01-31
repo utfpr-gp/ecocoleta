@@ -5,7 +5,7 @@
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
-        "build": "ng build",
+        "build": "ng build --configuration production",
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e"
@@ -44,7 +44,7 @@
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "^17.0.5",
-        "@angular/cli": "^17.0.5",
+        "@angular/cli": "^17.3.11",
         "@angular/compiler-cli": "^17.0.5",
         "@types/jasmine": "~4.3.1",
         "@types/jwt-decode": "^2.2.1",

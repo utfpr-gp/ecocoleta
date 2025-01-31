@@ -45,4 +45,5 @@ Thumbs.db
 
 
 # certificat
-/ssl/*
+/ssl/localhost.crt
+/ssl/localhost.key
