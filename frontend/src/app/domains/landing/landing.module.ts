@@ -7,6 +7,9 @@ import { DividerModule } from 'primeng/divider';
 import { ChartModule } from 'primeng/chart';
 import { PanelModule } from 'primeng/panel';
 import { ButtonModule } from 'primeng/button';
+import {RippleModule} from "primeng/ripple";
+import {CarouselModule} from "primeng/carousel";
+import {TimelineModule} from "primeng/timeline";
 
 @NgModule({
     imports: [
@@ -16,7 +19,10 @@ import { ButtonModule } from 'primeng/button';
         StyleClassModule,
         ChartModule,
         PanelModule,
-        ButtonModule
+        ButtonModule,
+        RippleModule,
+        CarouselModule,
+        TimelineModule
     ],
     declarations: [LandingComponent]
 })
