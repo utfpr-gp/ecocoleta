@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "sakai-ng": {
+        "ecocoleta": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
@@ -17,7 +17,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/sakai-ng",
+                        "outputPath": "dist/ecocoleta",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": [
@@ -36,6 +36,12 @@
                     },
                     "configurations": {
                         "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                }
+                            ],
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -64,18 +70,18 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "ssl": true,
-                        "sslKey": "ssl/localhost.key",
-                        "sslCert": "ssl/localhost.crt",
                         "host": "0.0.0.0",
                         "port": 4200
                     },
                     "configurations": {
                         "production": {
-                            "buildTarget": "sakai-ng:build:production"
+                            "browserTarget": "ecocoleta:build:production"
                         },
                         "development": {
-                            "buildTarget": "sakai-ng:build:development"
+                            "ssl": true,
+                            "sslKey": "ssl/localhost.key",
+                            "sslCert": "ssl/localhost.crt",
+                            "browserTarget": "ecocoleta:build:development"
                         }
                     },
                     "defaultConfiguration": "development"
@@ -83,7 +89,7 @@
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "buildTarget": "sakai-ng:build"
+                        "buildTarget": "ecocoleta:build"
                     }
                 },
                 "test": {
