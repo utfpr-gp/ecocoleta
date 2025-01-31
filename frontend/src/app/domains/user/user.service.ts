@@ -12,9 +12,9 @@ export type User = {
     name?: string;
     email: string;
     password?: string;
-    phone?: number;
-    cpf?: number;
-    cnpj?: number;
+    phone?: string;
+    cpf?: string;
+    cnpj?: string;
     picture?: string | File;
     score?: number;
     role?: UserRole | string;

@@ -1,0 +1,55 @@
+//---------------Carousel----------------//
+.carousel-image-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.carousel-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.bg-black-alpha-60 {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+#hero {
+    position: relative;
+}
+
+#hero .absolute {
+    z-index: 1; /* Garante que o texto fique sobre o carousel */
+}
+
+.text-shadow {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+//---------------passos da app----------------//
+.custom-timeline .p-timeline-event-content {
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.custom-timeline .p-timeline-event-opposite {
+    font-weight: bold;
+    color: #6b2e9a;
+}
+
+.custom-timeline .p-timeline-event-marker {
+    background-color: #6b2e9a;
+    border: 2px solid white;
+}
+//---------------dicas----------------//
+.p-button {
+    width: fit-content;
+}
+
+.surface-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
