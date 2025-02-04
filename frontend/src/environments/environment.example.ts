@@ -1,5 +1,5 @@
 export const environment = {
-    production: true,
+    production: false,
     API_KEY_GOOGLE_MAPS: 'INSIRA_SUA_CHAVE_GOOGLE_MAPS_AQUI',
     API: 'http://localhost:8080'
 };
