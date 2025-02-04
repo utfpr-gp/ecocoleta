@@ -19,18 +19,18 @@ services:
       - app-network
 
   # CONTAINERS BACKEND E FRONTEND
-  backend:
-    image: ecocoleta-backend:latest
-    container_name: ecocoleta-backend
-    build:
-      context: ./backend/
-      dockerfile: ./Dockerfile
-    ports:
-      - '8080:8080'
-    env_file:
-      - ./backend/.env  # Carrega as variáveis de ambiente
-    networks:
-      - app-network
+  # backend:
+  #   image: ecocoleta-backend:latest
+  #   container_name: ecocoleta-backend
+  #   build:
+  #     context: ./backend/
+  #     dockerfile: ./Dockerfile
+  #   ports:
+  #     - '8080:8080'
+  #   env_file:
+  #     - ./backend/.env  # Carrega as variáveis de ambiente
+  #   networks:
+  #     - app-network
 
   # frontend:
   #   image: ecocoleta-frontend:latest
