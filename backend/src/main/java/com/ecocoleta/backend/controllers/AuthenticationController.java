@@ -8,12 +8,19 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Controller responsável pela autenticação de usuários.
  */
 @RestController
 @RequestMapping("auth")
+@Tag(name = "Autenticação", description = "Gerenciamento de autenticação e tokens de acesso")
 public class AuthenticationController {
 
     @Autowired
@@ -27,12 +34,22 @@ public class AuthenticationController {
      * @return Resposta com o token de autenticação ou erro.
      */
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data) {
+    @Operation(summary = "Login de usuários", description = "Autentica o usuário com base no email e senha, retornando um token de acesso.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Autenticação bem-sucedida",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Erro de validação nos dados de entrada",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "401", description = "Credenciais inválidas",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor",
+                    content = @Content(mediaType = "application/json"))
+    })
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO data) {
         try {
             var token = authenticationService.authenticateAndGetToken(data.email(), data.password());
             return ResponseEntity.ok(new LoginResponseDTO(token));
         } catch (Exception e) {
-            // Lançamento de uma exceção personalizada em vez de capturar a exceção genérica
             throw new ValidException("Erro na autenticação: " + e.getMessage());
         }
     }

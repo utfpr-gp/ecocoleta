@@ -27,6 +27,9 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                                // Libera acesso às rotas do Swagger e documentação
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+
                                 //LOGIN
                                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 
