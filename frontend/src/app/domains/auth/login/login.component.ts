@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, AfterViewInit} from '@angular/core';
 import {LayoutService} from 'src/app/layout/service/app.layout.service';
 import {MessageService} from "primeng/api";
 import {AuthenticateTokenService} from "../authenticate-token.service";
@@ -29,7 +29,7 @@ interface LoginForm {
     `],
     providers: [MessageService]
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit {
 
     apiUrl: string = `${environment.API}/auth`;
     valCheck: string[] = ['remember'];
@@ -50,6 +50,18 @@ export class LoginComponent {
             ]),
             salvarSenha: new FormControl(false)
         });
+    }
+
+    ngAfterViewInit() {
+        // Garante que a mensagem seja exibida após o componente estar renderizado
+        setTimeout(() => {
+            this.messageService.add({
+                severity: 'warn',
+                summary: 'Aviso',
+                detail: 'O login pode demorar até 2 minutos devido ao uso de servidor de produção gratuito.',
+                life: 30000  // Exibe a mensagem por 30 segundos
+            });
+        }, 0);  // Executa após o ciclo de renderização
     }
 
     login() {

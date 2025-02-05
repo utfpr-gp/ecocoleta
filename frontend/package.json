@@ -5,7 +5,7 @@
     "scripts": {
         "ng": "ng",
         "prebuild": "node set-env.js",
-        "start": "ng serve",
+        "start": "ng serve --configuration development",
         "build": "ng build --configuration production",
         "test": "ng test",
         "lint": "ng lint",

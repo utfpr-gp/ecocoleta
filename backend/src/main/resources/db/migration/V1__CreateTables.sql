@@ -117,71 +117,75 @@ CREATE TABLE IF NOT EXISTS collects
             ON UPDATE NO ACTION
 );
 
--- Table ecocoleta_db.evaluations
-CREATE TABLE IF NOT EXISTS evaluations
-(
-    id                  BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    comments            VARCHAR(255)                 NOT NULL,
-    stars               INT                          NOT NULL,
-    id_user_destiny     BIGSERIAL                    NOT NULL,
-    create_time         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    waste_collectors_id BIGSERIAL                    NOT NULL,
-    residents_id        BIGINT                       NOT NULL,
-    CONSTRAINT fk_evaluations_waste_collectors
-        FOREIGN KEY (waste_collectors_id)
-            REFERENCES waste_collectors (id)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION,
-    CONSTRAINT fk_evaluations_residents
-        FOREIGN KEY (residents_id)
-            REFERENCES residents (id)
-            ON DELETE NO ACTION
-            ON UPDATE NO ACTION
-);
-
--- Table ecocoleta_db.products
-CREATE TABLE IF NOT EXISTS products
-(
-    id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    name        VARCHAR(255)                 NOT NULL,
-    description VARCHAR(255)                 NOT NULL,
-    price       DECIMAL                      NOT NULL,
-    points      BIGINT                       NOT NULL,
-    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_time TIMESTAMP,
-    picture     VARCHAR(255),
-    companys_id BIGSERIAL                    NOT NULL,
-    FOREIGN KEY (companys_id)
-        REFERENCES companys (id)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION
-);
-
--- Table ecocoleta_db.exchanges
-CREATE TABLE IF NOT EXISTS exchanges
-(
-    id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
-    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_time TIMESTAMP
-);
-
--- Table ecocoleta_db.products_has_exchanges
-CREATE TABLE IF NOT EXISTS products_has_exchanges
-(
-    products_id  BIGINT NOT NULL,
-    exchanges_id BIGINT NOT NULL,
-    FOREIGN KEY (products_id)
-        REFERENCES products (id)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION,
-    FOREIGN KEY (exchanges_id)
-        REFERENCES exchanges (id)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION
-);
-
 -- Alter to acept null
 ALTER TABLE collects
     ALTER COLUMN waste_collector_id DROP NOT NULL;
 ALTER TABLE collects
     ALTER COLUMN address_id DROP NOT NULL;
+
+-- implementação futura
+-- -- Table ecocoleta_db.evaluations
+-- CREATE TABLE IF NOT EXISTS evaluations
+-- (
+--     id                  BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
+--     comments            VARCHAR(255)                 NOT NULL,
+--     stars               INT                          NOT NULL,
+--     id_user_destiny     BIGSERIAL                    NOT NULL,
+--     create_time         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     waste_collectors_id BIGSERIAL                    NOT NULL,
+--     residents_id        BIGINT                       NOT NULL,
+--     CONSTRAINT fk_evaluations_waste_collectors
+--         FOREIGN KEY (waste_collectors_id)
+--             REFERENCES waste_collectors (id)
+--             ON DELETE NO ACTION
+--             ON UPDATE NO ACTION,
+--     CONSTRAINT fk_evaluations_residents
+--         FOREIGN KEY (residents_id)
+--             REFERENCES residents (id)
+--             ON DELETE NO ACTION
+--             ON UPDATE NO ACTION
+-- );
+
+-- implementação futura
+-- -- Table ecocoleta_db.products
+-- CREATE TABLE IF NOT EXISTS products
+-- (
+--     id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
+--     name        VARCHAR(255)                 NOT NULL,
+--     description VARCHAR(255)                 NOT NULL,
+--     price       DECIMAL                      NOT NULL,
+--     points      BIGINT                       NOT NULL,
+--     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     update_time TIMESTAMP,
+--     picture     VARCHAR(255),
+--     companys_id BIGSERIAL                    NOT NULL,
+--     FOREIGN KEY (companys_id)
+--         REFERENCES companys (id)
+--         ON DELETE NO ACTION
+--         ON UPDATE NO ACTION
+-- );
+
+-- implementação futura
+-- -- Table ecocoleta_db.exchanges
+-- CREATE TABLE IF NOT EXISTS exchanges
+-- (
+--     id          BIGSERIAL PRIMARY KEY UNIQUE NOT NULL,
+--     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     update_time TIMESTAMP
+-- );
+
+-- implementação futura
+-- -- Table ecocoleta_db.products_has_exchanges
+-- CREATE TABLE IF NOT EXISTS products_has_exchanges
+-- (
+--     products_id  BIGINT NOT NULL,
+--     exchanges_id BIGINT NOT NULL,
+--     FOREIGN KEY (products_id)
+--         REFERENCES products (id)
+--         ON DELETE NO ACTION
+--         ON UPDATE NO ACTION,
+--     FOREIGN KEY (exchanges_id)
+--         REFERENCES exchanges (id)
+--         ON DELETE NO ACTION
+--         ON UPDATE NO ACTION
+-- );

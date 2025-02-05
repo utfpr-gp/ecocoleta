@@ -41,3 +41,11 @@ Thumbs.db
 # certificat
 /ssl/localhost.crt
 /ssl/localhost.key
+
+# Ignorar arquivos de environment
+/src/environments/environment.ts
+/src/environments/environment.prod.ts
+/src/environments/environment.dev.ts
+
+# Ignorar arquivos de ambiente e chaves locais
+.env

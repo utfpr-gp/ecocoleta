@@ -47,8 +47,6 @@ export class NewCollectComponent implements OnInit {
      * @param collect Dados da coleta a ser criada.
      */
     private createCollect(collect: Collect): void {
-        console.log('Criando nova coleta:', collect);
-
         this.collectService.createCollect(collect).subscribe({
             next: () => {
                 // Exibe mensagem de sucesso

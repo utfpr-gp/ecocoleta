@@ -1,5 +1,5 @@
 export const environment = {
     production: false,
     API_KEY_GOOGLE_MAPS: '',
-    API: ''
+    API: 'https://localhost:8443',
 };
