@@ -35,18 +35,18 @@
 # CMD ["nginx", "-g", "daemon off;"]
 
 #CONTAINER PARA DESENVOLVIMENTO COM HTTPS
- # Definir a imagem base que será usada
- FROM node:18.17.1-alpine3.17 AS builder
+# Definir a imagem base que será usada
+FROM node:18.17.1-alpine3.17 AS builder
 
- # Definir o diretório de trabalho para a aplicação
- WORKDIR /app
+# Definir o diretório de trabalho para a aplicação
+WORKDIR /app
 
 # Instalar dependências
 COPY package*.json ./
 RUN npm install
 
- # Copiar o restante dos arquivos para o diretório de trabalho
- COPY . .
+# Copiar o restante dos arquivos para o diretório de trabalho
+COPY . .
 
 # Comando para iniciar o servidor Angular com HTTPS
-CMD ["npx", "ng", "serve", "--host", "0.0.0.0", "--port", "4200", "--ssl", "true", "--ssl-key", "/app/ssl/localhost.key", "--ssl-cert", "/app/ssl/localhost.crt"]
+CMD ["npx", "ng", "serve", "--host", "0.0.0.0", "--port", "4200", "--ssl", "true", "--ssl-key", "/app/ssl/localhost.key", "--ssl-cert", "/app/ssl/localhost.crt", "--disable-host-check"]

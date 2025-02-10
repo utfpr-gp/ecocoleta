@@ -19,33 +19,60 @@ services:
       - app-network
 
   # CONTAINERS BACKEND E FRONTEND
-  # backend:
-  #   image: ecocoleta-backend:latest
-  #   container_name: ecocoleta-backend
-  #   build:
-  #     context: ./backend/
-  #     dockerfile: ./Dockerfile
+  backend:
+    image: ecocoleta-backend:latest
+    container_name: ecocoleta-backend
+    build:
+      context: ./backend/
+      dockerfile: ./Dockerfile
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env  # Carrega as variáveis de ambiente
+    networks:
+      - app-network
+
+  frontend:
+    image: ecocoleta-frontend:latest
+    container_name: ecocoleta-frontend
+    build:
+      context: ./frontend/
+      dockerfile: ./Dockerfile
+    environment:
+      #ativa o modo de ambiente de produção para node, melhor desempenho
+      NODE_ENV: production
+    ports:
+      # - '80:80'
+      - '4200:4200'
+    restart: always
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  # # SERVIÇO SELENIUM
+  # selenium:
+  #   image: selenium/standalone-chrome-debug:latest
+  #   container_name: selenium-container
   #   ports:
-  #     - '8080:8080'
-  #   env_file:
-  #     - ./backend/.env  # Carrega as variáveis de ambiente
+  #     - "4444:4444"  # Porta do Selenium para o WebDriver
+  #     - "5900:5900"  # Porta VNC para depuração visual (opcional)
   #   networks:
   #     - app-network
 
-  # frontend:
-  #   image: ecocoleta-frontend:latest
-  #   container_name: ecocoleta-frontend
+  # # TESTE E2E
+  # e2e-tester:
   #   build:
   #     context: ./frontend/
-  #     dockerfile: ./Dockerfile
+  #     dockerfile: ./Dockerfile.e2e
+  #   container_name: e2e-tester
   #   environment:
-  #     #ativa o modo de ambiente de produção para node, melhor desempenho
-  #     NODE_ENV: production
-  #   ports:
-  #     - '80:80'
-  #   restart: always
+  #     SELENIUM_HOST: selenium
   #   depends_on:
-  #     - backend
+  #     - selenium
+  #     - frontend
   #   networks:
   #     - app-network
 

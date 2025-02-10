@@ -9,7 +9,8 @@
         "build": "ng build --configuration production",
         "test": "ng test",
         "lint": "ng lint",
-        "e2e": "ng e2e"
+        "e2e": "ng e2e",
+        "custom:e2e": "node e2e/custom-e2e.js"
     },
     "private": true,
     "dependencies": {
