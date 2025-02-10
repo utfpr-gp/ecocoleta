@@ -35,7 +35,7 @@
                 "https://ecocoleta-backend-92tr.onrender.com/**"
             ],
             "cacheConfig": {
-                "strategy": "performance",
+                "strategy": "freshness",
                 "maxSize": 50,
                 "maxAge": "1d",
                 "timeout": "10s"
@@ -44,8 +44,6 @@
     ],
     "navigationUrls": [
         "/**",
-        "!https://localhost:8080/**",
-        "!https://ecocoleta-backend-92tr.onrender.com/**",
         "!/assets/**",
         "!/offline.html"
     ]
