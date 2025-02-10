@@ -19,38 +19,38 @@ services:
       - app-network
 
   # CONTAINERS BACKEND E FRONTEND
-  backend:
-    image: ecocoleta-backend:latest
-    container_name: ecocoleta-backend
-    build:
-      context: ./backend/
-      dockerfile: ./Dockerfile
-    ports:
-      - '8080:8080'
-    depends_on:
-      - db
-    env_file:
-      - ./backend/.env  # Carrega as variáveis de ambiente
-    networks:
-      - app-network
+  # backend:
+  #   image: ecocoleta-backend:latest
+  #   container_name: ecocoleta-backend
+  #   build:
+  #     context: ./backend/
+  #     dockerfile: ./Dockerfile
+  #   ports:
+  #     - '8080:8080'
+  #   depends_on:
+  #     - db
+  #   env_file:
+  #     - ./backend/.env  # Carrega as variáveis de ambiente
+  #   networks:
+  #     - app-network
 
-  frontend:
-    image: ecocoleta-frontend:latest
-    container_name: ecocoleta-frontend
-    build:
-      context: ./frontend/
-      dockerfile: ./Dockerfile
-    environment:
-      #ativa o modo de ambiente de produção para node, melhor desempenho
-      NODE_ENV: production
-    ports:
-      # - '80:80'
-      - '4200:4200'
-    restart: always
-    depends_on:
-      - backend
-    networks:
-      - app-network
+  # frontend:
+  #   image: ecocoleta-frontend:latest
+  #   container_name: ecocoleta-frontend
+  #   build:
+  #     context: ./frontend/
+  #     dockerfile: ./Dockerfile
+  #   environment:
+  #     #ativa o modo de ambiente de produção para node, melhor desempenho
+  #     NODE_ENV: production
+  #   ports:
+  #     # - '80:80'
+  #     - '4200:4200'
+  #   restart: always
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - app-network
 
   # # SERVIÇO SELENIUM
   # selenium:
