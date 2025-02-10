@@ -1,7 +1,5 @@
 target/
 *.log
 .git/
-.env
 node_modules/
-ssl/
 .idea

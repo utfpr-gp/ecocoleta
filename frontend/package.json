@@ -49,6 +49,7 @@
         "@angular/compiler-cli": "^17.0.5",
         "@types/jasmine": "~4.3.1",
         "@types/jwt-decode": "^2.2.1",
+        "@types/selenium-webdriver": "^4.1.28",
         "dotenv": "^16.4.7",
         "jasmine-core": "~4.6.0",
         "karma": "~6.4.2",
@@ -56,6 +57,7 @@
         "karma-coverage": "~2.2.0",
         "karma-jasmine": "~5.1.0",
         "karma-jasmine-html-reporter": "~2.1.0",
+        "selenium-webdriver": "^4.28.1",
         "typescript": "~5.2.2"
     }
 }
