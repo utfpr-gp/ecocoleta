@@ -27,6 +27,8 @@ services:
   #     dockerfile: ./Dockerfile
   #   ports:
   #     - '8080:8080'
+  #   depends_on:
+  #     - db
   #   env_file:
   #     - ./backend/.env  # Carrega as variáveis de ambiente
   #   networks:
@@ -42,10 +44,35 @@ services:
   #     #ativa o modo de ambiente de produção para node, melhor desempenho
   #     NODE_ENV: production
   #   ports:
-  #     - '80:80'
+  #     # - '80:80'
+  #     - '4200:4200'
   #   restart: always
   #   depends_on:
   #     - backend
+  #   networks:
+  #     - app-network
+
+  # # SERVIÇO SELENIUM
+  # selenium:
+  #   image: selenium/standalone-chrome-debug:latest
+  #   container_name: selenium-container
+  #   ports:
+  #     - "4444:4444"  # Porta do Selenium para o WebDriver
+  #     - "5900:5900"  # Porta VNC para depuração visual (opcional)
+  #   networks:
+  #     - app-network
+
+  # # TESTE E2E
+  # e2e-tester:
+  #   build:
+  #     context: ./frontend/
+  #     dockerfile: ./Dockerfile.e2e
+  #   container_name: e2e-tester
+  #   environment:
+  #     SELENIUM_HOST: selenium
+  #   depends_on:
+  #     - selenium
+  #     - frontend
   #   networks:
   #     - app-network
 

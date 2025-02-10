@@ -1,0 +1,15 @@
+# Usar imagem base Node.js para rodar os testes
+FROM node:18.17.1-alpine3.17
+
+# Definir o diretório de trabalho
+WORKDIR /app
+
+# Copiar arquivos necessários e instalar dependências
+COPY package*.json ./
+RUN npm install --legacy-peer-deps
+
+# Copiar o restante dos arquivos
+COPY . .
+
+# Comando para rodar os testes E2E usando o Selenium
+CMD ["npm", "run", "custom:e2e"]

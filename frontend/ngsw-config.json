@@ -1,0 +1,52 @@
+{
+    "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+    "index": "/index.html",
+    "assetGroups": [
+        {
+            "name": "app",
+            "installMode": "prefetch",
+            "resources": {
+                "files": [
+                    "/favicon.ico",
+                    "/index.html",
+                    "/manifest.webmanifest",
+                    "/*.css",
+                    "/*.js"
+                ]
+            }
+        },
+        {
+            "name": "assets",
+            "installMode": "lazy",
+            "updateMode": "prefetch",
+            "resources": {
+                "files": [
+                    "/assets/**",
+                    "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+                ]
+            }
+        }
+    ],
+    "dataGroups": [
+        {
+            "name": "api-requests",
+            "urls": [
+                "https://localhost:8080/**",
+                "https://ecocoleta-backend-92tr.onrender.com/**"
+            ],
+            "cacheConfig": {
+                "strategy": "performance",
+                "maxSize": 50,
+                "maxAge": "1d",
+                "timeout": "10s"
+            }
+        }
+    ],
+    "navigationUrls": [
+        "/**",
+        "!https://localhost:8080/**",
+        "!https://ecocoleta-backend-92tr.onrender.com/**",
+        "!/assets/**",
+        "!/offline.html"
+    ]
+}

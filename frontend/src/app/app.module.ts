@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {NgModule, isDevMode} from '@angular/core';
 import {LocationStrategy, PathLocationStrategy} from '@angular/common';
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
@@ -16,6 +16,7 @@ import {MessageService} from "primeng/api";
 import { GoogleMapsModule } from '@angular/google-maps';
 import {ToastModule} from "primeng/toast";
 import {IConfig, NgxMaskModule} from "ngx-mask";
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 const maskConfig: Partial<IConfig> = {
     validation: true,
@@ -55,6 +56,12 @@ export function tokenGetter(): string {
         }),
         ToastModule,
         NgxMaskModule.forRoot(maskConfig),
+        ServiceWorkerModule.register('ngsw-worker.js', {
+          enabled: !isDevMode(),
+          // Register the ServiceWorker as soon as the application is stable
+          // or after 30 seconds (whichever comes first).
+          registrationStrategy: 'registerWhenStable:30000'
+        }),
     ],
     providers: [
         {
