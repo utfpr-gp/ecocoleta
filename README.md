@@ -1,107 +1,152 @@
-## Ecocoleta uma aplicação para incentivar a reciclagem e melhorar as condições de vida de catadores.
+# EcoColeta - Incentivando a reciclagem e melhorando a vida dos catadores
 
-Em resumo, trata-se de um sistema concebido para simplificar a rotina dos catadores de recicláveis. Os usuários têm a facilidade de solicitar uma coleta automática ou agendar um horário conveniente para a retirada dos materiais recicláveis de suas residências. Para os catadores, o sistema gera uma rota eficiente com até 10 coletas, otimizando o trajeto para maximizar a eficiência. Além disso, o aplicativo incorpora elementos de gamificação, oferecendo aos usuários a possibilidade de trocar pontos por produtos. A proposta é estabelecer parcerias estratégicas com empresas e prefeituras visando arrecadar produtos e fortalecer a iniciativa.
+## ✨ Sobre o projeto
 
-No desenvolvimento deste projeto, estou utilizando tecnologias como Spring Boot, Spring Security, Angular, Postgres, Docker, Flyway, H2, Selenium e Figma. Essa abordagem tecnológica proporciona uma base sólida e eficiente para a implementação do sistema, garantindo segurança, escalabilidade e uma experiência de usuário aprimorada.
+## Em resumo, trata-se de um sistema concebido para simplificar a rotina dos catadores de recicláveis. Os usuários têm a facilidade de solicitar uma coleta automática ou agendar um horário conveniente para a retirada dos materiais recicláveis de suas residências. Para os catadores, o sistema gera uma rota eficiente com até 10 coletas, otimizando o trajeto para maximizar a eficiência. Além disso, o aplicativo incorpora elementos de gamificação, oferecendo aos usuários a possibilidade de trocar pontos por produtos. A proposta é estabelecer parcerias estratégicas com empresas e prefeituras visando arrecadar produtos e fortalecer a iniciativa.
 
-## 🎨 Layout
+## 🔧 Tecnologias utilizadas
 
-Os protótipos da aplicação mobile está disponível neste link: <a href="https://www.figma.com/file/zUN6WoN3BdO9aAqyzo9mKJ/EcoColeta?type=design&node-id=2-3&mode=design">Figma</a>
+### Backend
+
+- **[Java 17](https://www.oracle.com/java)**
+- **[Spring Boot 3](https://spring.io/projects/spring-boot)**
+- **[Spring Security](https://spring.io/projects/spring-security)**
+- **[PostgreSQL](https://www.postgresql.org)** com **[PostGIS](https://postgis.net)** para georreferenciamento
+- **[Hibernate](https://hibernate.org)**
+- **[Flyway](https://flywaydb.org)** para migração de banco de dados
+- **[Swagger](https://swagger.io)** para documentação da API
+- **Docker Compose**
+- **Google Maps API** para traçar rotas otimizadas de coleta
+
+### Frontend
+
+- **[Angular](https://angular.io)**
+- **PrimeNG**
+- **TypeScript**
+
+### Infraestrutura e DevOps
+
+- **Docker** para conteinerização
+- **Cloudinary** para armazenamento de arquivos
 
 ---
 
-<!-- ## 📄 Documentação
+## 🛠️ Configuração e execução do projeto
 
-A documentação das funcionalidades da aplicação pode ser acessada neste link: <a href="https://trello.com/b/O0lGCsKb/api-voll-med">Trello</a>
+### 1. Configuração dos arquivos `.env`
 
---- -->
+Configurar os seguintes arquivos `.env` com as variáveis de ambiente necessárias:
 
-## 📄 Monografia
+- **Na raiz do projeto:** `.env`
+- **No backend:** `backend/.env`
+- **No frontend:** `frontend/src/environments/environment.ts` (para desenvolvimento, use o arquivo `environment.dev.ts`)
 
-A monografia da aplicação pode ser acessada neste link: <a href="https://www.overleaf.com/read/szdqjbyjrnnn#024b44">Overleaf</a>
+### Exemplo de configuração das variáveis de ambiente (arquivo `.env`):
+
+```
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=senha
+GOOGLE_MAPS_API_KEY=sua_chave_api_google_maps
+```
+
+> **Observação:** Certifique-se de comentar ou descomentar a linha correta no arquivo `application.properties` no backend para configurar o SSL ao rodar localmente ou via Docker.
 
 ---
 
-## 📝 Licença
+### 2. Como rodar a aplicação localmente
 
-Projeto desenvolvido pelo aluno: [Alvaro Pires](https://github.com/alguipires)
+#### Via IDE (localmente)
 
+1. **Clonar o repositório:**
+
+```
+git clone https://github.com/seu-usuario/ecocoleta.git
+cd ecocoleta
+```
+
+2. **Configurar os arquivos \*\***\*\***\*\***`.env`\***\*\*\*\*\*\*\*** conforme descrito acima.\*\*
+
+3. **Iniciar o Backend:**
+
+   - Abra o pacote backend no IntelliJ IDEA.
+   - Verifique o arquivo `application.properties`.
+   - Execute a aplicação utilizando a classe principal.
+
+4. **Iniciar o Frontend:**
+
+   - Acesse a pasta `frontend` e execute:
+
+   ```bash
+   nvm install 20.9.0
+   nvm use 20.9.0
+   npm install
+   ng serve
+   ```
+
+   - O frontend estará disponível em [https://localhost:4200](https://localhost:4200)
+
+#### Via Docker Compose
+
+1. **Configurar os arquivos \*\***\*\***\*\***`.env`\***\*\*\*\*\*\*\*** conforme descrito acima.\*\*
+2. **Abrir o terminal na raiz do projeto e rodar os comandos:**
+
+```bash
+docker compose build
+docker compose up -d
+```
+
+3. **Verifique os containers:**
+   - Banco de Dados, Backend e Frontend estarão ativos.
+   - Acesse a aplicação nos seguintes endereços:
+     - **API:** [https://localhost:8080](https://localhost:8080)
+     - **Frontend:** [https://localhost:4200](https://localhost:4200)
+
+---
+
+## 🔗 Endpoints de documentação da API
+
+- **Swagger UI:** [https://localhost:8080/swagger-ui.html](https://localhost:8080/swagger-ui.html)
+- **Documentação JSON:** [https://localhost:8080/v3/api-docs](https://localhost:8080/v3/api-docs)
+
+---
+
+## 🌄 Layout
+
+Os protótipos da aplicação estão disponíveis no [Figma](https://www.figma.com/file/zUN6WoN3BdO9aAqyzo9mKJ/EcoColeta?type=design&node-id=2-3&mode=design).
+
+---
+
+## 📒 Monografia
+
+A monografia da aplicação pode ser acessada neste link: [Overleaf](https://www.overleaf.com/read/szdqjbyjrnnn#024b44)
+
+---
+
+## 📃 Licença
+
+Projeto desenvolvido pelo aluno: [Alvaro Pires](https://github.com/alguipires)\
 Orientador: [Dr. Roni Fabio Banaszewski](https://ronifabio.github.io/)
 
 ---
 
-<!-- ## 🛠 Tecnologias
+## 🔧 Ferramentas recomendadas
 
-As seguintes tecnologias foram utilizadas no desenvolvimento da API Rest do projeto:
-
-- **[Java 17](https://www.oracle.com/java)**
-- **[Spring Boot 3](https://spring.io/projects/spring-boot)**
-- **[Maven](https://maven.apache.org)**
-- **[MySQL](https://www.mysql.com)**
-- **[Hibernate](https://hibernate.org)**
-- **[Flyway](https://flywaydb.org)**
-- **[Lombok](https://projectlombok.org)**
-
---- -->
-
-# 🛠 Requisitos para iniciar a aplicação em desenvolvimento
-
-## Ferramentas
-
-- **IDE Java IntelliJ IDEA**
-- **VsCode**
-- **Dbeaver para visualizar o DB ou outro de preferencia**
-- **Docker compose**
+- **IDE:** IntelliJ IDEA para backend e VSCode para frontend
+- **Gerenciador de banco de dados:** DBeaver ou outro de preferência
+- **Cliente de API:** Postman (ou Insomnia, se preferir)
 
 ---
 
-## Passos para iniciar a aplicação
+## 🚀 Importar configurações de API
 
-### FrontEnd
+Para testar a API, utilize o Postman e importe as configurações usando o botão abaixo:
 
-Abra o terminal no pacote frontend
+---
 
-- **Instalar [nvm -gerenciador de versões do node](https://github.com/nvm-sh/nvm)**
-- **Instalar o node via nvm `nvm install node 20.9.0`**
-- **Rode o comando nvm use (versão especifica node) `nvm use 20.9.0`**
-- **Instalar angular cli na pasta raiz do frontend `npm install -g @angular/cli`**
+## 🔧 Observações adicionais
 
-#### Para rodar o projeto angular frontend, no folder rode os comandos
-
-- `npm install`
-- `ng serve`
-
-### Configurações das Environments (.env)
-
-- **Na raiz do projeto renomeie o arquivo .env.example para .env e configura com as variaveis necessarias**
-- **No pacote backend do projeto renomeie o arquivo .env.example para .env e configura com as variaveis necessarias**
-
-### Containers e Banco de dados
-
-\*obs. a aplicação está configurada em 3 conteineres para rodar em produção mas no desenvolvimento está sendo utilizado somente o container db(banco de dados).
-
-Na raiz do projeto com o terminal aberto rodo os comandos para iniciar o container db
-
-- `docker compose build`
-- `docker compose up db` ou `docker compose up db -d` para iniciar somente o container db
-
-### BackEnd
-
-Abra o pacote backend no IntelliJ IDEA
-
-- **Verificar aplications.properties se está tudo correto**
-- **Faça um reload no pacotes maven**
-- **Agora está pronto para iniciar o backend do projeto**
-
-### Importar configuração do insomnia
-
-Para importar todas as rotas configuradas no insomnia para testar a API clique no botão abaixo para importar (necessário ter insomnia instalado).
-
-[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=EcoColeta&uri=https%3A%2F%2Fraw.githubusercontent.com%2Futfpr-gp%2Fecocoleta%2F%2540alguipires%2Finitial-readme%2FInsomnia_export_API_test.json)
-
-<!-- todo - escrever do script de .env do front,
-nvmrc versã odo node,
- cofig de var em prod do back,
- docker,
-  ssl falar sua importancia e como montar,
-  trocar pacote insomnia po rpostman  -->
+- O sistema está preparado para ser executado tanto localmente quanto em ambientes conteinerizados usando Docker.
+- A utilização de PostGIS permite um traçado eficiente das rotas de coleta com base na localização geográfica.
+- Para ambientes de produção, revise as configurações SSL corretamente para garantir a segurança.
